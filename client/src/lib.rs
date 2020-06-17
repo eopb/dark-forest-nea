@@ -6,6 +6,7 @@ use seed::{prelude::*, *};
 
 // `init` describes what should happen when your app started.
 fn init(_: Url, _: &mut impl Orders<updates::Msg>) -> state::Model {
+    ui::style::global::init();
     state::Model::default()
 }
 

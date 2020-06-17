@@ -1,2 +1,43 @@
 // `Model` describes our app state.
-pub type Model = i32;
+#[derive(Default)]
+pub struct Model {
+    pub theme: Theme,
+}
+
+pub enum Theme {
+    Dark,
+    Light,
+}
+
+impl Default for Theme {
+    fn default() -> Self {
+        Self::Dark
+    }
+}
+
+impl Theme {
+    pub fn toggle(&mut self) {
+        *self = match self {
+            Self::Dark => Self::Light,
+            Self::Light => Self::Dark,
+        }
+    }
+    pub fn background(&self) -> &str {
+        match self {
+            Self::Dark => "#090909",
+            Self::Light => "#ddd",
+        }
+    }
+    pub fn text(&self) -> &str {
+        match self {
+            Self::Dark => "#00FF00",
+            Self::Light => "#003300",
+        }
+    }
+    pub fn toggle_buttons_color(&self) -> &str {
+        match self {
+            Self::Dark => "#FFF",
+            Self::Light => "#000",
+        }
+    }
+}

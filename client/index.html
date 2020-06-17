@@ -1,17 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <style>
+      @font-face {
+        font-family: bitlimt;
+        src: url("fonts/8-bit-limit/8bitlim.ttf");
+        font-weight: bold;
+      }
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-</head>
+      @font-face {
+        font-family: adobedia;
+        src: url("fonts/levi-adobe-dia/Adobe Dia.ttf");
+        font-weight: bold;
+      }
+      @font-face {
+        font-family: prstart;
+        src: url("fonts/press-start/prstart.ttf");
+        font-weight: bold;
+      }
+    </style>
+  </head>
 
-<body>
+  <body>
     <section id="app"></section>
     <script type="module">
-        import init from '/pkg/package.js';
-        init('/pkg/package_bg.wasm');
+      import init from "/pkg/package.js";
+      init("/pkg/package_bg.wasm");
     </script>
-</body>
-
+  </body>
 </html>

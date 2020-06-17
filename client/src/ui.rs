@@ -1,29 +1,62 @@
-use seed_style::*;
+pub mod style;
+
+use seed_style::{em, px, vh, *};
 
 use crate::{state, updates};
 use seed::{prelude::*, *};
 
 // `view` describes what to display.
-pub fn view(model: &state::Model) -> impl View<updates::Msg> {
+pub fn view(model: &state::Model) -> impl IntoNodes<updates::Msg> {
     div![
-        nav(model),
-        button![model, ev(Ev::Click, |_| updates::Msg::Increment),],
-        title_card(model),
-        footer(model)
+        s().background_color(model.theme.background())
+            .color(model.theme.text())
+            .text_align("center")
+            .min_height(vh(100))
+            .padding(px(8))
+            .display("flex")
+            .flex_direction("column"),
+        div![
+            s().flex("1")
+                .display("grid")
+                .grid_auto_flow("row")
+                .grid_template_rows("min-content auto min-content")
+                .padding(px(0))
+                .min_height("100%")
+                .border(AsRef::<str>::as_ref(&format!(
+                    "6px solid {}",
+                    model.theme.text()
+                )))
+                .position("relative"),
+            style::pixel_cutouts(model),
+            nav(model),
+            // button![model,],
+            title_card(model),
+            footer(model)
+        ]
     ]
 }
 
 fn title_card(model: &state::Model) -> Node<updates::Msg> {
     header![
-        h1!["Dark Forest"],
-        p!["Play and create original interactive stories"],
+        h1![
+            s().font_family("bitlimt")
+                .font_size(em(6))
+                .margin_bottom(px(5)),
+            "Dark Forest"
+        ],
+        p![
+            s().margin_top(px(5)).font_size(em(2.9)),
+            "Play and create original interactive stories"
+        ],
     ]
 }
 
 fn footer(model: &state::Model) -> Node<updates::Msg> {
     footer![p![
+        s().margin(px(2)).font_size(em(2)),
         "A project created by ",
         a![
+            style::button(model, 2),
             "Ethan Brierley",
             attrs! {At::Href => "https://github.com/ethanboxx"}
         ],
@@ -31,29 +64,52 @@ fn footer(model: &state::Model) -> Node<updates::Msg> {
 }
 
 fn nav(model: &state::Model) -> Node<updates::Msg> {
+    pub fn a() -> seed_style::Style {
+        s().margin(px(14)).margin_top(px(8))
+    }
+
+    let button = |model| style::button(model, 5);
+
     nav![
+        s().display("flex")
+            .justify_content("space-between")
+            .font_size(em(3)),
         div![
             a![
+                a(),
+                button(model),
                 "Home",
                 attrs! {At::Href => "https://github.com/ethanboxx"}
             ],
             a![
+                a(),
+                button(model),
                 "Explore",
                 attrs! {At::Href => "https://github.com/ethanboxx"}
             ]
         ],
         div![
             a![
+                a(),
+                button(model),
                 "New Project",
                 attrs! {At::Href => "https://github.com/ethanboxx"}
             ],
             a![
+                a(),
+                button(model),
                 "Sign In",
                 attrs! {At::Href => "https://github.com/ethanboxx"}
             ],
             a![
+                a(),
+                button(model),
+                s().color(model.theme.toggle_buttons_color()),
+                s().after()
+                    .background_color(model.theme.toggle_buttons_color()),
                 "Light Mode",
-                attrs! {At::Href => "https://github.com/ethanboxx"}
+                attrs! {At::Href => "#"},
+                ev(Ev::Click, |_| updates::Msg::ToggleTheme)
             ]
         ]
     ]
