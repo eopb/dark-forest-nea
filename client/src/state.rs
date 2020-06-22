@@ -1,7 +1,10 @@
+use crate::routes::Route;
+
 // `Model` describes our app state.
 #[derive(Default)]
 pub struct Model {
     pub theme: Theme,
+    pub route: Route,
 }
 
 pub enum Theme {

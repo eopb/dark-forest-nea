@@ -1,8 +1,10 @@
+pub mod router;
 pub mod style;
+pub mod title_card;
 
 use seed_style::{em, px, vh, *};
 
-use crate::{state, updates};
+use crate::{routes::Route, state, updates};
 use seed::{prelude::*, *};
 
 // `view` describes what to display.
@@ -29,25 +31,9 @@ pub fn view(model: &state::Model) -> impl IntoNodes<updates::Msg> {
                 .position("relative"),
             style::pixel_cutouts(model),
             nav(model),
-            // button![model,],
-            title_card(model),
+            router::view(model),
             footer(model)
         ]
-    ]
-}
-
-fn title_card(model: &state::Model) -> Node<updates::Msg> {
-    header![
-        h1![
-            s().font_family("bitlimt")
-                .font_size(em(6))
-                .margin_bottom(px(5)),
-            "Dark Forest"
-        ],
-        p![
-            s().margin_top(px(5)).font_size(em(2.9)),
-            "Play and create original interactive stories"
-        ],
     ]
 }
 
@@ -75,25 +61,33 @@ fn nav(model: &state::Model) -> Node<updates::Msg> {
             .justify_content("space-between")
             .font_size(em(3)),
         div![
-            a![
-                a(),
-                button(model),
-                "Home",
-                attrs! {At::Href => "https://github.com/ethanboxx"}
-            ],
-            a![
-                a(),
-                button(model),
-                "Explore",
-                attrs! {At::Href => "https://github.com/ethanboxx"}
-            ]
+            if model.route != Route::Index {
+                a![
+                    a(),
+                    button(model),
+                    "Home",
+                    attrs! {At::Href => Route::Index.go_to()}
+                ]
+            } else {
+                empty()
+            },
+            if model.route != Route::Explore {
+                a![
+                    a(),
+                    button(model),
+                    "Explore",
+                    attrs! {At::Href => Route::Explore.go_to()}
+                ]
+            } else {
+                empty()
+            }
         ],
         div![
             a![
                 a(),
                 button(model),
                 "New Project",
-                attrs! {At::Href => "https://github.com/ethanboxx"}
+                attrs! {At::Href => "/new-project"}
             ],
             a![
                 a(),
