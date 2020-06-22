@@ -1,0 +1,30 @@
+#![warn(clippy::all, clippy::pedantic, clippy::nursery)]
+#[allow(clippy::must_use_candidate)]
+mod routes;
+mod state;
+
+use state::State;
+
+use dotenv::dotenv;
+
+#[async_std::main]
+async fn main() -> tide::Result<()> {
+    dotenv().ok();
+
+    femme::with_level(log::LevelFilter::Debug);
+
+    let state = State::new().await?;
+    let mut app = tide::with_state(state);
+
+    app.at("/").get(routes::index);
+    app.at("*").get(routes::index);
+
+    app.at("/pkg").serve_dir("../client/pkg")?;
+    app.at("/fonts").serve_dir("../client/fonts")?;
+
+    app.at("/api/hello").get(routes::hello);
+
+    app.listen("localhost:8081").await?;
+
+    Ok(())
+}

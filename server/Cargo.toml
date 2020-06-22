@@ -1,0 +1,16 @@
+[package]
+name = "dark-forest"
+version = "0.1.0"
+authors = ["Ethan Brierley <ethanboxx@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+tide = {git= "https://github.com/http-rs/tide.git"}
+async-std = { version = "1.6", features = ["attributes"] }
+env_logger = "0.5.13"
+log = "0.4.8"
+femme = "2.1"
+dotenv = "0.15"
+http-types = "2.2.1"
