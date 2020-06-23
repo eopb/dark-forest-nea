@@ -1,4 +1,4 @@
-use crate::View;
+use crate::ui;
 
 use seed::virtual_dom::update_el::UpdateEl;
 use seed::{browser::fetch::FetchError, prelude::*, *};
@@ -19,12 +19,14 @@ impl<T, E> Default for Fetch<T, E> {
     }
 }
 
-impl<T: View<Msg, Model>, E: View<Msg, Model>, Msg, Model> View<Msg, Model> for Fetch<T, E> {
+impl<T: ui::View<Msg, Model>, E: ui::View<Msg, Model>, Msg, Model> ui::View<Msg, Model>
+    for Fetch<T, E>
+{
     fn view(&self, model: &Model) -> Vec<Node<Msg>> {
         match self {
-            Fetch::Fetched(Ok(x)) => x.view(model),
-            Fetch::Fetched(Err(x)) => x.view(model),
-            Fetch::Loading => p!["Loading ..."].into_nodes(), // To be replaced by nice animation.
+            Self::Fetched(Ok(x)) => x.view(model),
+            Self::Fetched(Err(x)) => x.view(model),
+            Self::Loading => p!["Loading ..."].into_nodes(), // To be replaced by nice animation.
         }
     }
 }

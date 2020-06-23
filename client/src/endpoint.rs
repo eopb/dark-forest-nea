@@ -1,7 +1,6 @@
 use async_trait::async_trait;
 use glue::Endpoint as _;
-use seed::{browser::fetch::FetchError, prelude::*, *};
-use serde::{Deserialize, Serialize};
+use seed::{browser::fetch::FetchError, prelude::*};
 #[async_trait(?Send)]
 pub trait Endpoint: glue::Endpoint {
     async fn fetch() -> Result<Self, FetchError>;

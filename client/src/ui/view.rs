@@ -1,8 +1,6 @@
 use seed::virtual_dom::update_el::UpdateEl;
 use seed::{browser::fetch::FetchError, prelude::*, *};
 
-use crate::state;
-
 pub trait View<Msg, Model> {
     fn view(&self, model: &Model) -> Vec<Node<Msg>>;
 }
@@ -16,8 +14,7 @@ impl<Msg, Model> View<Msg, Model> for glue::Hello {
 impl<Msg, Model, T: View<Msg, Model>> View<Msg, Model> for Option<T> {
     fn view(&self, model: &Model) -> Vec<Node<Msg>> {
         self.as_ref()
-            .map(|x| x.view(model))
-            .unwrap_or_else(|| empty().into_nodes())
+            .map_or_else(|| empty().into_nodes(), |x| x.view(model))
     }
 }
 

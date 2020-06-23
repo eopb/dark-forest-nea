@@ -1,6 +1,6 @@
-use crate::{routes::Route, state, updates};
+use crate::updates;
 use seed::{prelude::*, *};
-use seed_style::{em, px, vh, *};
+use seed_style::{em, px, *};
 
 pub fn view(header: &str, subheading: &str) -> Node<updates::Msg> {
     header![

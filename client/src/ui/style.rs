@@ -1,9 +1,5 @@
 pub mod global;
-use crate::{state, updates};
-use seed::virtual_dom::update_el::UpdateEl;
-use seed::{prelude::*, *};
-use seed_style::LocalUpdateEl;
-use seed_style::*;
+use crate::state;
 use seed_style::{px, *};
 
 pub fn pixel_cutouts(model: &state::Model) -> Vec<seed_style::Style> {

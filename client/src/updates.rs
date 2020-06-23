@@ -1,7 +1,5 @@
 use crate::{routes::Route, state, Endpoint as _};
-use glue::Endpoint;
-use seed::{browser::fetch::FetchError, prelude::*, *};
-use std::future::Future;
+use seed::{browser::fetch::FetchError, prelude::*};
 
 // `Msg` describes the different events you can modify state with.
 pub enum Msg {

@@ -1,7 +1,6 @@
-use crate::{routes::Route, state, updates};
-use seed::{prelude::*, *};
-use seed_style::{em, px, vh, *};
+use crate::{state, updates};
+use seed::prelude::*;
 
-pub fn view(model: &state::Model) -> Node<updates::Msg> {
+pub fn view(_: &state::Model) -> Node<updates::Msg> {
     crate::ui::title_card::view("404", "Page not found")
 }

@@ -7,8 +7,7 @@ use {
     tide::{Request, Response, StatusCode},
 };
 
-pub async fn index(req: Request<State>) -> tide::Result<impl Into<Response>> {
-    println!("Hello");
+pub async fn index(_: Request<State>) -> tide::Result<impl Into<Response>> {
     Ok({
         let mut res = Response::new(StatusCode::Ok);
         res.set_content_type(mime::HTML);

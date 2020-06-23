@@ -10,12 +10,13 @@ pub trait Endpoint: glue::Endpoint + 'static {
     async fn endpoint(req: Request<State>) -> tide::Result<Response>;
     fn apply(app: &mut Server<State>) {
         app.at(Self::PATH).get(Self::endpoint);
+        app.at(Self::PATH).post(Self::endpoint);
     }
 }
 
 #[async_trait]
 impl Endpoint for glue::Hello {
-    async fn endpoint(_req: Request<State>) -> tide::Result<Response> {
+    async fn endpoint(_: Request<State>) -> tide::Result<Response> {
         thread::sleep(time::Duration::from_secs(1)); // Simulate slow response time.
         let mut res = Response::new(200);
         res.set_body(Body::from_json(&Self {

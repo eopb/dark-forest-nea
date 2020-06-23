@@ -1,10 +1,13 @@
 pub mod router;
 pub mod style;
 pub mod title_card;
+pub mod view;
+
+pub use view::View;
 
 use seed_style::{em, px, vh, *};
 
-use crate::{routes::Route, state, updates, View};
+use crate::{routes::Route, state, updates};
 use seed::{prelude::*, *};
 
 // `view` describes what to display.
@@ -61,25 +64,25 @@ fn nav(model: &state::Model) -> Node<updates::Msg> {
             .justify_content("space-between")
             .font_size(em(3)),
         div![
-            if model.route != Route::Index {
+            if model.route == Route::Index {
+                empty()
+            } else {
                 a![
                     a(),
                     button(model),
                     "Home",
                     attrs! {At::Href => Route::Index.go_to()}
                 ]
-            } else {
-                empty()
             },
-            if model.route != Route::Explore {
+            if model.route == Route::Explore {
+                empty()
+            } else {
                 a![
                     a(),
                     button(model),
                     "Explore",
                     attrs! {At::Href => Route::Explore.go_to()}
                 ]
-            } else {
-                empty()
             }
         ],
         div![

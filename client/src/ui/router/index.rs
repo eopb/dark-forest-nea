@@ -1,6 +1,5 @@
-use crate::{routes::Route, state, updates, View};
+use crate::{state, ui::View, updates};
 use seed::{prelude::*, *};
-use seed_style::{em, px, vh, *};
 
 pub fn view(model: &state::Model) -> Node<updates::Msg> {
     div![

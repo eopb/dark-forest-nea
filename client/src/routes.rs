@@ -1,6 +1,6 @@
-use crate::{state, updates};
+use crate::updates;
 use seed::browser::url::Url;
-use seed::{browser::fetch::FetchError, prelude::*, *};
+use seed::prelude::*;
 
 #[derive(Copy, Clone, PartialEq, Eq)]
 pub enum Route {
@@ -35,19 +35,16 @@ impl Route {
     pub fn update(url: Url) -> Option<updates::Msg> {
         Some(updates::Msg::ChangeRoute(url.into()))
     }
-    pub fn go_to(&self) -> &'static str {
+    pub fn go_to(self) -> &'static str {
         match self {
             Self::Index => "/",
             Self::Explore => "/explore",
             Self::NotFound => panic!("Can not go to 404 route"),
         }
     }
-    pub fn request_required_data(&self, orders: &mut impl Orders<updates::Msg>) {
-        match self {
-            Route::Index => {
-                orders.send_msg(updates::Msg::ToFetch(updates::ToFetch::Hello));
-            }
-            _ => (),
+    pub fn request_required_data(self, orders: &mut impl Orders<updates::Msg>) {
+        if let Self::Index = self {
+            orders.send_msg(updates::Msg::ToFetch(updates::ToFetch::Hello));
         };
     }
 }

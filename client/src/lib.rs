@@ -1,17 +1,17 @@
+#![allow(clippy::wildcard_imports, clippy::future_not_send)]
+
 pub mod endpoint;
 pub mod routes;
 pub mod state;
 pub mod ui;
 pub mod updates;
-pub mod view;
 
 pub use endpoint::Endpoint;
-use view::View;
 
-use seed::{prelude::*, *};
+use seed::prelude::*;
 
 // `init` describes what should happen when your app started.
-fn init(url: Url, orders: &mut impl Orders<updates::Msg>) -> AfterMount<state::Model> {
+fn init(_: Url, _: &mut impl Orders<updates::Msg>) -> AfterMount<state::Model> {
     ui::style::global::init();
 
     AfterMount::new(state::Model::default()).url_handling(UrlHandling::PassToRoutes)
