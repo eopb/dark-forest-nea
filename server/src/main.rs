@@ -1,9 +1,12 @@
 #![warn(clippy::all, clippy::pedantic, clippy::nursery)]
+
+mod endpoint;
 #[allow(clippy::must_use_candidate)]
 mod routes;
 mod state;
 
-use state::State;
+pub use endpoint::Endpoint;
+pub use state::State;
 
 use dotenv::dotenv;
 
@@ -22,7 +25,7 @@ async fn main() -> tide::Result<()> {
     app.at("/pkg").serve_dir("../client/pkg")?;
     app.at("/fonts").serve_dir("../client/fonts")?;
 
-    app.at("/api/hello").get(routes::hello);
+    glue::Hello::apply(&mut app);
 
     app.listen("localhost:8081").await?;
 

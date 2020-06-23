@@ -1,3 +1,7 @@
+pub mod server;
+
+pub use server::Server;
+
 use crate::routes::Route;
 
 // `Model` describes our app state.
@@ -5,6 +9,7 @@ use crate::routes::Route;
 pub struct Model {
     pub theme: Theme,
     pub route: Route,
+    pub server: Server,
 }
 
 pub enum Theme {

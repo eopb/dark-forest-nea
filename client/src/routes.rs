@@ -1,7 +1,8 @@
-use crate::updates;
+use crate::{state, updates};
 use seed::browser::url::Url;
+use seed::{browser::fetch::FetchError, prelude::*, *};
 
-#[derive(Clone, PartialEq, Eq)]
+#[derive(Copy, Clone, PartialEq, Eq)]
 pub enum Route {
     Index,
     Explore,
@@ -10,7 +11,7 @@ pub enum Route {
 
 impl Default for Route {
     fn default() -> Self {
-        Self::Index
+        Self::NotFound
     }
 }
 
@@ -40,5 +41,13 @@ impl Route {
             Self::Explore => "/explore",
             Self::NotFound => panic!("Can not go to 404 route"),
         }
+    }
+    pub fn request_required_data(&self, orders: &mut impl Orders<updates::Msg>) {
+        match self {
+            Route::Index => {
+                orders.send_msg(updates::Msg::ToFetch(updates::ToFetch::Hello));
+            }
+            _ => (),
+        };
     }
 }

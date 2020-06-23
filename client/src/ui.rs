@@ -4,7 +4,7 @@ pub mod title_card;
 
 use seed_style::{em, px, vh, *};
 
-use crate::{routes::Route, state, updates};
+use crate::{routes::Route, state, updates, View};
 use seed::{prelude::*, *};
 
 // `view` describes what to display.
@@ -33,7 +33,7 @@ pub fn view(model: &state::Model) -> impl IntoNodes<updates::Msg> {
             nav(model),
             router::view(model),
             footer(model)
-        ]
+        ],
     ]
 }
 

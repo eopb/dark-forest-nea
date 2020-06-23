@@ -1,8 +1,6 @@
 //! Application endpoints.
 
-use super::state::State;
-
-use std::str::FromStr;
+use super::State;
 
 use {
     http_types::mime,
@@ -17,8 +15,4 @@ pub async fn index(req: Request<State>) -> tide::Result<impl Into<Response>> {
         res.set_body(include_str!("../../client/index.html"));
         res
     })
-}
-
-pub async fn hello(req: Request<State>) -> tide::Result<impl Into<Response>> {
-    Ok("hello client")
 }

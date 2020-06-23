@@ -1,7 +1,5 @@
 //! Shared application state.
 
-use std::env;
-
 #[derive(Debug)]
 pub struct State;
 
