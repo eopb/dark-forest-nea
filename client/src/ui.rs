@@ -1,9 +1,10 @@
+pub mod bordered;
 pub mod router;
 pub mod style;
 pub mod title_card;
 pub mod view;
 
-pub use view::View;
+pub use {bordered::Bordered, view::View};
 
 use seed_style::{em, px, vh, *};
 
@@ -12,32 +13,14 @@ use seed::{prelude::*, *};
 
 // `view` describes what to display.
 pub fn view(model: &state::Model) -> impl IntoNodes<updates::Msg> {
-    div![
-        s().background_color(model.theme.background())
-            .color(model.theme.text())
-            .text_align("center")
-            .min_height(vh(100))
-            .padding(px(8))
-            .display("flex")
-            .flex_direction("column"),
-        div![
-            s().flex("1")
-                .display("grid")
+    Bordered::new(vec![nav(model), router::view(model), footer(model)])
+        .outer(s().min_height(vh(100)))
+        .inner(
+            s().display("grid")
                 .grid_auto_flow("row")
-                .grid_template_rows("min-content auto min-content")
-                .padding(px(0))
-                .min_height("100%")
-                .border(AsRef::<str>::as_ref(&format!(
-                    "6px solid {}",
-                    model.theme.text()
-                )))
-                .position("relative"),
-            style::pixel_cutouts(model),
-            nav(model),
-            router::view(model),
-            footer(model)
-        ],
-    ]
+                .grid_template_rows("min-content auto min-content"),
+        )
+        .view(model)
 }
 
 fn footer(model: &state::Model) -> Node<updates::Msg> {
@@ -96,7 +79,7 @@ fn nav(model: &state::Model) -> Node<updates::Msg> {
                 a(),
                 button(model),
                 "Sign In",
-                attrs! {At::Href => "https://github.com/ethanboxx"}
+                attrs! {At::Href => Route::SignIn.go_to()}
             ],
             a![
                 a(),

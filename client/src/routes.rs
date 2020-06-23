@@ -6,6 +6,7 @@ use seed::prelude::*;
 pub enum Route {
     Index,
     Explore,
+    SignIn,
     NotFound,
 }
 
@@ -26,6 +27,7 @@ impl From<Url> for Route {
         {
             [] => Self::Index,
             ["explore"] => Self::Explore,
+            ["sign-in"] => Self::SignIn,
             _ => Self::NotFound,
         }
     }
@@ -39,6 +41,7 @@ impl Route {
         match self {
             Self::Index => "/",
             Self::Explore => "/explore",
+            Self::SignIn => "/sign-in",
             Self::NotFound => panic!("Can not go to 404 route"),
         }
     }
