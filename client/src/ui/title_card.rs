@@ -1,4 +1,4 @@
-use crate::{ui, updates};
+use crate::ui;
 use seed::{prelude::*, *};
 use seed_style::{em, px, *};
 

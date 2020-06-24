@@ -9,7 +9,7 @@ pub use {bordered::Bordered, view::View};
 
 use seed_style::{em, px, vh, *};
 
-use crate::{state, updates, Route};
+use crate::{state, updates};
 use seed::{prelude::*, *};
 
 // `view` describes what to display.
@@ -48,24 +48,24 @@ fn nav(model: &state::Model) -> Node<updates::Msg> {
             .justify_content("space-between")
             .font_size(em(3)),
         div![
-            if model.route == Route::Index {
+            if model.route == glue::Route::Index.into() {
                 empty()
             } else {
                 a![
                     a(),
                     button(model),
                     "Home",
-                    attrs! {At::Href => Route::Index.go_to()}
+                    attrs! {At::Href => glue::Route::Index}
                 ]
             },
-            if model.route == Route::Explore {
+            if model.route == glue::Route::Explore.into() {
                 empty()
             } else {
                 a![
                     a(),
                     button(model),
                     "Explore",
-                    attrs! {At::Href => Route::Explore.go_to()}
+                    attrs! {At::Href => glue::Route::Explore}
                 ]
             }
         ],
@@ -74,13 +74,13 @@ fn nav(model: &state::Model) -> Node<updates::Msg> {
                 a(),
                 button(model),
                 "New Project",
-                attrs! {At::Href => Route::NewProject.go_to()}
+                attrs! {At::Href => glue::Route::NewProject}
             ],
             a![
                 a(),
                 button(model),
                 "Sign In",
-                attrs! {At::Href => Route::SignIn.go_to()}
+                attrs! {At::Href => glue::Route::SignIn}
             ],
             a![
                 a(),

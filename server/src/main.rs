@@ -27,6 +27,8 @@ async fn main() -> tide::Result<()> {
     app.at("/fonts").serve_dir("../client/fonts")?;
 
     glue::Hello::apply(&mut app);
+    glue::Credentials::apply(&mut app);
+    glue::CreateAccount::apply(&mut app);
 
     app.listen("localhost:8081").await?;
 

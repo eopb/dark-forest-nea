@@ -3,18 +3,23 @@ use seed::browser::url::Url;
 use seed::prelude::*;
 
 #[derive(Copy, Clone, PartialEq, Eq)]
-pub enum Route {
-    Index,
-    Explore,
-    SignIn,
-    CreateAccount,
-    NewProject,
-    NotFound,
+pub struct Route(glue::Route);
+
+impl Into<glue::Route> for Route {
+    fn into(self) -> glue::Route {
+        self.0
+    }
+}
+
+impl From<glue::Route> for Route {
+    fn from(route: glue::Route) -> Self {
+        Self(route)
+    }
 }
 
 impl Default for Route {
     fn default() -> Self {
-        Self::NotFound
+        Self(glue::Route::default())
     }
 }
 
@@ -27,12 +32,12 @@ impl From<Url> for Route {
             .collect::<Vec<&str>>()
             .as_slice()
         {
-            [] => Self::Index,
-            ["explore"] => Self::Explore,
-            ["sign-in"] => Self::SignIn,
-            ["create-account"] => Self::CreateAccount,
-            ["new-project"] => Self::NewProject,
-            _ => Self::NotFound,
+            [] => Self(glue::Route::Index),
+            ["explore"] => Self(glue::Route::Explore),
+            ["sign-in"] => Self(glue::Route::SignIn),
+            ["create-account"] => Self(glue::Route::CreateAccount),
+            ["new-project"] => Self(glue::Route::NewProject),
+            _ => Self(glue::Route::NotFound),
         }
     }
 }
@@ -41,18 +46,8 @@ impl Route {
     pub fn update(url: Url) -> Option<updates::Msg> {
         Some(updates::Msg::ChangeRoute(url.into()))
     }
-    pub fn go_to(self) -> &'static str {
-        match self {
-            Self::Index => "/",
-            Self::Explore => "/explore",
-            Self::SignIn => "/sign-in",
-            Self::CreateAccount => "/create-account",
-            Self::NewProject => "/new-project",
-            Self::NotFound => panic!("Can not go to 404 route"),
-        }
-    }
     pub fn request_required_data(self, orders: &mut impl Orders<updates::Msg>) {
-        if let Self::Index = self {
+        if glue::Route::Index == self.into() {
             orders.send_msg(updates::Msg::ToFetch(updates::ToFetch::Hello));
         };
     }

@@ -4,16 +4,16 @@ mod new_project;
 mod not_found;
 mod sign_in;
 
-use crate::{state, updates, Route};
+use crate::{state, updates};
 use seed::{prelude::*, *};
 
 pub fn view(model: &state::Model) -> Node<updates::Msg> {
-    match model.route {
-        Route::Index => index::view(model),
-        Route::Explore => p!["explore"],
-        Route::SignIn => sign_in::view(model),
-        Route::NotFound => not_found::view(model),
-        Route::CreateAccount => create_account::view(model),
-        Route::NewProject => new_project::view(model),
+    match model.route.into() {
+        glue::Route::Index => index::view(model),
+        glue::Route::Explore => p!["explore"],
+        glue::Route::SignIn => sign_in::view(model),
+        glue::Route::NotFound => not_found::view(model),
+        glue::Route::CreateAccount => create_account::view(model),
+        glue::Route::NewProject => new_project::view(model),
     }
 }

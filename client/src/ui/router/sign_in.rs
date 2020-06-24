@@ -1,4 +1,4 @@
-use crate::{state, ui, updates, Route};
+use crate::{state, ui, updates};
 use seed::{prelude::*, *};
 
 use seed_style::*;
@@ -17,7 +17,7 @@ pub fn view(model: &state::Model) -> Node<updates::Msg> {
             a![
                 ui::style::button(model, 3),
                 "Create account.",
-                attrs! {At::Href => Route::CreateAccount.go_to()}
+                attrs! {At::Href => glue::Route::CreateAccount}
             ]
             .into_nodes(),
         ],
