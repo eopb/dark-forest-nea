@@ -1,4 +1,5 @@
 pub mod bordered;
+pub mod form;
 pub mod router;
 pub mod style;
 pub mod title_card;
@@ -93,4 +94,8 @@ fn nav(model: &state::Model) -> Node<updates::Msg> {
             ]
         ]
     ]
+}
+
+pub fn subheading<Msg>(subheading: impl UpdateEl<Msg>) -> Node<Msg> {
+    p![s().margin_top(px(5)).font_size(em(2.9)), subheading]
 }
