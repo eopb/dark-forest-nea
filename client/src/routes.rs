@@ -7,6 +7,7 @@ pub enum Route {
     Index,
     Explore,
     SignIn,
+    CreateAccount,
     NotFound,
 }
 
@@ -28,6 +29,7 @@ impl From<Url> for Route {
             [] => Self::Index,
             ["explore"] => Self::Explore,
             ["sign-in"] => Self::SignIn,
+            ["create-account"] => Self::CreateAccount,
             _ => Self::NotFound,
         }
     }
@@ -42,6 +44,7 @@ impl Route {
             Self::Index => "/",
             Self::Explore => "/explore",
             Self::SignIn => "/sign-in",
+            Self::CreateAccount => "/create-account",
             Self::NotFound => panic!("Can not go to 404 route"),
         }
     }

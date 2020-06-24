@@ -14,6 +14,7 @@ enum InputType {
     Text,
     Password,
     Submit,
+    Email,
 }
 
 impl fmt::Display for InputType {
@@ -25,6 +26,7 @@ impl fmt::Display for InputType {
                 Self::Text => "text",
                 Self::Password => "password",
                 Self::Submit => "submit",
+                Self::Email => "email",
             }
         )
     }
@@ -81,6 +83,29 @@ pub fn password(model: &state::Model, id: &str, placeholder: &str) -> Vec<Node<u
     input(model, id, InputType::Password, placeholder)
 }
 
-pub fn submit(model: &state::Model, placeholder: &str) -> Vec<Node<updates::Msg>> {
+pub fn email(model: &state::Model, id: &str, placeholder: &str) -> Vec<Node<updates::Msg>> {
+    input(model, id, InputType::Email, placeholder)
+}
+
+fn submit(model: &state::Model, placeholder: &str) -> Vec<Node<updates::Msg>> {
     input(model, "", InputType::Submit, placeholder)
+}
+
+pub fn view(
+    model: &state::Model,
+    action: impl fmt::Display,
+    items: Vec<Vec<Node<updates::Msg>>>,
+    submit_text: &str,
+    note: impl UpdateEl<updates::Msg>,
+) -> Node<updates::Msg> {
+    div![form![
+        attrs! {At::Action => action, At::Method => "post"},
+        s().display("flex")
+            .align_items("center")
+            .flex_direction("column")
+            .margin("auto"),
+        items,
+        submit(model, submit_text),
+        ui::subheading(note)
+    ]]
 }

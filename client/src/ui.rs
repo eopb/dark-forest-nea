@@ -9,7 +9,7 @@ pub use {bordered::Bordered, view::View};
 
 use seed_style::{em, px, vh, *};
 
-use crate::{routes::Route, state, updates};
+use crate::{state, updates, Route};
 use seed::{prelude::*, *};
 
 // `view` describes what to display.

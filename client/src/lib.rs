@@ -6,7 +6,7 @@ pub mod state;
 pub mod ui;
 pub mod updates;
 
-pub use endpoint::Endpoint;
+pub use {endpoint::Endpoint, routes::Route};
 
 use seed::prelude::*;
 
