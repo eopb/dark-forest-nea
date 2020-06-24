@@ -74,7 +74,7 @@ fn nav(model: &state::Model) -> Node<updates::Msg> {
                 a(),
                 button(model),
                 "New Project",
-                attrs! {At::Href => "/new-project"}
+                attrs! {At::Href => Route::NewProject.go_to()}
             ],
             a![
                 a(),

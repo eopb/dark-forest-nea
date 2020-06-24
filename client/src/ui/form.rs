@@ -94,7 +94,7 @@ fn submit(model: &state::Model, placeholder: &str) -> Vec<Node<updates::Msg>> {
 pub fn view(
     model: &state::Model,
     action: impl fmt::Display,
-    items: Vec<Vec<Node<updates::Msg>>>,
+    items: impl UpdateEl<updates::Msg>,
     submit_text: &str,
     note: impl UpdateEl<updates::Msg>,
 ) -> Node<updates::Msg> {

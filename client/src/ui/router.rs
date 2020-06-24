@@ -1,5 +1,6 @@
 mod create_account;
 mod index;
+mod new_project;
 mod not_found;
 mod sign_in;
 
@@ -13,5 +14,6 @@ pub fn view(model: &state::Model) -> Node<updates::Msg> {
         Route::SignIn => sign_in::view(model),
         Route::NotFound => not_found::view(model),
         Route::CreateAccount => create_account::view(model),
+        Route::NewProject => new_project::view(model),
     }
 }
