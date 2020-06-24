@@ -7,9 +7,9 @@ use crate::{
 };
 use seed::{prelude::*, *};
 
-use seed_style::{em, px, vh, *};
+use seed_style::{em, px, *};
 
-#[derive(Eq, PartialEq)]
+#[derive(Eq, PartialEq, Copy, Clone)]
 enum InputType {
     Text,
     Password,

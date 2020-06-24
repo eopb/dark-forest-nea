@@ -1,11 +1,7 @@
-use crate::{
-    state,
-    ui::{self, View},
-    updates, Route,
-};
+use crate::{state, ui, updates, Route};
 use seed::{prelude::*, *};
 
-use seed_style::{em, px, vh, *};
+use seed_style::*;
 
 pub fn view(model: &state::Model) -> Node<updates::Msg> {
     ui::form::view(

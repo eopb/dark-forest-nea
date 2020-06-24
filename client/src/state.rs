@@ -12,6 +12,7 @@ pub struct Model {
     pub server: Server,
 }
 
+#[derive(Copy, Clone)]
 pub enum Theme {
     Dark,
     Light,

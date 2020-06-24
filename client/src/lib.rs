@@ -1,4 +1,10 @@
-#![allow(clippy::wildcard_imports, clippy::future_not_send)]
+#![warn(clippy::all, clippy::pedantic, clippy::nursery)]
+#![allow(
+    clippy::wildcard_imports,
+    clippy::future_not_send,
+    clippy::must_use_candidate,
+    clippy::missing_const_for_fn
+)]
 
 pub mod endpoint;
 pub mod routes;

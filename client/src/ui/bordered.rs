@@ -1,6 +1,6 @@
-use seed_style::{em, px, vh, Style, *};
+use seed_style::{px, Style, *};
 
-use crate::{routes::Route, state, ui, updates};
+use crate::{state, ui, updates};
 use seed::{prelude::*, *};
 
 pub struct Bordered<Nodes> {
@@ -14,7 +14,7 @@ impl<Nodes> Bordered<Nodes> {
         Self {
             outer: s(),
             inner: s(),
-            nodes: nodes,
+            nodes,
         }
     }
 }
