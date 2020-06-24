@@ -6,7 +6,7 @@ mod endpoint;
 mod routes;
 mod state;
 
-pub use endpoint::Endpoint;
+pub use endpoint::{GetEndpoint, PostEndpoint};
 pub use state::State;
 
 use dotenv::dotenv;
