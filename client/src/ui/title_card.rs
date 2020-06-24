@@ -2,7 +2,7 @@ use crate::{ui, updates};
 use seed::{prelude::*, *};
 use seed_style::{em, px, *};
 
-pub fn view(header: &str, subheading: &str) -> Node<updates::Msg> {
+pub fn view<Msg>(header: &str, subheading: &str) -> Node<Msg> {
     header![
         h1![
             s().font_family("bitlimt")
