@@ -7,7 +7,7 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-tide = {git= "https://github.com/http-rs/tide.git"}
+tide = "0.11"
 async-std = { version = "1.6", features = ["attributes"] }
 env_logger = "0.7"
 log = "0.4.8"
