@@ -9,14 +9,14 @@ use {
 };
 
 #[async_trait]
-pub trait PostEndpoint: glue::Endpoint + 'static {
+pub trait Post: glue::Endpoint + 'static {
     async fn post(req: Request<State>) -> tide::Result<Response>;
     fn apply(app: &mut Server<State>) {
         app.at(Self::PATH).post(Self::post);
     }
 }
 #[async_trait]
-pub trait GetEndpoint: glue::Endpoint + 'static {
+pub trait Get: glue::Endpoint + 'static {
     async fn get(req: Request<State>) -> tide::Result<Response>;
     fn apply(app: &mut Server<State>) {
         app.at(Self::PATH).get(Self::get);
@@ -24,7 +24,7 @@ pub trait GetEndpoint: glue::Endpoint + 'static {
 }
 
 #[async_trait]
-impl GetEndpoint for glue::Hello {
+impl Get for glue::Hello {
     async fn get(_: Request<State>) -> tide::Result<Response> {
         thread::sleep(time::Duration::from_secs(1)); // Simulate slow response time.
         let mut res = Response::new(200);
@@ -36,7 +36,7 @@ impl GetEndpoint for glue::Hello {
 }
 
 #[async_trait]
-impl PostEndpoint for glue::Credentials {
+impl Post for glue::Credentials {
     async fn post(mut req: Request<State>) -> tide::Result<Response> {
         let credentials: glue::Credentials = req.body_form().await?;
         dbg!(credentials);

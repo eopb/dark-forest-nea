@@ -1,16 +1,24 @@
 #![warn(clippy::all, clippy::pedantic, clippy::nursery)]
-#![allow(clippy::missing_errors_doc, clippy::similar_names)]
+#![allow(
+    clippy::missing_errors_doc,
+    clippy::similar_names,
+    clippy::must_use_candidate,
+    clippy::missing_const_for_fn
+)]
 
-mod endpoint;
+pub mod endpoint;
 #[allow(clippy::must_use_candidate)]
 mod routes;
 mod state;
 pub mod util;
 
-pub use endpoint::{GetEndpoint, PostEndpoint};
 pub use state::State;
 
-use {dotenv::dotenv, tide::Redirect};
+use {
+    dotenv::dotenv,
+    endpoint::{Get, Post},
+    tide::Redirect,
+};
 
 #[async_std::main]
 async fn main() -> tide::Result<()> {
