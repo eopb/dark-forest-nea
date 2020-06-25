@@ -1709,9 +1709,9 @@ dependencies = [
 
 [[package]]
 name = "route-recognizer"
-version = "0.1.13"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ea509065eb0b3c446acdd0102f0d46567dc30902dc0be91d6552035d92b0f4f8"
+checksum = "56770675ebc04927ded3e60633437841581c285dc6236109ea25fbf3beb7b59e"
 
 [[package]]
 name = "rustc-demangle"
@@ -1965,6 +1965,7 @@ version = "0.1.0"
 dependencies = [
  "async-std",
  "async-trait",
+ "bson",
  "dotenv",
  "env_logger",
  "femme",
@@ -1972,6 +1973,7 @@ dependencies = [
  "http-types",
  "log",
  "mongodb",
+ "serde",
  "tide",
 ]
 
@@ -2252,8 +2254,7 @@ dependencies = [
 [[package]]
 name = "tide"
 version = "0.11.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "151b07f369a9152c2f93715ea0db8a7f7e2533bd2e52fbff1ea5bad7a88db541"
+source = "git+https://github.com/http-rs/tide.git#2c26085b0580cebeec6870339b99457674afc647"
 dependencies = [
  "async-h1",
  "async-sse",

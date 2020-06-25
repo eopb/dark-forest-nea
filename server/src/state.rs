@@ -1,23 +1,22 @@
 //! Shared application state.
 
-use std::env;
+pub mod database;
+
+pub use database::Database;
 
 #[derive(Debug)]
 pub struct State {
-    pub db: mongodb::Client,
+    database: Database,
 }
 
 impl State {
     /// Create a new instance of `State`.
     pub async fn new() -> tide::Result<Self> {
-        let mongo = mongodb::Client::with_uri_str(&env::var("DB_URL").unwrap()).await?;
-        Ok(Self { db: mongo })
+        Ok(Self {
+            database: Database::new().await?,
+        })
     }
-    /// Access the mongodb client.
-    const fn mongo(&self) -> &mongodb::Client {
-        &self.db
-    }
-    pub fn db(&self) -> mongodb::Database {
-        self.mongo().database("testing-ground")
+    pub fn database(&self) -> &Database {
+        &self.database
     }
 }

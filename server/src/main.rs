@@ -5,11 +5,12 @@ mod endpoint;
 #[allow(clippy::must_use_candidate)]
 mod routes;
 mod state;
+pub mod util;
 
 pub use endpoint::{GetEndpoint, PostEndpoint};
 pub use state::State;
 
-use dotenv::dotenv;
+use {dotenv::dotenv, tide::Redirect};
 
 #[async_std::main]
 async fn main() -> tide::Result<()> {
@@ -25,6 +26,10 @@ async fn main() -> tide::Result<()> {
 
     app.at("/pkg").serve_dir("../client/pkg")?;
     app.at("/fonts").serve_dir("../client/fonts")?;
+
+    // Redirect hackers to YouTube.
+    app.at("/.env")
+        .get(Redirect::new("https://www.youtube.com/watch?v=dQw4w9WgXcQ"));
 
     glue::Hello::apply(&mut app);
     glue::Credentials::apply(&mut app);

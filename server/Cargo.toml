@@ -7,7 +7,7 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-tide = "0.11"
+tide = {git= "https://github.com/http-rs/tide.git"}
 async-std = { version = "1.6", features = ["attributes"] }
 env_logger = "0.7"
 log = "0.4.8"
@@ -17,3 +17,5 @@ http-types = "2.2.1"
 glue = { path = "../glue" }
 async-trait = "0.1"
 mongodb = { git = "https://github.com/ethanboxx/mongo-rust-driver.git", features = ["async-std-runtime"], default-features = false }
+bson = "1.0"
+serde = { version = "1.0", features = ["derive"] }
