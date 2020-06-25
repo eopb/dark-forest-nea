@@ -7,7 +7,6 @@ use {
 
 use crate::{
     state::{database::Insert, State},
-    util::BsonDoc,
     PostEndpoint,
 };
 
@@ -20,11 +19,7 @@ impl PostEndpoint for glue::CreateAccount {
             match req
                 .state()
                 .database()
-                .add_user(
-                    account_info
-                        .try_into()
-                        .expect("remove this expect when it can fail."),
-                )
+                .add_user(account_info.try_into()?)
                 .await?
             {
                 Insert::Success => Redirect::<&str>::new("/api/sign-in").into(),

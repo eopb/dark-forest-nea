@@ -19,3 +19,4 @@ async-trait = "0.1"
 mongodb = { git = "https://github.com/ethanboxx/mongo-rust-driver.git", features = ["async-std-runtime"], default-features = false }
 bson = "1.0"
 serde = { version = "1.0", features = ["derive"] }
+bcrypt = "0.8"

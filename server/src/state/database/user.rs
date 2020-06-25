@@ -2,7 +2,10 @@ use std::convert::TryFrom;
 
 use crate::util::BsonDoc;
 
-use serde::{Deserialize, Serialize};
+use {
+    bcrypt::{hash, BcryptError},
+    serde::{Deserialize, Serialize},
+};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct User {
@@ -15,12 +18,12 @@ pub struct User {
 impl BsonDoc for User {}
 
 impl TryFrom<glue::CreateAccount> for User {
-    type Error = ();
+    type Error = BcryptError;
     fn try_from(value: glue::CreateAccount) -> Result<Self, Self::Error> {
         Ok(Self {
             user_name: value.user_name,
             email: value.email,
-            password_hash: value.password,
+            password_hash: hash(value.password, bcrypt::DEFAULT_COST)?,
         })
     }
 }
