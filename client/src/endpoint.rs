@@ -1,17 +1,11 @@
 use {
     async_trait::async_trait,
-    glue::Endpoint as _,
     seed::{browser::fetch::FetchError, prelude::*},
     serde::{Deserialize, Serialize},
     web_sys::RequestCredentials::SameOrigin,
 };
 #[async_trait(?Send)]
-pub trait Endpoint: glue::Endpoint + Serialize + for<'a> Deserialize<'a> {
-    async fn fetch() -> Result<Self, FetchError>;
-}
-
-#[async_trait(?Send)]
-impl Endpoint for glue::Hello {
+pub trait Endpoint: 'static + glue::Endpoint + Serialize + for<'a> Deserialize<'a> {
     async fn fetch() -> Result<Self, FetchError> {
         Request::new(Self::PATH)
             // TODO Maybe this is default so lets try removing it when we need it.
@@ -22,3 +16,6 @@ impl Endpoint for glue::Hello {
             .await
     }
 }
+
+impl Endpoint for glue::Hello {}
+impl Endpoint for glue::SignedIn {}

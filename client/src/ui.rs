@@ -7,10 +7,13 @@ pub mod view;
 
 pub use {bordered::Bordered, view::View};
 
-use seed_style::{em, px, vh, *};
-
 use crate::{state, updates};
-use seed::{prelude::*, *};
+
+use {
+    glue::Endpoint as _,
+    seed::{prelude::*, *},
+    seed_style::{em, px, vh, *},
+};
 
 // `view` describes what to display.
 pub fn view(model: &state::Model) -> impl IntoNodes<updates::Msg> {
@@ -76,12 +79,24 @@ fn nav(model: &state::Model) -> Node<updates::Msg> {
                 "New Project",
                 attrs! {At::Href => glue::Route::NewProject}
             ],
-            a![
-                a(),
-                button(model),
-                "Sign In",
-                attrs! {At::Href => glue::Route::SignIn(None)}
-            ],
+            if let Some(signed_in) = model.server.signed_in.ok() {
+                match signed_in {
+                    glue::SignedIn::As(_) => a![
+                        a(),
+                        button(model),
+                        "Sign Out",
+                        attrs! {At::Href => glue::SignOut::PATH}
+                    ],
+                    glue::SignedIn::Not => a![
+                        a(),
+                        button(model),
+                        "Sign In",
+                        attrs! {At::Href => glue::Route::SignIn(None)}
+                    ],
+                }
+            } else {
+                empty()
+            },
             a![
                 a(),
                 button(model),

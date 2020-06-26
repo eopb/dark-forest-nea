@@ -6,6 +6,7 @@ use seed::{browser::fetch::FetchError, prelude::*, *};
 #[derive(Default)]
 pub struct Server {
     pub hello: Fetch<glue::Hello, FetchError>,
+    pub signed_in: Fetch<glue::SignedIn, FetchError>,
 }
 
 pub enum Fetch<T, E> {
@@ -16,6 +17,16 @@ pub enum Fetch<T, E> {
 impl<T, E> Default for Fetch<T, E> {
     fn default() -> Self {
         Self::Loading
+    }
+}
+
+impl<T, E> Fetch<T, E> {
+    pub fn ok(&self) -> Option<&T> {
+        if let Self::Fetched(Ok(t)) = self {
+            Some(t)
+        } else {
+            None
+        }
     }
 }
 

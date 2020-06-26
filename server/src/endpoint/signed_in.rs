@@ -9,7 +9,7 @@ use std::env;
 use crate::{endpoint, security, state::State};
 
 #[async_trait]
-impl endpoint::Get for glue::SingedIn {
+impl endpoint::Get for glue::SignedIn {
     async fn get(req: Request<State>) -> tide::Result<Response> {
         let user = req.cookie("login").and_then(|cookie| {
             decode::<security::jwt::Claims>(

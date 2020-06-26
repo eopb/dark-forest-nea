@@ -49,6 +49,7 @@ impl Route {
         Some(updates::Msg::ChangeRoute(url.into()))
     }
     pub fn request_required_data(self, orders: &mut impl Orders<updates::Msg>) {
+        orders.send_msg(updates::Msg::ToFetch(updates::ToFetch::SignedIn));
         if glue::Route::Index == self.into() {
             orders.send_msg(updates::Msg::ToFetch(updates::ToFetch::Hello));
         };

@@ -30,24 +30,28 @@ pub fn update(msg: Msg, model: &mut state::Model, orders: &mut impl Orders<Msg>)
 
 pub enum ToFetch {
     Hello,
+    SignedIn,
 }
 
 impl ToFetch {
     async fn order(self) -> Msg {
         match self {
             Self::Hello => Msg::DataFetched(Fetched::Hello(glue::Hello::fetch().await)),
+            Self::SignedIn => Msg::DataFetched(Fetched::SignedIn(glue::SignedIn::fetch().await)),
         }
     }
 }
 
 pub enum Fetched {
     Hello(Result<glue::Hello, FetchError>),
+    SignedIn(Result<glue::SignedIn, FetchError>),
 }
 
 impl Fetched {
     fn add_to(self, model: &mut state::Model) {
         match self {
             Self::Hello(x) => model.server.hello = state::server::Fetch::Fetched(x),
+            Self::SignedIn(x) => model.server.signed_in = state::server::Fetch::Fetched(x),
         }
     }
 }
