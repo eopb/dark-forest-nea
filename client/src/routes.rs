@@ -34,7 +34,7 @@ impl From<Url> for Route {
         {
             [] => Self(glue::Route::Index),
             ["explore"] => Self(glue::Route::Explore),
-            ["sign-in"] => Self(glue::Route::SignIn(glue::routes::get_enum_qs(
+            ["sign-in"] => Self(glue::Route::SignIn(glue::qs::get_enum(
                 &url.search().to_string(),
             ))),
             ["create-account"] => Self(glue::Route::CreateAccount),

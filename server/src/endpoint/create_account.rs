@@ -10,6 +10,8 @@ use crate::{
     state::{database::Insert, State},
 };
 
+use glue::Endpoint as _;
+
 #[async_trait]
 impl endpoint::Post for glue::CreateAccount {
     async fn post(mut req: Request<State>) -> tide::Result<Response> {
@@ -22,7 +24,7 @@ impl endpoint::Post for glue::CreateAccount {
                 .add_user(account_info.try_into()?)
                 .await?
             {
-                Insert::Success => glue::Route::SignIn(None).to_string(),
+                Insert::Success => glue::Credentials::PATH.to_string(),
                 Insert::AlreadyExists => glue::Route::CreateAccount.to_string(),
             },
         )

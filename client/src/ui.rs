@@ -97,5 +97,10 @@ fn nav(model: &state::Model) -> Node<updates::Msg> {
 }
 
 pub fn subheading<Msg>(subheading: impl UpdateEl<Msg>) -> Node<Msg> {
-    p![s().margin_top(px(5)).font_size(em(2.9)), subheading]
+    p![
+        s().margin_top(px(5))
+            .margin_bottom(px(5))
+            .font_size(em(2.9)),
+        subheading
+    ]
 }
