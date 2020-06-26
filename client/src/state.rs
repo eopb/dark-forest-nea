@@ -43,6 +43,12 @@ impl Theme {
             Self::Light => "#003300",
         }
     }
+    pub fn error(&self) -> &str {
+        match self {
+            Self::Dark => "#FF0000",
+            Self::Light => "#330000",
+        }
+    }
     pub fn toggle_buttons_color(&self) -> &str {
         match self {
             Self::Dark => "#FFF",

@@ -37,58 +37,110 @@ fn input(
     id: &str,
     input_type: InputType,
     placeholder: &str,
+    error: Option<impl fmt::Display>,
 ) -> Vec<Node<updates::Msg>> {
-    ui::Bordered::new(input![
-        attrs! {
-            At::Id => id,
-            At::Name => id,
-            At::Type => input_type,
+    vec![
+        vec![if let Some(error) = error {
+            p![
+                s().margin("0")
+                    .margin_bottom(px(-15))
+                    .width(px(600))
+                    .text_align("left")
+                    .font_size(em(2.9))
+                    .color(model.theme.error()),
+                error.to_string()
+            ]
+        } else {
+            empty()
+        }],
+        ui::Bordered::new(input![
+            attrs! {
+                At::Id => id,
+                At::Name => id,
+                At::Type => input_type,
 
-        },
-        if InputType::Submit == input_type {
-            attrs! {At::Value => placeholder}
+            },
+            if InputType::Submit == input_type {
+                attrs! {At::Value => placeholder}
+            } else {
+                attrs! {At::Placeholder => placeholder}
+            },
+            s().margin("0")
+                .width("95%")
+                .font_family("adobedia")
+                .box_sizing("border-box")
+                .border("none")
+                .font_size(em(3))
+                .background_color(model.theme.background())
+                .color(model.theme.text()),
+            if InputType::Password == input_type {
+                s().pseudo(":not(:placeholder-shown)")
+                    .font_size(em(1.5))
+                    .font_family("prstart")
+                    .margin("11px 7px")
+            } else {
+                s()
+            }
+        ])
+        .inner(s().width(px(if InputType::Submit == input_type {
+            300
         } else {
-            attrs! {At::Placeholder => placeholder}
-        },
-        s().margin("0")
-            .width("95%")
-            .font_family("adobedia")
-            .box_sizing("border-box")
-            .border("none")
-            .font_size(em(3))
-            .background_color(model.theme.background())
-            .color(model.theme.text()),
-        if InputType::Password == input_type {
-            s().pseudo(":not(:placeholder-shown)")
-                .font_size(em(1.5))
-                .font_family("prstart")
-                .margin("11px 7px")
-        } else {
-            s()
-        }
-    ])
-    .inner(s().width(px(if InputType::Submit == input_type {
-        300
-    } else {
-        600
-    })))
-    .view(model)
+            600
+        })))
+        .view(model),
+    ]
+    .into_iter()
+    .flatten()
+    .collect()
 }
 
 pub fn text(model: &state::Model, id: &str, placeholder: &str) -> Vec<Node<updates::Msg>> {
-    input(model, id, InputType::Text, placeholder)
+    text_with_error(model, id, placeholder, Option::<String>::None)
 }
 
 pub fn password(model: &state::Model, id: &str, placeholder: &str) -> Vec<Node<updates::Msg>> {
-    input(model, id, InputType::Password, placeholder)
+    password_with_error(model, id, placeholder, Option::<String>::None)
 }
 
 pub fn email(model: &state::Model, id: &str, placeholder: &str) -> Vec<Node<updates::Msg>> {
-    input(model, id, InputType::Email, placeholder)
+    email_with_error(model, id, placeholder, Option::<String>::None)
+}
+
+pub fn text_with_error(
+    model: &state::Model,
+    id: &str,
+    placeholder: &str,
+    error: Option<impl fmt::Display>,
+) -> Vec<Node<updates::Msg>> {
+    input(model, id, InputType::Text, placeholder, error)
+}
+
+pub fn password_with_error(
+    model: &state::Model,
+    id: &str,
+    placeholder: &str,
+    error: Option<impl fmt::Display>,
+) -> Vec<Node<updates::Msg>> {
+    input(model, id, InputType::Password, placeholder, error)
+}
+
+pub fn email_with_error(
+    model: &state::Model,
+    id: &str,
+    placeholder: &str,
+    error: Option<impl fmt::Display>,
+) -> Vec<Node<updates::Msg>> {
+    input(model, id, InputType::Email, placeholder, error)
 }
 
 fn submit(model: &state::Model, placeholder: &str) -> Vec<Node<updates::Msg>> {
-    input(model, "", InputType::Submit, placeholder)
+    input(
+        model,
+        "",
+        InputType::Submit,
+        placeholder,
+        Option::<String>::None,
+    )
 }
 
 pub fn view(

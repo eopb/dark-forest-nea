@@ -1,7 +1,7 @@
 use crate::{state, ui, updates};
 use seed::{prelude::*, *};
 
-use seed_style::*;
+use seed_style::{em, px, *};
 
 use glue::data;
 
@@ -10,24 +10,18 @@ pub fn view(model: &state::Model, error: Option<data::credentials::Fail>) -> Nod
         model,
         "/api/sign-in",
         vec![
-            vec![
-                if let Some(data::credentials::Fail::UserNotFound) = error {
-                    ui::subheading(data::credentials::Fail::UserNotFound.to_string())
-                } else {
-                    empty()
-                }
-                .into_nodes(),
-                ui::form::text(model, "user_name", "Username..."),
-            ],
-            vec![
-                if let Some(data::credentials::Fail::IncorrectPassword) = error {
-                    ui::subheading(data::credentials::Fail::IncorrectPassword.to_string())
-                } else {
-                    empty()
-                }
-                .into_nodes(),
-                ui::form::password(model, "password", "Password..."),
-            ],
+            ui::form::text_with_error(
+                model,
+                "user_name",
+                "Username...",
+                if_equal_display(error, data::credentials::Fail::UserNotFound),
+            ),
+            ui::form::password_with_error(
+                model,
+                "password",
+                "Password...",
+                if_equal_display(error, data::credentials::Fail::IncorrectPassword),
+            ),
         ],
         "Sign In",
         vec![
@@ -40,4 +34,14 @@ pub fn view(model: &state::Model, error: Option<data::credentials::Fail>) -> Nod
             .into_nodes(),
         ],
     )
+}
+
+fn if_equal_display<T: ToString + PartialEq>(option: Option<T>, eq_to: T) -> Option<String> {
+    option.and_then(|x| {
+        if x == eq_to {
+            Some(x.to_string())
+        } else {
+            None
+        }
+    })
 }
