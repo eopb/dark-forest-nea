@@ -17,7 +17,7 @@ impl endpoint::Post for glue::CreateAccount {
     async fn post(mut req: Request<State>) -> tide::Result<Response> {
         let account_info: Self = req.body_form().await?;
 
-        Ok(Redirect::<String>::new(
+        Ok(Redirect::new(
             match req
                 .state()
                 .database()

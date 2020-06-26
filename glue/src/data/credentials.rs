@@ -1,12 +1,11 @@
 use crate::Endpoint;
 
-use std::{error::Error, fmt};
+use std::fmt;
 
 use serde::{Deserialize, Serialize};
 
 #[derive(Copy, Clone, Serialize, Deserialize, Debug, Eq, PartialEq)]
 pub enum Fail {
-    Success,
     UserNotFound,
     IncorrectPassword,
 }
@@ -17,7 +16,6 @@ impl fmt::Display for Fail {
             f,
             "{}",
             match self {
-                Self::Success => "Success",
                 Self::UserNotFound => "User not found",
                 Self::IncorrectPassword => "Incorrect password",
             }

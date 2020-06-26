@@ -6,7 +6,7 @@ use std::{thread, time};
 
 use {
     async_trait::async_trait,
-    tide::{Body, Redirect, Request, Response, Server},
+    tide::{Body, Request, Response, Server},
 };
 
 #[async_trait]

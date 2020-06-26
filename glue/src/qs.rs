@@ -1,6 +1,7 @@
 pub use crate::data;
+
 use serde::{Deserialize, Serialize};
-use std::fmt;
+
 use std::string::ToString;
 
 #[derive(Eq, PartialEq, Copy, Clone, Deserialize, Serialize)]
@@ -46,8 +47,11 @@ mod tests {
     #[test]
     fn with_qs_t() {
         assert_eq!(
-            with_enum("/epic/path", &Some(data::credentials::Fail::Success)),
-            "/epic/path?value=Success".to_string()
+            with_enum(
+                "/epic/path",
+                &Some(data::credentials::Fail::IncorrectPassword)
+            ),
+            "/epic/path?value=IncorrectPassword".to_string()
         );
     }
 }

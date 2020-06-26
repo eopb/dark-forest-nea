@@ -1,7 +1,6 @@
 pub use crate::{data, qs};
-use serde::{Deserialize, Serialize};
-use std::fmt;
-use std::string::ToString;
+
+use std::{fmt, string::ToString};
 
 #[derive(Copy, Clone, PartialEq, Eq)]
 pub enum Route {

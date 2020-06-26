@@ -1,11 +1,18 @@
-use crate::{state, ui, updates};
+use crate::{
+    state,
+    ui::{self, form::if_equal_display},
+    updates,
+};
 use seed::{prelude::*, *};
 
-use seed_style::{em, px, *};
+use seed_style::*;
 
-use glue::data;
+use glue::data::credentials::Fail::{IncorrectPassword, UserNotFound};
 
-pub fn view(model: &state::Model, error: Option<data::credentials::Fail>) -> Node<updates::Msg> {
+pub fn view(
+    model: &state::Model,
+    error: Option<glue::data::credentials::Fail>,
+) -> Node<updates::Msg> {
     ui::form::view(
         model,
         "/api/sign-in",
@@ -14,13 +21,13 @@ pub fn view(model: &state::Model, error: Option<data::credentials::Fail>) -> Nod
                 model,
                 "user_name",
                 "Username...",
-                if_equal_display(error, data::credentials::Fail::UserNotFound),
+                if_equal_display(error, &UserNotFound),
             ),
             ui::form::password_with_error(
                 model,
                 "password",
                 "Password...",
-                if_equal_display(error, data::credentials::Fail::IncorrectPassword),
+                if_equal_display(error, &IncorrectPassword),
             ),
         ],
         "Sign In",
@@ -34,14 +41,4 @@ pub fn view(model: &state::Model, error: Option<data::credentials::Fail>) -> Nod
             .into_nodes(),
         ],
     )
-}
-
-fn if_equal_display<T: ToString + PartialEq>(option: Option<T>, eq_to: T) -> Option<String> {
-    option.and_then(|x| {
-        if x == eq_to {
-            Some(x.to_string())
-        } else {
-            None
-        }
-    })
 }
