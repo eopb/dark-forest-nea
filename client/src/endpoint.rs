@@ -2,10 +2,11 @@ use {
     async_trait::async_trait,
     glue::Endpoint as _,
     seed::{browser::fetch::FetchError, prelude::*},
+    serde::{Deserialize, Serialize},
     web_sys::RequestCredentials::SameOrigin,
 };
 #[async_trait(?Send)]
-pub trait Endpoint: glue::Endpoint {
+pub trait Endpoint: glue::Endpoint + Serialize + for<'a> Deserialize<'a> {
     async fn fetch() -> Result<Self, FetchError>;
 }
 

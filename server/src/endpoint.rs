@@ -1,5 +1,6 @@
 mod create_account;
 mod sign_in;
+mod sign_out;
 mod signed_in;
 
 use crate::State;

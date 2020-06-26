@@ -1,4 +1,4 @@
 use serde::{Deserialize, Serialize};
-pub trait Endpoint: Serialize + for<'a> Deserialize<'a> {
+pub trait Endpoint {
     const PATH: &'static str;
 }

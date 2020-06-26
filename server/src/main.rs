@@ -44,6 +44,7 @@ async fn main() -> tide::Result<()> {
     glue::Credentials::apply(&mut app);
     glue::CreateAccount::apply(&mut app);
     glue::SingedIn::apply(&mut app);
+    glue::SignOut::apply(&mut app);
 
     app.listen("localhost:8081").await?;
 
