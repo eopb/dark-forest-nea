@@ -29,8 +29,8 @@ impl TryFrom<glue::CreateAccount> for User {
 }
 
 impl User {
-    pub fn verify(&self, credentials: &glue::Credentials) -> Result<bool, BcryptError> {
+    pub fn verify_credentials(&self, credentials: &glue::Credentials) -> Result<bool, BcryptError> {
         Ok(self.user_name == credentials.user_name
-            && bcrypt::verify(&self.password_hash, &credentials.password)?)
+            && bcrypt::verify(&credentials.password, &self.password_hash)?)
     }
 }

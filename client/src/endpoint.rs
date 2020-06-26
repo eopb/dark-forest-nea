@@ -13,7 +13,7 @@ pub trait Endpoint: glue::Endpoint {
 impl Endpoint for glue::Hello {
     async fn fetch() -> Result<Self, FetchError> {
         Request::new(Self::PATH)
-            //TODO Maybe this is default so lets try removing it when we need it.
+            // TODO Maybe this is default so lets try removing it when we need it.
             .credentials(SameOrigin)
             .fetch()
             .await?

@@ -17,17 +17,15 @@ impl endpoint::Post for glue::CreateAccount {
     async fn post(mut req: Request<State>) -> tide::Result<Response> {
         let account_info: Self = req.body_form().await?;
 
-        Ok(Redirect::new(
-            match req
-                .state()
-                .database()
-                .add_user(account_info.try_into()?)
-                .await?
-            {
-                Insert::Success => glue::Credentials::PATH.to_string(),
-                Insert::AlreadyExists => glue::Route::CreateAccount.to_string(),
-            },
-        )
+        Ok(match req
+            .state()
+            .database()
+            .add_user(account_info.try_into()?)
+            .await?
+        {
+            Insert::Success => Redirect::temporary(glue::Credentials::PATH.to_string()),
+            Insert::AlreadyExists => Redirect::new(glue::Route::CreateAccount.to_string()),
+        }
         .into())
     }
 }

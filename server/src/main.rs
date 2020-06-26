@@ -9,6 +9,7 @@
 pub mod endpoint;
 #[allow(clippy::must_use_candidate)]
 mod routes;
+pub mod security;
 mod state;
 pub mod util;
 
@@ -42,6 +43,7 @@ async fn main() -> tide::Result<()> {
     glue::Hello::apply(&mut app);
     glue::Credentials::apply(&mut app);
     glue::CreateAccount::apply(&mut app);
+    glue::SingedIn::apply(&mut app);
 
     app.listen("localhost:8081").await?;
 
