@@ -36,6 +36,20 @@ impl Database {
             Insert::AlreadyExists
         })
     }
+
+    pub async fn get_user(&self, user_name: &str) -> tide::Result<Option<User>> {
+        Ok(
+            if let Some(x) = self
+                .users()
+                .find_one(doc! { "_id": user_name}, None)
+                .await?
+            {
+                Some(bson::from_bson(bson::Bson::Document(x))?)
+            } else {
+                None
+            },
+        )
+    }
 }
 
 pub enum Insert {

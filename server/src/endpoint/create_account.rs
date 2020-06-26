@@ -13,17 +13,17 @@ use crate::{
 #[async_trait]
 impl endpoint::Post for glue::CreateAccount {
     async fn post(mut req: Request<State>) -> tide::Result<Response> {
-        let account_info: glue::CreateAccount = req.body_form().await?;
+        let account_info: Self = req.body_form().await?;
 
-        Ok(Redirect::<&str>::new(
+        Ok(Redirect::<String>::new(
             match req
                 .state()
                 .database()
                 .add_user(account_info.try_into()?)
                 .await?
             {
-                Insert::Success => "/api/sign-in",
-                Insert::AlreadyExists => glue::Route::CreateAccount.into(),
+                Insert::Success => glue::Route::SignIn(None).to_string(),
+                Insert::AlreadyExists => glue::Route::CreateAccount.to_string(),
             },
         )
         .into())

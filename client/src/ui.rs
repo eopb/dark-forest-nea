@@ -80,7 +80,7 @@ fn nav(model: &state::Model) -> Node<updates::Msg> {
                 a(),
                 button(model),
                 "Sign In",
-                attrs! {At::Href => glue::Route::SignIn}
+                attrs! {At::Href => glue::Route::SignIn(None)}
             ],
             a![
                 a(),

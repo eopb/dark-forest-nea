@@ -1,4 +1,5 @@
 mod create_account;
+mod sign_in;
 
 use crate::State;
 use std::{thread, time};
@@ -32,15 +33,5 @@ impl Get for glue::Hello {
             msg: String::from("Hi peeps"),
         })?);
         Ok(res)
-    }
-}
-
-#[async_trait]
-impl Post for glue::Credentials {
-    async fn post(mut req: Request<State>) -> tide::Result<Response> {
-        let credentials: glue::Credentials = req.body_form().await?;
-        dbg!(credentials);
-
-        Ok(Redirect::<&str>::new(glue::Route::Index.into()).into())
     }
 }

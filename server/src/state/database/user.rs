@@ -3,7 +3,7 @@ use std::convert::TryFrom;
 use crate::util::BsonDoc;
 
 use {
-    bcrypt::{hash, BcryptError},
+    bcrypt::BcryptError,
     serde::{Deserialize, Serialize},
 };
 
@@ -23,7 +23,14 @@ impl TryFrom<glue::CreateAccount> for User {
         Ok(Self {
             user_name: value.user_name,
             email: value.email,
-            password_hash: hash(value.password, bcrypt::DEFAULT_COST)?,
+            password_hash: bcrypt::hash(value.password, bcrypt::DEFAULT_COST)?,
         })
+    }
+}
+
+impl User {
+    pub fn verify(&self, credentials: &glue::Credentials) -> Result<bool, BcryptError> {
+        Ok(self.user_name == credentials.user_name
+            && bcrypt::verify(&self.password_hash, &credentials.password)?)
     }
 }

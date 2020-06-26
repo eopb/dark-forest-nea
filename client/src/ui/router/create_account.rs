@@ -18,7 +18,7 @@ pub fn view(model: &state::Model) -> Node<updates::Msg> {
             a![
                 ui::style::button(model, 3),
                 "Sign In.",
-                attrs! {At::Href => glue::Route::SignIn}
+                attrs! {At::Href => glue::Route::SignIn(None)}
             ]
             .into_nodes(),
         ],
