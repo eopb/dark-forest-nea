@@ -3,15 +3,31 @@ use seed::{prelude::*, *};
 
 use seed_style::*;
 
-pub fn view(model: &state::Model) -> Node<updates::Msg> {
+pub fn view(
+    model: &state::Model,
+    error: Option<glue::data::create_account::Fail>,
+) -> Node<updates::Msg> {
+    let user_name = |err| ui::form::text_with_error(model, "user_name", "Username...", err);
+    let email = |err| ui::form::email_with_error(model, "email", "Email...", err);
+    let password = |err| ui::form::password_with_error(model, "password", "Password...", err);
     ui::form::view(
         model,
         "/api/create-account",
-        vec![
-            ui::form::text(model, "user_name", "Username..."),
-            ui::form::email(model, "email", "Email..."),
-            ui::form::password(model, "password", "Password..."),
-        ],
+        match error {
+            Some(error) => match error {
+                glue::data::create_account::Fail::AlreadyExists => vec![
+                    user_name(Some("Username already taken.".to_string())),
+                    email(None),
+                    password(None),
+                ],
+                glue::data::create_account::Fail::InvalidField(error) => vec![
+                    user_name(error.user_name.map(|x| x.show("Username"))),
+                    email(error.email.map(|x| x.show("Email"))),
+                    password(error.password.map(|x| x.show("Password"))),
+                ],
+            },
+            None => vec![user_name(None), email(None), password(None)],
+        },
         "Create Account",
         vec![
             Node::from_html("Already have account? "),

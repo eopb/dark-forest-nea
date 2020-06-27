@@ -10,22 +10,31 @@ use crate::{
     state::{database::Insert, State},
 };
 
-use glue::Endpoint as _;
+use glue::{data::create_account::Fail, data::validation::Post as _, Endpoint as _};
 
 #[async_trait]
 impl endpoint::Post for glue::CreateAccount {
     async fn post(mut req: Request<State>) -> tide::Result<Response> {
         let account_info: Self = req.body_form().await?;
 
-        Ok(match req
-            .state()
-            .database()
-            .add_user(account_info.try_into()?)
-            .await?
-        {
-            Insert::Success => Redirect::temporary(glue::Credentials::PATH.to_string()),
-            Insert::AlreadyExists => Redirect::new(glue::Route::CreateAccount.to_string()),
-        }
-        .into())
+        let validation = account_info.validate();
+
+        Ok(if let Err(error) = validation {
+            Redirect::new(glue::Route::CreateAccount(Some(Fail::InvalidField(error))).to_string())
+                .into()
+        } else {
+            match req
+                .state()
+                .database()
+                .add_user(account_info.try_into()?)
+                .await?
+            {
+                Insert::Success => Redirect::temporary(glue::Credentials::PATH.to_string()),
+                Insert::AlreadyExists => {
+                    Redirect::new(glue::Route::CreateAccount(Some(Fail::AlreadyExists)).to_string())
+                }
+            }
+            .into()
+        })
     }
 }

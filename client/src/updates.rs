@@ -15,7 +15,7 @@ pub fn update(msg: Msg, model: &mut state::Model, orders: &mut impl Orders<Msg>)
         Msg::ToggleTheme => model.theme.toggle(),
         Msg::ChangeRoute(route) => {
             if route != model.route {
-                if Into::<glue::Route>::into(route) == glue::Route::Api {
+                if Into::<&glue::Route>::into(&route) == &glue::Route::Api {
                     web_sys::window()
                         .expect("Window required")
                         .location()
@@ -23,7 +23,7 @@ pub fn update(msg: Msg, model: &mut state::Model, orders: &mut impl Orders<Msg>)
                         .expect("Reload failed");
                 } else {
                     (*model).server = state::Server::default();
-                    (*model).route = route;
+                    (*model).route = route.clone();
                     route.request_required_data(orders)
                 }
             }

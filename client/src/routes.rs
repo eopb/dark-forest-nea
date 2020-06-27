@@ -2,12 +2,17 @@ use crate::updates;
 use seed::browser::url::Url;
 use seed::prelude::*;
 
-#[derive(Copy, Clone, PartialEq, Eq)]
+#[derive(Clone, PartialEq, Eq)]
 pub struct Route(glue::Route);
 
 impl Into<glue::Route> for Route {
     fn into(self) -> glue::Route {
         self.0
+    }
+}
+impl<'a> Into<&'a glue::Route> for &'a Route {
+    fn into(self) -> &'a glue::Route {
+        &self.0
     }
 }
 
@@ -25,6 +30,7 @@ impl Default for Route {
 
 impl From<Url> for Route {
     fn from(url: Url) -> Self {
+        let qs = &url.search().to_string();
         match &url
             .path()
             .iter()
@@ -34,10 +40,8 @@ impl From<Url> for Route {
         {
             [] => Self(glue::Route::Index),
             ["explore"] => Self(glue::Route::Explore),
-            ["sign-in"] => Self(glue::Route::SignIn(glue::qs::get_enum(
-                &url.search().to_string(),
-            ))),
-            ["create-account"] => Self(glue::Route::CreateAccount),
+            ["sign-in"] => Self(glue::Route::SignIn(glue::qs::get_enum(qs))),
+            ["create-account"] => Self(glue::Route::CreateAccount(glue::qs::get_enum(qs))),
             ["new-project"] => Self(glue::Route::NewProject),
             ["api", ..] => Self(glue::Route::Api),
             _ => Self(glue::Route::NotFound),

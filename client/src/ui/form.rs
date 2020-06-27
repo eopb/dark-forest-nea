@@ -161,13 +161,3 @@ pub fn view(
         ui::subheading(note)
     ]]
 }
-
-pub fn if_equal_display<T: ToString + PartialEq>(option: Option<T>, eq_to: &T) -> Option<String> {
-    option.and_then(|x| {
-        if &x == eq_to {
-            Some(x.to_string())
-        } else {
-            None
-        }
-    })
-}

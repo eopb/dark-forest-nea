@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use std::string::ToString;
 
-#[derive(Eq, PartialEq, Copy, Clone, Deserialize, Serialize)]
+#[derive(Eq, PartialEq, Copy, Clone, Deserialize, Serialize, Debug)]
 pub struct Single<T> {
     pub value: T,
 }
@@ -34,13 +34,17 @@ pub(crate) fn with_enum<T: Serialize>(base: &str, qs: &Option<T>) -> String {
 }
 
 pub fn get_enum<T: for<'a> Deserialize<'a>>(qs: &str) -> Option<T> {
+    get::<Single<T>>(qs).map(|x| x.value)
+}
+
+pub fn get<T: for<'a> Deserialize<'a>>(qs: &str) -> Option<T> {
+    let config = serde_qs::Config::new(50, false);
     if !qs.is_empty() {
-        Some(serde_qs::from_str::<Single<T>>(qs).ok()?.value)
+        Some(config.deserialize_str::<T>(qs).ok()?)
     } else {
         None
     }
 }
-
 #[cfg(test)]
 mod tests {
     use super::*;
