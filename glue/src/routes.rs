@@ -10,6 +10,7 @@ pub enum Route {
     CreateAccount,
     NewProject,
     NotFound,
+    Api,
 }
 
 impl Default for Route {
@@ -27,6 +28,7 @@ impl Into<String> for Route {
             Self::CreateAccount => "/create-account".to_string(),
             Self::NewProject => "/new-project".to_string(),
             Self::NotFound => panic!("Can not go to 404 route"),
+            Self::Api => panic!("Can not go to an API route"),
         }
     }
 }

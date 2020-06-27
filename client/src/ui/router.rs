@@ -12,7 +12,7 @@ pub fn view(model: &state::Model) -> Node<updates::Msg> {
         glue::Route::Index => index::view(model),
         glue::Route::Explore => p!["explore"],
         glue::Route::SignIn(error) => sign_in::view(model, error),
-        glue::Route::NotFound => not_found::view(model),
+        glue::Route::NotFound | glue::Route::Api => not_found::view(model),
         glue::Route::CreateAccount => create_account::view(model),
         glue::Route::NewProject => new_project::view(model),
     }

@@ -39,6 +39,7 @@ impl From<Url> for Route {
             ))),
             ["create-account"] => Self(glue::Route::CreateAccount),
             ["new-project"] => Self(glue::Route::NewProject),
+            ["api", ..] => Self(glue::Route::Api),
             _ => Self(glue::Route::NotFound),
         }
     }
