@@ -32,12 +32,19 @@ impl Endpoint for CreateAccount {
 impl validation::Post for CreateAccount {
     type Invalid = Invalid;
     fn validate(&self) -> Result<(), Self::Invalid> {
-        let validation = Validation {
+        let user_name = Validation {
             must_be_ascii: true,
             ..Validation::default()
-        };
-        let user_name = validation.of(&self.user_name).err();
-        let email = validation.of(&self.email).err();
+        }
+        .of(&self.user_name)
+        .err();
+        let email = Validation {
+            must_be_ascii: true,
+            must_be_email: true,
+            ..Validation::default()
+        }
+        .of(&self.email)
+        .err();
         let password = Validation {
             min_length: 1,
             max_length: Some(1_000),
@@ -45,6 +52,7 @@ impl validation::Post for CreateAccount {
         }
         .of(&self.password)
         .err();
+
         if user_name.is_none() && email.is_none() && password.is_none() {
             Ok(())
         } else {
