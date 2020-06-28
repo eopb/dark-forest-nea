@@ -1,0 +1,50 @@
+
+
+[config]
+skip_core_tasks = true
+
+# ---- BASIC ----
+
+[tasks.run]
+
+[tasks.check]
+command = "cargo"
+args = ["check"]
+
+[tasks.run_release]
+
+[tasks.verify]
+description = "Format, lint with Clippy and run tests"
+dependencies = ["fmt_check", "clippy", "test"]
+
+# ---- BUILD ----
+
+[tasks.build]
+
+[tasks.build_release]
+
+# ---- LINT ----
+
+[tasks.clippy]
+description = "Lint with Clippy"
+install_crate = { rustup_component_name = "clippy", binary = "cargo-clippy", test_arg = "--help" }
+command = "cargo"
+args = ["clippy", "--all-features"]
+
+[tasks.fmt]
+description = "Format with rustfmt"
+command = "cargo"
+args = ["fmt"]
+
+[tasks.fmt_check]
+description = "Check format with rustfmt"
+command = "cargo"
+args = ["fmt", "--all", "--", "--check"]
+
+
+# ---- TEST ----
+
+[tasks.test]
+description = "Run tests."
+command = "cargo"
+args = ["test"]

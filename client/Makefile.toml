@@ -1,27 +1,32 @@
-[env]
-PORT = "8082"
+# [env]
+# PORT = "8082"
 
 [config]
 skip_core_tasks = true
 
 # ---- BASIC ----
 
-[tasks.watch]
-description = "Watch files and recompile the project on change"
-run_task = [
-    { name = "build" },
-]
-watch = true
+[tasks.run]
+description = "Build ready for server run"
+dependencies = ["build"]
 
-[tasks.serve]
-description = "Start server"
-install_crate = { crate_name = "microserver", binary = "microserver", test_arg = "-h" }
-command = "microserver"
-args = ["--port", "${PORT}"]
+[tasks.check]
+command = "cargo"
+args = ["check"]
+
+[tasks.run_release]
+description = "Build in release mode ready for server run"
+dependencies = ["build_release"]
+
+# [tasks.serve]
+# description = "Start server"
+# install_crate = { crate_name = "microserver", binary = "microserver", test_arg = "-h" }
+# command = "microserver"
+# args = ["--port", "${PORT}"]
 
 [tasks.verify]
 description = "Format, lint with Clippy and run tests"
-dependencies = ["fmt", "clippy", "test_h_firefox"]
+dependencies = ["fmt_check", "clippy", "test_h_firefox"]
 
 # ---- BUILD ----
 
@@ -43,12 +48,17 @@ args = ["build", "--target", "web", "--out-name", "package"]
 description = "Lint with Clippy"
 install_crate = { rustup_component_name = "clippy", binary = "cargo-clippy", test_arg = "--help" }
 command = "cargo"
-args = ["clippy", "--all-features", "--", "--deny", "warnings", "--deny", "clippy::pedantic", "--deny", "clippy::nursery"]
+args = ["clippy", "--all-features"]
 
 [tasks.fmt]
 description = "Format with rustfmt"
 command = "cargo"
 args = ["fmt"]
+
+[tasks.fmt_check]
+description = "Check format with rustfmt"
+command = "cargo"
+args = ["fmt", "--all", "--", "--check"]
 
 
 # ---- TEST ----
