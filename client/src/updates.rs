@@ -25,8 +25,8 @@ pub fn update(msg: Msg, model: &mut state::Model, orders: &mut impl Orders<Msg>)
                         .reload()
                         .expect("Reload failed");
                 } else {
-                    (*model).server = state::Server::default();
-                    (*model).route = route.clone();
+                    model.server = state::Server::default();
+                    model.route = route.clone();
                     route.request_required_data(orders)
                 }
             }
