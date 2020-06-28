@@ -20,3 +20,5 @@
 - `cargo make doc`
 - `cargo make doc_open`
 - `cargo make doc_watch`
+- `cargo make coverage`
+- `cargo make coverage_open`

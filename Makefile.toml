@@ -40,3 +40,16 @@ run_task = [
     { name = "doc" },
 ]
 watch = true
+
+[tasks.coverage]
+workspace = false
+install_crate = "cargo-tarpaulin"
+command = "cargo"
+args = ["tarpaulin", "--all", "--out", "Html", "--output-dir", "target"]
+
+
+[tasks.coverage_open]
+workspace = false
+dependencies = ["coverage"]
+command = "firefox"
+args = ["target/tarpaulin-report.html"]

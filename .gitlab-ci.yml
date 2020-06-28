@@ -7,6 +7,7 @@ before_script:
 stages:
   - build
   - verify
+  - coverage
 
 build:
   stage: build
@@ -17,3 +18,8 @@ verify:
   stage: verify
   script:
     - cargo make verify
+
+coverage:
+  stage: coverage
+  script:
+    - cargo make coverage
