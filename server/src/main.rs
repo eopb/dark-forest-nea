@@ -7,7 +7,6 @@
 )]
 
 pub mod endpoint;
-#[allow(clippy::must_use_candidate)]
 mod routes;
 pub mod security;
 mod state;
