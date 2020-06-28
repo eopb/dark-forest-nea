@@ -3,28 +3,47 @@ use seed::browser::url::Url;
 use seed::prelude::*;
 
 #[derive(Clone, PartialEq, Eq)]
-pub struct Route(glue::Route);
+pub enum Unknown {
+    NotFound,
+    Api,
+}
 
-impl Into<glue::Route> for Route {
-    fn into(self) -> glue::Route {
-        self.0
+impl Default for Unknown {
+    fn default() -> Self {
+        Self::NotFound
     }
 }
-impl<'a> Into<&'a glue::Route> for &'a Route {
-    fn into(self) -> &'a glue::Route {
-        &self.0
+
+#[derive(Clone, PartialEq, Eq)]
+pub struct Route(Result<glue::Route, Unknown>);
+
+impl From<Route> for Result<glue::Route, Unknown> {
+    fn from(t: Route) -> Self {
+        t.0
+    }
+}
+
+impl<'a> From<&'a Route> for &'a Result<glue::Route, Unknown> {
+    fn from(t: &'a Route) -> Self {
+        &t.0
     }
 }
 
 impl From<glue::Route> for Route {
     fn from(route: glue::Route) -> Self {
-        Self(route)
+        Self(Ok(route))
+    }
+}
+
+impl From<Unknown> for Route {
+    fn from(route: Unknown) -> Self {
+        Self(Err(route))
     }
 }
 
 impl Default for Route {
     fn default() -> Self {
-        Self(glue::Route::default())
+        Unknown::default().into()
     }
 }
 
@@ -38,13 +57,13 @@ impl From<Url> for Route {
             .collect::<Vec<&str>>()
             .as_slice()
         {
-            [] => Self(glue::Route::Index),
-            ["explore"] => Self(glue::Route::Explore),
-            ["sign-in"] => Self(glue::Route::SignIn(glue::qs::get_enum(qs))),
-            ["create-account"] => Self(glue::Route::CreateAccount(glue::qs::get_enum(qs))),
-            ["new-project"] => Self(glue::Route::NewProject),
-            ["api", ..] => Self(glue::Route::Api),
-            _ => Self(glue::Route::NotFound),
+            [] => glue::Route::Index.into(),
+            ["explore"] => glue::Route::Explore.into(),
+            ["sign-in"] => glue::Route::SignIn(glue::qs::get_enum(qs)).into(),
+            ["create-account"] => glue::Route::CreateAccount(glue::qs::get_enum(qs)).into(),
+            ["new-project"] => glue::Route::NewProject.into(),
+            ["api", ..] => Unknown::Api.into(),
+            _ => Unknown::NotFound.into(),
         }
     }
 }
@@ -55,7 +74,7 @@ impl Route {
     }
     pub fn request_required_data(self, orders: &mut impl Orders<updates::Msg>) {
         orders.send_msg(updates::Msg::ToFetch(updates::ToFetch::SignedIn));
-        if glue::Route::Index == self.into() {
+        if let Ok(glue::Route::Index) = self.into() {
             orders.send_msg(updates::Msg::ToFetch(updates::ToFetch::Hello));
         };
     }
