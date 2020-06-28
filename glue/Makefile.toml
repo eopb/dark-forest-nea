@@ -33,11 +33,13 @@ args = ["clippy", "--all-features"]
 
 [tasks.fmt]
 description = "Format with rustfmt"
+install_crate = "rustfmt"
 command = "cargo"
 args = ["fmt"]
 
 [tasks.fmt_check]
 description = "Check format with rustfmt"
+install_crate = "rustfmt"
 command = "cargo"
 args = ["fmt", "--all", "--", "--check"]
 

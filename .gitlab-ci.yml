@@ -1,0 +1,19 @@
+image: "rust:latest"
+
+before_script:
+  - rustup default nightly
+  - cargo install cargo-make
+
+stages:
+  - build
+  - verify
+
+build:
+  stage: build
+  script:
+    - cargo make build
+
+verify:
+  stage: verify
+  script:
+    - cargo make verify
