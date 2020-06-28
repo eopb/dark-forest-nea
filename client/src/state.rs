@@ -5,11 +5,21 @@ pub use server::Server;
 use crate::routes::Route;
 
 // `Model` describes our app state.
-#[derive(Default)]
 pub struct Model {
     pub theme: Theme,
     pub route: Route,
     pub server: Server,
+}
+
+impl Model {
+    #[allow(clippy::new_without_default)]
+    pub fn new() -> Self {
+        Self {
+            theme: Theme::default(),
+            route: Route::default(),
+            server: Server::default(),
+        }
+    }
 }
 
 #[derive(Copy, Clone)]

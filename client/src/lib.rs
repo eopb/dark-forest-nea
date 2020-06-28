@@ -20,7 +20,7 @@ use seed::prelude::*;
 fn init(_: Url, _: &mut impl Orders<updates::Msg>) -> AfterMount<state::Model> {
     ui::style::global::init();
 
-    AfterMount::new(state::Model::default()).url_handling(UrlHandling::PassToRoutes)
+    AfterMount::new(state::Model::new()).url_handling(UrlHandling::PassToRoutes)
 }
 
 // (This function is invoked by `init` function in `index.html`.)
