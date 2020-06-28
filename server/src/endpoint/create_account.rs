@@ -29,7 +29,7 @@ impl endpoint::Post for glue::CreateAccount {
                 .add_user(account_info.try_into()?)
                 .await?
             {
-                Insert::Success => Redirect::temporary(glue::Credentials::PATH.to_string()),
+                Insert::Success => Redirect::temporary(glue::Credentials::PATH.to_owned()),
                 Insert::AlreadyExists => {
                     Redirect::new(glue::Route::CreateAccount(Some(Fail::AlreadyExists)).to_string())
                 }

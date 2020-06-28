@@ -16,7 +16,7 @@ pub fn view(
         match error {
             Some(error) => match error {
                 glue::data::create_account::Fail::AlreadyExists => vec![
-                    user_name(Some("Username already taken.".to_string())),
+                    user_name(Some("Username already taken.".to_owned())),
                     email(None),
                     password(None),
                 ],

@@ -2,8 +2,6 @@ pub use crate::data;
 
 use serde::{Deserialize, Serialize};
 
-use std::string::ToString;
-
 #[derive(Eq, PartialEq, Copy, Clone, Deserialize, Serialize, Debug)]
 pub struct Single<T> {
     pub value: T,
@@ -25,7 +23,7 @@ pub(crate) fn with<T: Serialize>(base: &str, qs: &Option<T>) -> String {
         Some(qs) => format!("{}?{}", base, {
             serde_qs::to_string(qs).expect("failed to parse qs")
         }),
-        None => base.to_string(),
+        None => base.to_owned(),
     }
 }
 
@@ -55,7 +53,7 @@ mod tests {
                 "/epic/path",
                 &Some(data::credentials::Fail::IncorrectPassword)
             ),
-            "/epic/path?value=IncorrectPassword".to_string()
+            "/epic/path?value=IncorrectPassword".to_owned()
         );
     }
 }

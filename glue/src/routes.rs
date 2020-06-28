@@ -1,6 +1,6 @@
 pub use crate::{data, qs};
 
-use std::{fmt, string::ToString};
+use std::fmt;
 
 #[derive(Clone, PartialEq, Eq, Debug)]
 pub enum Route {
@@ -23,11 +23,11 @@ impl fmt::Display for Route {
             f,
             "{}",
             match self {
-                Self::Index => "/".to_string(),
-                Self::Explore => "/explore".to_string(),
+                Self::Index => "/".to_owned(),
+                Self::Explore => "/explore".to_owned(),
                 Self::SignIn(fail) => qs::with_enum("/sign-in", &fail),
                 Self::CreateAccount(fail) => qs::with_enum("/create-account", &fail),
-                Self::NewProject => "/new-project".to_string(),
+                Self::NewProject => "/new-project".to_owned(),
             }
         )
     }
