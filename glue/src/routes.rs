@@ -2,6 +2,9 @@ pub use crate::{data, qs};
 
 use std::fmt;
 
+/// An enum for all routes used by both server and client.
+///
+/// Routes can also store query strings.
 #[derive(Clone, PartialEq, Eq, Debug)]
 pub enum Route {
     Index,

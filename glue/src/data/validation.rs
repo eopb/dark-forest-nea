@@ -1,41 +1,24 @@
-use regex::Regex;
-use serde::{Deserialize, Serialize};
+//! Validation and sanity checks for user input.
+
+use {
+    regex::Regex,
+    serde::{Deserialize, Serialize},
+};
 
 use crate::Endpoint;
 
+/// An endpoint that can be validated.
 pub trait Post: Endpoint {
     type Invalid: Serialize + for<'a> Deserialize<'a>;
     fn validate(&self) -> Result<(), Self::Invalid>;
 }
+
+/// Settings for validating `&str`s.
 pub struct Validation {
     pub max_length: Option<usize>,
     pub min_length: usize,
     pub must_be_ascii: bool,
     pub must_be_email: bool,
-}
-
-#[derive(Eq, PartialEq, Debug, Deserialize, Serialize, Copy, Clone)]
-pub enum Error {
-    TooLong,
-    TooShort,
-    NotAscii,
-    InvalidEmail,
-}
-use Error::*;
-
-impl Error {
-    pub fn show(self, field: &str) -> String {
-        format!(
-            "{} {}.",
-            field,
-            match self {
-                TooLong => "must be shorter",
-                TooShort => "must be longer",
-                NotAscii => "must only contain ASCII characters",
-                InvalidEmail => "must be a valid email",
-            }
-        )
-    }
 }
 
 impl Default for Validation {
@@ -58,19 +41,26 @@ impl Validation {
             must_be_email: false,
         }
     }
-    pub fn of(&self, s: &str) -> Result<(), Error> {
-        let length = s.len();
-        if length < self.min_length {
-            return Err(TooShort);
-        };
-        if let Some(max) = self.max_length {
-            if length > max {
-                return Err(TooLong);
+    /// Validates a string.
+    pub fn of(&self, s: &str) -> Result<(), Fail> {
+        {
+            let length = s.len();
+
+            if length < self.min_length {
+                return Err(TooShort);
+            };
+
+            if let Some(max) = self.max_length {
+                if length > max {
+                    return Err(TooLong);
+                }
             }
         }
+
         if self.must_be_ascii && !s.is_ascii() {
             return Err(NotAscii);
         }
+
         if self.must_be_email
             && !Regex::new("(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$)")
                 .unwrap()
@@ -82,9 +72,34 @@ impl Validation {
     }
 }
 
+/// The reason a validation failed.
+#[derive(Eq, PartialEq, Debug, Deserialize, Serialize, Copy, Clone)]
+pub enum Fail {
+    TooLong,
+    TooShort,
+    NotAscii,
+    InvalidEmail,
+}
+use Fail::*;
+
+impl Fail {
+    pub fn show(self, field: &str) -> String {
+        format!(
+            "{} {}.",
+            field,
+            match self {
+                TooLong => "must be shorter",
+                TooShort => "must be longer",
+                NotAscii => "must only contain ASCII characters",
+                InvalidEmail => "must be a valid email",
+            }
+        )
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use super::{Error::*, Validation};
+    use super::{Fail::*, Validation};
     #[test]
     fn length() {
         assert_eq!(Validation::default().of(""), Err(TooShort));

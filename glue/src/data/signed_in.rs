@@ -2,6 +2,7 @@ use crate::Endpoint;
 
 use serde::{Deserialize, Serialize};
 
+/// Endpoint used by the client to check if a user is signed-in.
 #[derive(Clone, Serialize, Deserialize, Debug, Eq, PartialEq)]
 pub enum SignedIn {
     As(String),

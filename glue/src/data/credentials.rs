@@ -4,6 +4,18 @@ use std::fmt;
 
 use serde::{Deserialize, Serialize};
 
+/// A users credentials used to sign-in.
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct Credentials {
+    pub user_name: String,
+    pub password: String,
+}
+
+impl Endpoint for Credentials {
+    const PATH: &'static str = "/api/sign-in";
+}
+
+/// Reasons signing-in may fail.
 #[derive(Copy, Clone, Serialize, Deserialize, Debug, Eq, PartialEq)]
 pub enum Fail {
     UserNotFound,
@@ -21,14 +33,4 @@ impl fmt::Display for Fail {
             }
         )
     }
-}
-
-#[derive(Clone, Serialize, Deserialize, Debug)]
-pub struct Credentials {
-    pub user_name: String,
-    pub password: String,
-}
-
-impl Endpoint for Credentials {
-    const PATH: &'static str = "/api/sign-in";
 }

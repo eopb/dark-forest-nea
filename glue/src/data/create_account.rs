@@ -5,24 +5,12 @@ use crate::{
 
 use serde::{Deserialize, Serialize};
 
+/// Data sent when a user creates an account.
 #[derive(Clone, Serialize, Deserialize, Debug, Eq, PartialEq)]
 pub struct CreateAccount {
     pub user_name: String,
     pub email: String,
     pub password: String,
-}
-
-#[derive(Clone, Serialize, Deserialize, Debug, Eq, PartialEq)]
-pub enum Fail {
-    AlreadyExists,
-    InvalidField(Invalid),
-}
-
-#[derive(Clone, Serialize, Deserialize, Debug, Eq, PartialEq)]
-pub struct Invalid {
-    pub user_name: Option<validation::Error>,
-    pub email: Option<validation::Error>,
-    pub password: Option<validation::Error>,
 }
 
 impl Endpoint for CreateAccount {
@@ -38,6 +26,7 @@ impl validation::Post for CreateAccount {
         }
         .of(&self.user_name)
         .err();
+
         let email = Validation {
             must_be_ascii: true,
             must_be_email: true,
@@ -45,6 +34,7 @@ impl validation::Post for CreateAccount {
         }
         .of(&self.email)
         .err();
+
         let password = Validation {
             min_length: 1,
             max_length: Some(1_000),
@@ -63,6 +53,20 @@ impl validation::Post for CreateAccount {
             })
         }
     }
+}
+
+/// Reasons creating an account may fail.
+#[derive(Clone, Serialize, Deserialize, Debug, Eq, PartialEq)]
+pub enum Fail {
+    AlreadyExists,
+    InvalidField(Invalid),
+}
+
+#[derive(Clone, Serialize, Deserialize, Debug, Eq, PartialEq)]
+pub struct Invalid {
+    pub user_name: Option<validation::Fail>,
+    pub email: Option<validation::Fail>,
+    pub password: Option<validation::Fail>,
 }
 
 #[cfg(test)]
