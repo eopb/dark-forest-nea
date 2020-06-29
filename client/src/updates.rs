@@ -21,18 +21,14 @@ pub fn update(msg: Msg, model: &mut state::Model, orders: &mut impl Orders<Msg>)
                 model.server = state::Server::default();
                 model.route = route.clone();
                 route.request_required_data(orders);
-                web_sys::window()
-                    .as_ref()
-                    .and_then(Window::document)
-                    .map(|doc| {
-                        doc.set_title(
-                            route
-                                .0
-                                .as_ref()
-                                .map(glue::Route::title)
-                                .unwrap_or("Page Not Found"),
-                        )
-                    });
+                if let Some(doc) = web_sys::window().as_ref().and_then(Window::document) {
+                    doc.set_title(
+                        route
+                            .0
+                            .as_ref()
+                            .map_or("Page Not Found", glue::Route::title),
+                    )
+                }
             }
         }
         Msg::ToFetch(x) => {
