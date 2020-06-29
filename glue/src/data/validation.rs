@@ -24,7 +24,7 @@ pub enum Error {
 use Error::*;
 
 impl Error {
-    pub fn show(&self, field: &str) -> String {
+    pub fn show(self, field: &str) -> String {
         format!(
             "{} {}.",
             field,
@@ -50,7 +50,7 @@ impl Default for Validation {
 }
 
 impl Validation {
-    pub fn minimal() -> Self {
+    pub const fn minimal() -> Self {
         Self {
             max_length: None,
             min_length: 0,

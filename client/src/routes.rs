@@ -24,13 +24,11 @@ impl TryFrom<&Url> for Route {
             .collect::<Vec<&str>>()
             .as_slice()
         {
-            [] => Ok(Some(glue::Route::Index.into())),
-            ["explore"] => Ok(Some(glue::Route::Explore.into())),
-            ["sign-in"] => Ok(Some(glue::Route::SignIn(glue::qs::get_enum(qs)).into())),
-            ["create-account"] => Ok(Some(
-                glue::Route::CreateAccount(glue::qs::get_enum(qs)).into(),
-            )),
-            ["new-project"] => Ok(Some(glue::Route::NewProject.into())),
+            [] => Ok(Some(glue::Route::Index)),
+            ["explore"] => Ok(Some(glue::Route::Explore)),
+            ["sign-in"] => Ok(Some(glue::Route::SignIn(glue::qs::get_enum(qs)))),
+            ["create-account"] => Ok(Some(glue::Route::CreateAccount(glue::qs::get_enum(qs)))),
+            ["new-project"] => Ok(Some(glue::Route::NewProject)),
             ["api", ..] => Err(ApiRoute),
             _ => Ok(None),
         }
@@ -41,7 +39,7 @@ impl TryFrom<&Url> for Route {
 pub struct ApiRoute;
 
 impl Route {
-    pub fn update(url: UrlChanged) -> Option<updates::Msg> {
+    pub fn update(url: &UrlChanged) -> Option<updates::Msg> {
         if let Ok(url) = (&url.0).try_into() {
             Some(updates::Msg::ChangeRoute(url))
         } else {

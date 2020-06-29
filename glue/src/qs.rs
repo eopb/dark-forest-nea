@@ -43,10 +43,10 @@ pub(crate) fn with_enum<T: Serialize>(base: &str, qs: &Option<T>) -> String {
 /// Deserializes a query string.
 pub fn get<T: for<'a> Deserialize<'a>>(qs: &str) -> Option<T> {
     let config = serde_qs::Config::new(50, false);
-    if !qs.is_empty() {
-        Some(config.deserialize_str::<T>(qs).ok()?)
-    } else {
+    if qs.is_empty() {
         None
+    } else {
+        Some(config.deserialize_str::<T>(qs).ok()?)
     }
 }
 
