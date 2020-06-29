@@ -5,7 +5,7 @@ use crate::{
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug, Eq, PartialEq)]
 pub struct CreateAccount {
     pub user_name: String,
     pub email: String,
@@ -61,6 +61,17 @@ impl validation::Post for CreateAccount {
                 email,
                 password,
             })
+        }
+    }
+}
+
+#[cfg(test)]
+impl CreateAccount {
+    pub fn mock() -> Self {
+        Self {
+            user_name: "Ethan".to_owned(),
+            email: "example@example.com".to_owned(),
+            password: "hunter2".to_owned(),
         }
     }
 }
