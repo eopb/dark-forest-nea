@@ -4,7 +4,7 @@ use seed::{app::subs::UrlChanged, browser::url::Url, prelude::*};
 
 use std::convert::{TryFrom, TryInto};
 
-#[derive(Default, Clone, PartialEq, Eq)]
+#[derive(Default, Clone, PartialEq, Eq, Debug)]
 pub struct Route(pub Option<glue::Route>);
 
 impl From<glue::Route> for Route {
@@ -48,7 +48,7 @@ impl Route {
             None
         }
     }
-    pub fn request_required_data(self, orders: &mut impl Orders<updates::Msg>) {
+    pub fn request_required_data(&self, orders: &mut impl Orders<updates::Msg>) {
         orders.send_msg(updates::Msg::ToFetch(updates::ToFetch::SignedIn));
         if let Some(glue::Route::Index) = self.0 {
             orders.send_msg(updates::Msg::ToFetch(updates::ToFetch::Hello));

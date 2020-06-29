@@ -35,3 +35,16 @@ impl fmt::Display for Route {
         )
     }
 }
+
+impl Route {
+    /// Title to display on browser tab.
+    pub fn title(&self) -> &'static str {
+        match self {
+            Self::Index => "Dark Forest",
+            Self::Explore => "Explore Dark Forest",
+            Self::SignIn(_) => "Sign In",
+            Self::CreateAccount(_) => "Create Account",
+            Self::NewProject => "New Project",
+        }
+    }
+}

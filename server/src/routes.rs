@@ -21,6 +21,7 @@ pub async fn index(_: Request<State>) -> tide::Result<impl Into<Response>> {
                     meta
                         name="viewport"
                         content="width=device-width, initial-scale=1, shrink-to-fit=no";
+                    title { (glue::Route::Index.title()) }
                     style {
                         (PreEscaped(r#"
                             @font-face {
