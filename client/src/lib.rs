@@ -1,4 +1,4 @@
-#![warn(clippy::all, clippy::pedantic, clippy::nursery)]
+#![deny(clippy::all, clippy::pedantic, clippy::nursery)]
 #![allow(
     clippy::wildcard_imports,
     clippy::future_not_send,
@@ -14,21 +14,21 @@ pub mod updates;
 
 pub use {endpoint::Endpoint, routes::Route};
 
-use seed::prelude::*;
+use seed::{app::subs::UrlChanged, prelude::*};
 
 // `init` describes what should happen when your app started.
-fn init(_: Url, _: &mut impl Orders<updates::Msg>) -> AfterMount<state::Model> {
+fn init(url: Url, orders: &mut impl Orders<updates::Msg>) -> state::Model {
     ui::style::global::init();
 
-    AfterMount::new(state::Model::new()).url_handling(UrlHandling::PassToRoutes)
+    orders
+        .subscribe(routes::Route::update)
+        .notify(UrlChanged(url));
+
+    state::Model::new()
 }
 
 // (This function is invoked by `init` function in `index.html`.)
 #[wasm_bindgen(start)]
 pub fn start() {
-    // Mount the `app` to the element with the `id` "app".
-    App::builder(updates::update, ui::view)
-        .routes(routes::Route::update)
-        .after_mount(init)
-        .build_and_start();
+    let _app = App::start("app", init, updates::update, ui::view);
 }

@@ -7,7 +7,7 @@ use {
 
 pub fn view(
     model: &state::Model,
-    error: Option<glue::data::credentials::Fail>,
+    error: Option<&glue::data::credentials::Fail>,
 ) -> Node<updates::Msg> {
     use glue::data::credentials::Fail::{IncorrectPassword, UserNotFound};
     let user_name = |err| ui::form::text_with_error(model, "user_name", "Username...", err);

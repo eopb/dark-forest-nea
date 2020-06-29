@@ -5,7 +5,7 @@ use seed_style::*;
 
 pub fn view(
     model: &state::Model,
-    error: Option<glue::data::create_account::Fail>,
+    error: Option<&glue::data::create_account::Fail>,
 ) -> Node<updates::Msg> {
     let user_name = |err| ui::form::text_with_error(model, "user_name", "Username...", err);
     let email = |err| ui::form::email_with_error(model, "email", "Email...", err);

@@ -1,7 +1,4 @@
-use crate::{
-    routes::{self, Route},
-    state, Endpoint as _,
-};
+use crate::{routes::Route, state, Endpoint as _};
 use seed::{browser::fetch::FetchError, prelude::*};
 
 // `Msg` describes the different events you can modify state with.
@@ -18,17 +15,9 @@ pub fn update(msg: Msg, model: &mut state::Model, orders: &mut impl Orders<Msg>)
         Msg::ToggleTheme => model.theme.toggle(),
         Msg::ChangeRoute(route) => {
             if route != model.route {
-                if let Err(routes::Unknown::Api) = &route.clone().into() {
-                    web_sys::window()
-                        .expect("Window required")
-                        .location()
-                        .reload()
-                        .expect("Reload failed");
-                } else {
-                    model.server = state::Server::default();
-                    model.route = route.clone();
-                    route.request_required_data(orders)
-                }
+                model.server = state::Server::default();
+                model.route = route.clone();
+                route.request_required_data(orders)
             }
         }
         Msg::ToFetch(x) => {

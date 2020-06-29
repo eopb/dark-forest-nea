@@ -9,6 +9,7 @@ pub struct Server {
     pub signed_in: Fetch<glue::SignedIn, FetchError>,
 }
 
+#[derive(Clone)]
 pub enum Fetch<T, E> {
     Loading,
     Fetched(Result<T, E>),

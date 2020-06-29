@@ -384,7 +384,7 @@ version = "0.1.0"
 dependencies = [
  "async-trait",
  "glue",
- "seed",
+ "seed 0.7.0 (git+https://github.com/seed-rs/seed?rev=0a538f0)",
  "seed_style_preview",
  "serde",
  "serde_json",
@@ -1851,6 +1851,31 @@ dependencies = [
 [[package]]
 name = "seed"
 version = "0.7.0"
+source = "git+https://github.com/seed-rs/seed?rev=0a538f0#0a538f03d6aeb56b00d997c80a666e388279a727"
+dependencies = [
+ "console_error_panic_hook",
+ "cookie 0.14.1",
+ "dbg",
+ "enclose",
+ "futures",
+ "gloo-file",
+ "gloo-timers",
+ "indexmap",
+ "js-sys",
+ "pulldown-cmark",
+ "rand",
+ "serde",
+ "serde_json",
+ "uuid",
+ "version_check 0.9.2",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "web-sys",
+]
+
+[[package]]
+name = "seed"
+version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "882f4569a394bbb2f15f2fc410e0fbcef178fe24fc2d91599607a598443c6df8"
 dependencies = [
@@ -1883,7 +1908,7 @@ dependencies = [
  "comp_state",
  "derive_more",
  "lazy_static",
- "seed",
+ "seed 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "wasm-bindgen",
  "web-sys",
 ]
@@ -1891,7 +1916,7 @@ dependencies = [
 [[package]]
 name = "seed_style_macros"
 version = "0.1.3"
-source = "git+https://github.com/rebo/seed_style_preview#bb80fdfce27710f74379a50ae79df837dda24757"
+source = "git+https://github.com/ethanboxx/seed_style_preview.git#c83a29c947acb583ac39ecefb28c8ab0b5a3c6e0"
 dependencies = [
  "darling",
  "eager",
@@ -1899,7 +1924,7 @@ dependencies = [
  "illicit",
  "proc-macro2 1.0.18",
  "quote 1.0.7",
- "seed",
+ "seed 0.7.0 (git+https://github.com/seed-rs/seed?rev=0a538f0)",
  "seed_hooks",
  "syn 1.0.33",
 ]
@@ -1907,7 +1932,7 @@ dependencies = [
 [[package]]
 name = "seed_style_preview"
 version = "0.1.7"
-source = "git+https://github.com/rebo/seed_style_preview#bb80fdfce27710f74379a50ae79df837dda24757"
+source = "git+https://github.com/ethanboxx/seed_style_preview.git#c83a29c947acb583ac39ecefb28c8ab0b5a3c6e0"
 dependencies = [
  "anymap",
  "derive_more",
@@ -1916,7 +1941,7 @@ dependencies = [
  "illicit",
  "objekt-clonable",
  "ordered-float",
- "seed",
+ "seed 0.7.0 (git+https://github.com/seed-rs/seed?rev=0a538f0)",
  "seed_hooks",
  "seed_style_macros",
  "wasm-bindgen",

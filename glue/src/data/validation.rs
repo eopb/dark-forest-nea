@@ -14,7 +14,7 @@ pub struct Validation {
     pub must_be_email: bool,
 }
 
-#[derive(Eq, PartialEq, Debug, Deserialize, Serialize, Clone)]
+#[derive(Eq, PartialEq, Debug, Deserialize, Serialize, Copy, Clone)]
 pub enum Error {
     TooLong,
     TooShort,
