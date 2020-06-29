@@ -13,3 +13,26 @@ pub fn view<Msg>(header: &str, subheading: &str) -> Node<Msg> {
         ui::subheading(subheading),
     ]
 }
+
+#[cfg(test)]
+mod tests {
+    use wasm_bindgen_test::*;
+    wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);
+    use super::*;
+    use crate::updates;
+
+    #[wasm_bindgen_test]
+    fn test() {
+        let mut element = El::<updates::Msg>::empty(Tag::Div);
+        view("Dark Forest", "A cool subheading").update_el(&mut element);
+        let children = element.children;
+        let header = children[0].clone();
+
+        assert!(matches!(
+            header,
+            Node::Element(El {
+                tag: Tag::Header, ..
+            })
+        ))
+    }
+}
