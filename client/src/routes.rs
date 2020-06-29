@@ -39,7 +39,8 @@ impl TryFrom<&Url> for Route {
 pub struct ApiRoute;
 
 impl Route {
-    pub fn update(url: &UrlChanged) -> Option<updates::Msg> {
+    #[allow(clippy::needless_pass_by_value)] // Update function does not register otherwise.
+    pub fn update(url: UrlChanged) -> Option<updates::Msg> {
         if let Ok(url) = (&url.0).try_into() {
             Some(updates::Msg::ChangeRoute(url))
         } else {
