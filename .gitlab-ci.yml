@@ -17,6 +17,8 @@ build:
 verify:
   stage: verify
   script:
+    - apt update
+    - apt install firefox-esr -y
     - cargo make verify
 
 coverage:
