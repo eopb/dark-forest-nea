@@ -19,7 +19,7 @@ impl Claims {
         Self {
             sub: user,
             company: "dark_forest".to_owned(),
-            exp: (Utc::now() + Duration::days(1))
+            exp: (Utc::now() + Duration::days(Self::max_age_days()))
                 .timestamp()
                 .try_into()
                 .expect("Should be convertible for the next 100 years"),
@@ -31,5 +31,9 @@ impl Claims {
             self,
             &EncodingKey::from_secret(env::var("SECRET").unwrap().as_bytes()),
         )
+    }
+    /// Can't simply return duration due to time crate version miss-match with `chrono` and `cookie`
+    pub const fn max_age_days() -> i64 {
+        1
     }
 }
