@@ -5,14 +5,14 @@ before_script:
   - cargo install cargo-make
 
 stages:
-  - build
+  # - build
   - verify
-  - coverage
+  # - coverage
 
-build:
-  stage: build
-  script:
-    - cargo make build
+# build:
+#   stage: build
+#   script:
+#     - cargo make build
 
 verify:
   stage: verify
@@ -20,8 +20,7 @@ verify:
     - apt update
     - apt install firefox-esr -y
     - cargo make verify
-
-coverage:
-  stage: coverage
-  script:
-    - cargo make coverage
+# coverage:
+#   stage: coverage
+#   script:
+#     - cargo make coverage
