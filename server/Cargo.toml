@@ -14,7 +14,7 @@ log = "0.4.8"
 femme = "2.1"
 dotenv = "0.15"
 http-types = "2.2.1"
-glue = { path = "../glue" }
+shared = { path = "../shared" }
 async-trait = "0.1"
 mongodb = { git = "https://github.com/ethanboxx/mongo-rust-driver.git", features = ["async-std-runtime"], default-features = false }
 bson = "1.0"

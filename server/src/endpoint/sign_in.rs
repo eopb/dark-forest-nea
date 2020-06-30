@@ -1,7 +1,7 @@
 use {
     async_trait::async_trait,
     cookie::Cookie,
-    glue::data::credentials::Fail::{IncorrectPassword, UserNotFound},
+    shared::data::credentials::Fail::{IncorrectPassword, UserNotFound},
     tide::{Redirect, Request, Response},
     time::Duration,
 };
@@ -9,7 +9,7 @@ use {
 use crate::{endpoint, security, state::State};
 
 #[async_trait]
-impl endpoint::Post for glue::Credentials {
+impl endpoint::Post for shared::Credentials {
     async fn post(mut req: Request<State>) -> tide::Result<Response> {
         let credentials: Self = req.body_form().await?;
 
@@ -21,7 +21,7 @@ impl endpoint::Post for glue::Credentials {
 
         Ok(if let Some(stored_user) = stored_user {
             if stored_user.verify_credentials(&credentials)? {
-                let mut response: Response = Redirect::new(glue::Route::Index.to_string()).into();
+                let mut response: Response = Redirect::new(shared::Route::Index.to_string()).into();
                 response.insert_cookie(
                     Cookie::build(
                         "login",
@@ -34,10 +34,10 @@ impl endpoint::Post for glue::Credentials {
                 );
                 response
             } else {
-                Redirect::new(glue::Route::SignIn(Some(IncorrectPassword)).to_string()).into()
+                Redirect::new(shared::Route::SignIn(Some(IncorrectPassword)).to_string()).into()
             }
         } else {
-            Redirect::new(glue::Route::SignIn(Some(UserNotFound)).to_string()).into()
+            Redirect::new(shared::Route::SignIn(Some(UserNotFound)).to_string()).into()
         })
     }
 }

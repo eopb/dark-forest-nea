@@ -39,11 +39,11 @@ async fn main() -> tide::Result<()> {
     app.at("/.env")
         .get(Redirect::new("https://www.youtube.com/watch?v=dQw4w9WgXcQ"));
 
-    glue::Hello::apply(&mut app);
-    glue::Credentials::apply(&mut app);
-    glue::CreateAccount::apply(&mut app);
-    glue::SignedIn::apply(&mut app);
-    glue::SignOut::apply(&mut app);
+    shared::Hello::apply(&mut app);
+    shared::Credentials::apply(&mut app);
+    shared::CreateAccount::apply(&mut app);
+    shared::SignedIn::apply(&mut app);
+    shared::SignOut::apply(&mut app);
 
     app.listen("localhost:8081").await?;
 

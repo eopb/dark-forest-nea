@@ -5,7 +5,7 @@ use seed_style::*;
 
 pub fn view(
     model: &state::Model,
-    error: Option<&glue::data::create_account::Fail>,
+    error: Option<&shared::data::create_account::Fail>,
 ) -> Node<updates::Msg> {
     let user_name = |err| ui::form::text_with_error(model, "user_name", "Username...", err);
     let email = |err| ui::form::email_with_error(model, "email", "Email...", err);
@@ -15,12 +15,12 @@ pub fn view(
         "/api/create-account",
         match error {
             Some(error) => match error {
-                glue::data::create_account::Fail::AlreadyExists => vec![
+                shared::data::create_account::Fail::AlreadyExists => vec![
                     user_name(Some("Username already taken.".to_owned())),
                     email(None),
                     password(None),
                 ],
-                glue::data::create_account::Fail::InvalidField(error) => vec![
+                shared::data::create_account::Fail::InvalidField(error) => vec![
                     user_name(error.user_name.map(|x| x.show("Username"))),
                     email(error.email.map(|x| x.show("Email"))),
                     password(error.password.map(|x| x.show("Password"))),
@@ -34,7 +34,7 @@ pub fn view(
             a![
                 ui::style::button(model, 3),
                 "Sign In.",
-                attrs! {At::Href => glue::Route::SignIn(None)}
+                attrs! {At::Href => shared::Route::SignIn(None)}
             ]
             .into_nodes(),
         ],

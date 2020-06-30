@@ -26,7 +26,7 @@ pub fn update(msg: Msg, model: &mut state::Model, orders: &mut impl Orders<Msg>)
                         route
                             .0
                             .as_ref()
-                            .map_or("Page Not Found", glue::Route::title),
+                            .map_or("Page Not Found", shared::Route::title),
                     )
                 }
             }
@@ -47,15 +47,15 @@ pub enum ToFetch {
 impl ToFetch {
     async fn order(self) -> Msg {
         match self {
-            Self::Hello => Msg::DataFetched(Fetched::Hello(glue::Hello::fetch().await)),
-            Self::SignedIn => Msg::DataFetched(Fetched::SignedIn(glue::SignedIn::fetch().await)),
+            Self::Hello => Msg::DataFetched(Fetched::Hello(shared::Hello::fetch().await)),
+            Self::SignedIn => Msg::DataFetched(Fetched::SignedIn(shared::SignedIn::fetch().await)),
         }
     }
 }
 
 pub enum Fetched {
-    Hello(Result<glue::Hello, FetchError>),
-    SignedIn(Result<glue::SignedIn, FetchError>),
+    Hello(Result<shared::Hello, FetchError>),
+    SignedIn(Result<shared::SignedIn, FetchError>),
 }
 
 impl Fetched {

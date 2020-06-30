@@ -5,7 +5,7 @@ pub trait View<Msg, Model> {
     fn view(&self, model: &Model) -> Vec<Node<Msg>>;
 }
 
-impl<Msg, Model> View<Msg, Model> for glue::Hello {
+impl<Msg, Model> View<Msg, Model> for shared::Hello {
     fn view(&self, _: &Model) -> Vec<Node<Msg>> {
         p![&self.msg].into_nodes()
     }

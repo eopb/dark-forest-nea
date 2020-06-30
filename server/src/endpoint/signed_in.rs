@@ -6,7 +6,7 @@ use {
 use crate::{endpoint, security::jwt, state::State};
 
 #[async_trait]
-impl endpoint::Get for glue::SignedIn {
+impl endpoint::Get for shared::SignedIn {
     async fn get(req: Request<State>) -> tide::Result<Response> {
         let user = req.cookie("login").and_then(|cookie| {
             jwt::Claims::decode_token(cookie.value())

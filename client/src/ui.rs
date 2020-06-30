@@ -10,9 +10,9 @@ pub use {bordered::Bordered, view::View};
 use crate::{state, updates};
 
 use {
-    glue::Endpoint as _,
     seed::{prelude::*, *},
     seed_style::{em, px, vh, *},
+    shared::Endpoint as _,
 };
 
 // `view` describes what to display.
@@ -51,24 +51,24 @@ fn nav(model: &state::Model) -> Node<updates::Msg> {
             .justify_content("space-between")
             .font_size(em(3)),
         div![
-            if model.route == glue::Route::Index.into() {
+            if model.route == shared::Route::Index.into() {
                 empty()
             } else {
                 a![
                     a(),
                     button(model),
                     "Home",
-                    attrs! {At::Href => glue::Route::Index}
+                    attrs! {At::Href => shared::Route::Index}
                 ]
             },
-            if model.route == glue::Route::Explore.into() {
+            if model.route == shared::Route::Explore.into() {
                 empty()
             } else {
                 a![
                     a(),
                     button(model),
                     "Explore",
-                    attrs! {At::Href => glue::Route::Explore}
+                    attrs! {At::Href => shared::Route::Explore}
                 ]
             }
         ],
@@ -77,21 +77,21 @@ fn nav(model: &state::Model) -> Node<updates::Msg> {
                 a(),
                 button(model),
                 "New Project",
-                attrs! {At::Href => glue::Route::NewProject}
+                attrs! {At::Href => shared::Route::NewProject}
             ],
             if let Some(signed_in) = model.server.signed_in.ok() {
                 match signed_in {
-                    glue::SignedIn::As(_) => a![
+                    shared::SignedIn::As(_) => a![
                         a(),
                         button(model),
                         "Sign Out",
-                        attrs! {At::Href => glue::SignOut::PATH}
+                        attrs! {At::Href => shared::SignOut::PATH}
                     ],
-                    glue::SignedIn::Not => a![
+                    shared::SignedIn::Not => a![
                         a(),
                         button(model),
                         "Sign In",
-                        attrs! {At::Href => glue::Route::SignIn(None)}
+                        attrs! {At::Href => shared::Route::SignIn(None)}
                     ],
                 }
             } else {

@@ -7,9 +7,9 @@ use {
 
 pub fn view(
     model: &state::Model,
-    error: Option<&glue::data::credentials::Fail>,
+    error: Option<&shared::data::credentials::Fail>,
 ) -> Node<updates::Msg> {
-    use glue::data::credentials::Fail::{IncorrectPassword, UserNotFound};
+    use shared::data::credentials::Fail::{IncorrectPassword, UserNotFound};
     let user_name = |err| ui::form::text_with_error(model, "user_name", "Username...", err);
     let password = |err| ui::form::password_with_error(model, "password", "Password...", err);
     ui::form::view(
@@ -33,7 +33,7 @@ pub fn view(
             a![
                 ui::style::button(model, 3),
                 "Create account.",
-                attrs! {At::Href => glue::Route::CreateAccount(None)}
+                attrs! {At::Href => shared::Route::CreateAccount(None)}
             ]
             .into_nodes(),
         ],

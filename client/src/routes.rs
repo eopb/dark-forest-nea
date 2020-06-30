@@ -5,10 +5,10 @@ use seed::{app::subs::UrlChanged, browser::url::Url, prelude::*};
 use std::convert::{TryFrom, TryInto};
 
 #[derive(Default, Clone, PartialEq, Eq, Debug)]
-pub struct Route(pub Option<glue::Route>);
+pub struct Route(pub Option<shared::Route>);
 
-impl From<glue::Route> for Route {
-    fn from(route: glue::Route) -> Self {
+impl From<shared::Route> for Route {
+    fn from(route: shared::Route) -> Self {
         Self(Some(route))
     }
 }
@@ -24,11 +24,11 @@ impl TryFrom<&Url> for Route {
             .collect::<Vec<&str>>()
             .as_slice()
         {
-            [] => Ok(Some(glue::Route::Index)),
-            ["explore"] => Ok(Some(glue::Route::Explore)),
-            ["sign-in"] => Ok(Some(glue::Route::SignIn(glue::qs::get_enum(qs)))),
-            ["create-account"] => Ok(Some(glue::Route::CreateAccount(glue::qs::get_enum(qs)))),
-            ["new-project"] => Ok(Some(glue::Route::NewProject)),
+            [] => Ok(Some(shared::Route::Index)),
+            ["explore"] => Ok(Some(shared::Route::Explore)),
+            ["sign-in"] => Ok(Some(shared::Route::SignIn(shared::qs::get_enum(qs)))),
+            ["create-account"] => Ok(Some(shared::Route::CreateAccount(shared::qs::get_enum(qs)))),
+            ["new-project"] => Ok(Some(shared::Route::NewProject)),
             ["api", ..] => Err(ApiRoute),
             _ => Ok(None),
         }
@@ -50,7 +50,7 @@ impl Route {
     }
     pub fn request_required_data(&self, orders: &mut impl Orders<updates::Msg>) {
         orders.send_msg(updates::Msg::ToFetch(updates::ToFetch::SignedIn));
-        if let Some(glue::Route::Index) = self.0 {
+        if let Some(shared::Route::Index) = self.0 {
             orders.send_msg(updates::Msg::ToFetch(updates::ToFetch::Hello));
         };
     }

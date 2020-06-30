@@ -392,11 +392,11 @@ name = "client"
 version = "0.1.0"
 dependencies = [
  "async-trait",
- "glue",
  "seed 0.7.0 (git+https://github.com/seed-rs/seed?rev=0a538f0)",
  "seed_style_preview",
  "serde",
  "serde_json",
+ "shared",
  "wasm-bindgen-test",
  "web-sys",
 ]
@@ -928,15 +928,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "glue"
-version = "0.1.0"
-dependencies = [
- "regex",
- "serde",
- "serde_qs",
-]
-
-[[package]]
 name = "harsh"
 version = "0.1.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1129,9 +1120,9 @@ dependencies = [
 
 [[package]]
 name = "jsonwebtoken"
-version = "7.1.2"
+version = "7.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b1f325ae57ddcf609f02d891486ce740f5bbd0cc3e93f9bffaacdf6594b21404"
+checksum = "afabcc15e437a6484fc4f12d0fd63068fe457bf93f1c148d3d9649c60b103f32"
 dependencies = [
  "base64 0.12.3",
  "pem",
@@ -1466,9 +1457,9 @@ checksum = "2839e79665f131bdb5782e51f2c6c9599c133c6098982a54c794358bf432529c"
 
 [[package]]
 name = "ordered-float"
-version = "1.0.2"
+version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "18869315e81473c951eb56ad5558bbc56978562d3ecfb87abb7a1e944cea4518"
+checksum = "3741934be594d77de1c8461ebcbbe866f585ea616a9753aa78f2bdc69f0e4579"
 dependencies = [
  "num-traits",
 ]
@@ -2105,13 +2096,13 @@ dependencies = [
  "dotenv",
  "env_logger",
  "femme",
- "glue",
  "http-types",
  "jsonwebtoken",
  "log",
  "maud",
  "mongodb",
  "serde",
+ "shared",
  "tide",
  "time 0.2.16",
 ]
@@ -2144,6 +2135,15 @@ dependencies = [
  "digest",
  "fake-simd",
  "opaque-debug",
+]
+
+[[package]]
+name = "shared"
+version = "0.1.0"
+dependencies = [
+ "regex",
+ "serde",
+ "serde_qs",
 ]
 
 [[package]]

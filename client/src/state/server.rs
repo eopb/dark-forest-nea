@@ -5,8 +5,8 @@ use seed::{browser::fetch::FetchError, prelude::*, *};
 
 #[derive(Default)]
 pub struct Server {
-    pub hello: Fetch<glue::Hello, FetchError>,
-    pub signed_in: Fetch<glue::SignedIn, FetchError>,
+    pub hello: Fetch<shared::Hello, FetchError>,
+    pub signed_in: Fetch<shared::SignedIn, FetchError>,
 }
 
 #[derive(Clone)]
