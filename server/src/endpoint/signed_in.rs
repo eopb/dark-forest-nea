@@ -1,24 +1,17 @@
 use {
     async_trait::async_trait,
-    jsonwebtoken::{decode, DecodingKey, Validation},
     tide::{Body, Request, Response},
 };
 
-use std::env;
-
-use crate::{endpoint, security, state::State};
+use crate::{endpoint, security::jwt, state::State};
 
 #[async_trait]
 impl endpoint::Get for glue::SignedIn {
     async fn get(req: Request<State>) -> tide::Result<Response> {
         let user = req.cookie("login").and_then(|cookie| {
-            decode::<security::jwt::Claims>(
-                cookie.value(),
-                &DecodingKey::from_secret(env::var("SECRET").unwrap().as_bytes()),
-                &Validation::default(),
-            )
-            .ok()
-            .map(|token| token.claims.sub)
+            jwt::Claims::decode_token(cookie.value())
+                .map(|token| token.claims.sub)
+                .ok()
         });
 
         let mut res = Response::new(200);
