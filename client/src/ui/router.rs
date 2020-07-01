@@ -14,7 +14,8 @@ pub fn view(model: &state::Model) -> Node<updates::Msg> {
             shared::Route::Explore => p!["explore"],
             shared::Route::SignIn(error) => sign_in::view(model, error.as_ref()),
             shared::Route::CreateAccount(error) => create_account::view(model, error.as_ref()),
-            shared::Route::NewProject => new_project::view(model),
+            shared::Route::NewProject(error) => new_project::view(model, error.as_ref()),
+            shared::Route::Users { .. } => todo!(),
         },
         None => not_found::view(model),
     }

@@ -44,6 +44,7 @@ async fn main() -> tide::Result<()> {
     shared::CreateAccount::apply(&mut app);
     shared::SignedIn::apply(&mut app);
     shared::SignOut::apply(&mut app);
+    shared::NewProject::apply(&mut app);
 
     app.listen("localhost:8081").await?;
 

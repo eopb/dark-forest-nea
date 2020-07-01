@@ -1,4 +1,7 @@
 use crate::{routes::Route, state, Endpoint as _};
+
+use shared::routes::SubRoute;
+
 use {
     seed::{browser::fetch::FetchError, prelude::*},
     web_sys::Window,
@@ -23,10 +26,10 @@ pub fn update(msg: Msg, model: &mut state::Model, orders: &mut impl Orders<Msg>)
                 route.request_required_data(orders);
                 if let Some(doc) = web_sys::window().as_ref().and_then(Window::document) {
                     doc.set_title(
-                        route
+                        &route
                             .0
                             .as_ref()
-                            .map_or("Page Not Found", shared::Route::title),
+                            .map_or("Page Not Found".to_owned(), shared::Route::title),
                     )
                 }
             }

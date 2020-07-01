@@ -4,7 +4,6 @@ use {
     bson::doc,
     chrono::{offset::Utc, Duration},
     jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, TokenData, Validation},
-    log::log,
     serde::{Deserialize, Serialize},
 };
 
