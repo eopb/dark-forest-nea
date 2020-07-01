@@ -2,6 +2,7 @@
 pub mod create_account;
 pub mod credentials;
 pub mod hello;
+pub mod new_project;
 pub mod sign_out;
 pub mod signed_in;
 pub mod validation;

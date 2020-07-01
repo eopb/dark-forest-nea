@@ -9,6 +9,8 @@ use {
     tide::{Request, Response, StatusCode},
 };
 
+use shared::routes::SubRoute;
+
 pub async fn index(_: Request<State>) -> tide::Result<impl Into<Response>> {
     Ok({
         let mut res = Response::new(StatusCode::Ok);

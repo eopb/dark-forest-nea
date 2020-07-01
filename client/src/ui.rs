@@ -73,29 +73,31 @@ fn nav(model: &state::Model) -> Node<updates::Msg> {
             }
         ],
         div![
-            a![
-                a(),
-                button(model),
-                "New Project",
-                attrs! {At::Href => shared::Route::NewProject}
-            ],
             if let Some(signed_in) = model.server.signed_in.ok() {
                 match signed_in {
-                    shared::SignedIn::As(_) => a![
-                        a(),
-                        button(model),
-                        "Sign Out",
-                        attrs! {At::Href => shared::SignOut::PATH}
+                    shared::SignedIn::As(_) => vec![
+                        a![
+                            a(),
+                            button(model),
+                            "New Project",
+                            attrs! {At::Href => shared::Route::NewProject(None)}
+                        ],
+                        a![
+                            a(),
+                            button(model),
+                            "Sign Out",
+                            attrs! {At::Href => shared::SignOut::PATH}
+                        ],
                     ],
-                    shared::SignedIn::Not => a![
+                    shared::SignedIn::Not => vec![a![
                         a(),
                         button(model),
                         "Sign In",
                         attrs! {At::Href => shared::Route::SignIn(None)}
-                    ],
+                    ]],
                 }
             } else {
-                empty()
+                empty().into_nodes()
             },
             a![
                 a(),

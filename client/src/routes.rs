@@ -28,7 +28,7 @@ impl TryFrom<&Url> for Route {
             ["explore"] => Ok(Some(shared::Route::Explore)),
             ["sign-in"] => Ok(Some(shared::Route::SignIn(shared::qs::get_enum(qs)))),
             ["create-account"] => Ok(Some(shared::Route::CreateAccount(shared::qs::get_enum(qs)))),
-            ["new-project"] => Ok(Some(shared::Route::NewProject)),
+            ["new-project"] => Ok(Some(shared::Route::NewProject(shared::qs::get_enum(qs)))),
             ["api", ..] => Err(ApiRoute),
             _ => Ok(None),
         }
