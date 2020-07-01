@@ -1,11 +1,14 @@
 use std::env;
 
+use once_cell::sync::Lazy;
 use {
     bson::doc,
     chrono::{offset::Utc, Duration},
     jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, TokenData, Validation},
     serde::{Deserialize, Serialize},
 };
+
+static SECRET: Lazy<Vec<u8>> = Lazy::new(|| env::var("SECRET").unwrap().as_bytes().to_vec());
 
 // `Claims` is the data we are going to encode in our tokens.
 #[derive(Debug, Serialize, Deserialize)]
@@ -27,26 +30,18 @@ impl Claims {
         }
     }
     pub fn get_token(&self) -> jsonwebtoken::errors::Result<String> {
-        encode(
-            &Header::default(),
-            self,
-            &EncodingKey::from_secret(Self::secret().as_bytes()),
-        )
+        encode(&Header::default(), self, &EncodingKey::from_secret(&SECRET))
     }
     // Decodes a token to produce the underlying claim.
     pub fn decode_token(token: &str) -> Result<TokenData<Self>, jsonwebtoken::errors::Error> {
         decode::<Self>(
             token,
-            &DecodingKey::from_secret(Self::secret().as_bytes()),
+            &DecodingKey::from_secret(&SECRET),
             &Validation::default(),
         )
     }
     /// Can't simply return duration due to time crate version miss-match with `chrono` and `cookie`
     pub const fn max_age_days() -> i64 {
         1
-    }
-
-    fn secret() -> String {
-        env::var("SECRET").unwrap()
     }
 }

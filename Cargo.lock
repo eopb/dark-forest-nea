@@ -2101,6 +2101,7 @@ dependencies = [
  "log",
  "maud",
  "mongodb",
+ "once_cell",
  "serde",
  "shared",
  "tide",
