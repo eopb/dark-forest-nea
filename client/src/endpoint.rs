@@ -12,3 +12,4 @@ pub trait Endpoint: 'static + shared::Endpoint + Serialize + for<'a> Deserialize
 
 impl Endpoint for shared::Hello {}
 impl Endpoint for shared::SignedIn {}
+impl Endpoint for shared::RefreshToken {}

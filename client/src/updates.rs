@@ -10,6 +10,7 @@ use {
 // `Msg` describes the different events you can modify state with.
 pub enum Msg {
     ToggleTheme,
+    RefreshTokenIfNeed,
     ChangeRoute(Route),
     DataFetched(Fetched),
     ToFetch(ToFetch),
@@ -39,12 +40,20 @@ pub fn update(msg: Msg, model: &mut state::Model, orders: &mut impl Orders<Msg>)
             orders.skip();
         }
         Msg::DataFetched(x) => x.add_to(model),
+        Msg::RefreshTokenIfNeed => {
+            use state::server::Fetch::Fetched;
+            // Only run this When a user is signed in.
+            if let Fetched(Ok(shared::SignedIn::As(_))) = model.server.signed_in {
+                orders.send_msg(Msg::ToFetch(ToFetch::RefreshToken));
+            }
+        }
     }
 }
 
 pub enum ToFetch {
     Hello,
     SignedIn,
+    RefreshToken,
 }
 
 impl ToFetch {
@@ -52,6 +61,9 @@ impl ToFetch {
         match self {
             Self::Hello => Msg::DataFetched(Fetched::Hello(shared::Hello::fetch().await)),
             Self::SignedIn => Msg::DataFetched(Fetched::SignedIn(shared::SignedIn::fetch().await)),
+            Self::RefreshToken => {
+                Msg::DataFetched(Fetched::RefreshToken(shared::RefreshToken::fetch().await))
+            }
         }
     }
 }
@@ -59,6 +71,7 @@ impl ToFetch {
 pub enum Fetched {
     Hello(Result<shared::Hello, FetchError>),
     SignedIn(Result<shared::SignedIn, FetchError>),
+    RefreshToken(Result<shared::RefreshToken, FetchError>),
 }
 
 impl Fetched {
@@ -66,6 +79,8 @@ impl Fetched {
         match self {
             Self::Hello(x) => model.server.hello = state::server::Fetch::Fetched(x),
             Self::SignedIn(x) => model.server.signed_in = state::server::Fetch::Fetched(x),
+            // Refresh token only affects cookies so it does not have to be handled here.
+            Self::RefreshToken(_) => {}
         }
     }
 }

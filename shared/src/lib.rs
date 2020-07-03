@@ -17,7 +17,8 @@ pub mod routes;
 pub use {
     data::{
         create_account::CreateAccount, credentials::Credentials, hello::Hello,
-        new_project::NewProject, sign_out::SignOut, signed_in::SignedIn, Endpoint,
+        new_project::NewProject, refresh_token::RefreshToken, sign_out::SignOut,
+        signed_in::SignedIn, Endpoint,
     },
     routes::Route,
 };

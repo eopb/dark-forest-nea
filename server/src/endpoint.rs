@@ -1,6 +1,7 @@
 mod create_account;
 mod new_project;
-mod sign_in;
+mod refresh_token;
+pub mod sign_in;
 mod sign_out;
 mod signed_in;
 

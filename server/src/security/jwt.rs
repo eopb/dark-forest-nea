@@ -18,7 +18,7 @@ pub struct Claims {
     company: String,
     // must have this rename for `jsonwebtoken` to validate correctly.
     #[serde(rename(serialize = "exp", deserialize = "exp"))]
-    expires: i64,
+    pub expires: i64,
 }
 
 impl Claims {
@@ -26,7 +26,7 @@ impl Claims {
         Self {
             sub: user,
             company: "dark_forest".to_owned(),
-            expires: (Utc::now() + Duration::days(Self::max_age_days())).timestamp(),
+            expires: (Utc::now() + Duration::minutes(Self::max_age_minutes())).timestamp(),
         }
     }
     pub fn get_token(&self) -> jsonwebtoken::errors::Result<String> {
@@ -41,7 +41,7 @@ impl Claims {
         )
     }
     /// Can't simply return duration due to time crate version miss-match with `chrono` and `cookie`
-    pub const fn max_age_days() -> i64 {
-        1
+    pub const fn max_age_minutes() -> i64 {
+        15
     }
 }
