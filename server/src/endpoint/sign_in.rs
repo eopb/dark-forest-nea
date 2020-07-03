@@ -21,18 +21,10 @@ impl endpoint::Post for shared::Credentials {
 
         Ok(if let Some(stored_user) = stored_user {
             if stored_user.verify_credentials(&credentials)? {
-                let mut response: Response = Redirect::new(shared::Route::Index.to_string()).into();
-                response.insert_cookie(
-                    Cookie::build(
-                        "login",
-                        security::jwt::Claims::new(credentials.user_name).get_token()?,
-                    )
-                    .max_age(Duration::days(security::jwt::Claims::max_age_days()))
-                    .secure(true)
-                    .http_only(true)
-                    .finish(),
-                );
-                response
+                unsafe_sign_in(
+                    Redirect::new(shared::Route::Index.to_string()).into(),
+                    credentials.user_name,
+                )?
             } else {
                 Redirect::new(shared::Route::SignIn(Some(IncorrectPassword)).to_string()).into()
             }
@@ -40,4 +32,17 @@ impl endpoint::Post for shared::Credentials {
             Redirect::new(shared::Route::SignIn(Some(UserNotFound)).to_string()).into()
         })
     }
+}
+
+#[allow(clippy::module_name_repetitions)]
+pub fn unsafe_sign_in(mut res: Response, user: String) -> tide::Result<Response> {
+    let claims = security::jwt::Claims::new(user);
+    res.insert_cookie(
+        Cookie::build("login", claims.get_token()?)
+            .max_age(Duration::minutes(security::jwt::Claims::max_age_minutes()))
+            .secure(true)
+            .http_only(true)
+            .finish(),
+    );
+    Ok(res)
 }

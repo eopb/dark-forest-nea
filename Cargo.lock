@@ -397,6 +397,7 @@ dependencies = [
  "serde",
  "serde_json",
  "shared",
+ "time 0.2.16",
  "wasm-bindgen-test",
  "web-sys",
 ]

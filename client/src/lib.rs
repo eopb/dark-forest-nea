@@ -14,7 +14,12 @@ pub mod updates;
 
 pub use {endpoint::Endpoint, routes::Route};
 
-use seed::{app::subs::UrlChanged, prelude::*};
+use {
+    seed::{app::subs::UrlChanged, prelude::*},
+    time::Duration,
+};
+
+use std::convert::TryInto;
 
 // `init` describes what should happen when your app started.
 fn init(url: Url, orders: &mut impl Orders<updates::Msg>) -> state::Model {
@@ -22,6 +27,15 @@ fn init(url: Url, orders: &mut impl Orders<updates::Msg>) -> state::Model {
 
     orders
         .subscribe(routes::Route::update)
+        // Always refresh token on load to keep token update.
+        .send_msg(updates::Msg::RefreshTokenIfNeed)
+        .stream(streams::interval(
+            Duration::minutes(14)
+                .whole_milliseconds()
+                .try_into()
+                .unwrap(),
+            || updates::Msg::RefreshTokenIfNeed,
+        ))
         .notify(UrlChanged(url));
 
     state::Model::new()
