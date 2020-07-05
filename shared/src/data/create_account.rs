@@ -14,7 +14,7 @@ pub struct CreateAccount {
 }
 
 impl Endpoint for CreateAccount {
-    const PATH: &'static str = "/api/create-account";
+    const PATH: &'static str = "/create-account";
 }
 
 impl validation::Post for CreateAccount {

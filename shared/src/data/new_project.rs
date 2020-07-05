@@ -12,7 +12,7 @@ pub struct NewProject {
 }
 
 impl Endpoint for NewProject {
-    const PATH: &'static str = "/api/new-project";
+    const PATH: &'static str = "/new-project";
 }
 
 impl validation::Post for NewProject {

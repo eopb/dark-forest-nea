@@ -11,8 +11,26 @@ pub mod validation;
 #[doc(inline)]
 pub use validation::Validation;
 
+#[derive(Copy, Clone)]
+pub enum ResponseKind {
+    Json,
+    Binary,
+}
+use ResponseKind::{Binary, Json};
+
 /// A type that is related to a path.
 pub trait Endpoint {
     /// Relative API path.
     const PATH: &'static str;
+
+    fn path(res_kind: ResponseKind) -> String {
+        format!(
+            "/{}{}",
+            match res_kind {
+                Binary => "api/bin",
+                Json => "api/json",
+            },
+            Self::PATH
+        )
+    }
 }

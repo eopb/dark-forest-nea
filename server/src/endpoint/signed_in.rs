@@ -1,15 +1,23 @@
 use {
     async_trait::async_trait,
-    tide::{Body, Request, Response},
+    tide::{Request, Response},
 };
 
-use crate::{endpoint, security::jwt, state::State};
+use crate::{
+    endpoint::{self, Endpoint},
+    security::jwt,
+    state::State,
+};
+
+use shared::data::ResponseKind;
+
+impl Endpoint for shared::SignedIn {}
 
 #[async_trait]
 impl endpoint::Get for shared::SignedIn {
-    async fn get(req: Request<State>) -> tide::Result<Response> {
+    async fn get(req: Request<State>, res_kind: ResponseKind) -> tide::Result<Response> {
         let mut res = Response::new(200);
-        res.set_body(Body::from_json(&Self::get_user(&req).await)?);
+        res.set_body(Self::body_from(&Self::get_user(&req).await, res_kind)?);
         Ok(res)
     }
 }

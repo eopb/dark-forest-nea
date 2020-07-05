@@ -1,5 +1,5 @@
 use seed::virtual_dom::update_el::UpdateEl;
-use seed::{browser::fetch::FetchError, prelude::*, *};
+use seed::{prelude::*, *};
 
 pub trait View<Msg, Model> {
     fn view(&self, model: &Model) -> Vec<Node<Msg>>;
@@ -24,7 +24,7 @@ impl<Msg, Model> View<Msg, Model> for () {
     }
 }
 
-impl<Msg, Model> View<Msg, Model> for FetchError {
+impl<Msg, Model> View<Msg, Model> for anyhow::Error {
     fn view(&self, _: &Model) -> Vec<Node<Msg>> {
         p![&format!("Failed to fetch info. \"Error Info: {:?}\"", self)].into_nodes()
     }

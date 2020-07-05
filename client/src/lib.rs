@@ -21,6 +21,10 @@ use {
 
 use std::convert::TryInto;
 
+use shared::data::ResponseKind::{self, Binary};
+
+pub const RESPONSE_KIND: ResponseKind = Binary;
+
 // `init` describes what should happen when your app started.
 fn init(url: Url, orders: &mut impl Orders<updates::Msg>) -> state::Model {
     ui::style::global::init();

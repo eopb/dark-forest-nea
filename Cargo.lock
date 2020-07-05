@@ -173,6 +173,33 @@ dependencies = [
 ]
 
 [[package]]
+name = "atomic_hooks"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "759d2f5f67b700c9651a95525f51a3ce1bea5059f74480677acb0957852fe34f"
+dependencies = [
+ "anymap",
+ "atomic_hooks_macros",
+ "illicit",
+ "slotmap",
+ "topo",
+ "typemap",
+]
+
+[[package]]
+name = "atomic_hooks_macros"
+version = "0.1.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5bd817ca5111d8415233a086d937efc7aa651215f584097902866f67b73a29e9"
+dependencies = [
+ "darling",
+ "illicit",
+ "proc-macro2 1.0.18",
+ "quote 1.0.7",
+ "syn 1.0.33",
+]
+
+[[package]]
 name = "atty"
 version = "0.2.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -231,6 +258,16 @@ dependencies = [
  "blowfish",
  "byteorder",
  "getrandom",
+]
+
+[[package]]
+name = "bincode"
+version = "1.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f30d3a39baa26f9651f17b375061f3233dde33424a8b72b0dbe93a68a0bc896d"
+dependencies = [
+ "byteorder",
+ "serde",
 ]
 
 [[package]]
@@ -366,9 +403,9 @@ checksum = "24508e28c677875c380c20f4d28124fab6f8ed4ef929a1397d7b1a31e92f1005"
 
 [[package]]
 name = "cc"
-version = "1.0.56"
+version = "1.0.57"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "77c1f1d60091c1b73e2b1f4560ab419204b178e625fa945ded7b660becd2bd46"
+checksum = "0fde55d2a2bfaa4c9668bbc63f531fbdeee3ffe188f4662511ce2c22b3eedebe"
 
 [[package]]
 name = "cfg-if"
@@ -378,9 +415,9 @@ checksum = "4785bdd1c96b2a846b2bd7cc02e86b6b3dbf14e7e53446c4f54c92a361040822"
 
 [[package]]
 name = "chrono"
-version = "0.4.11"
+version = "0.4.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "80094f509cf8b5ae86a4966a39b3ff66cd7e2a3e594accec3743ff3fabeab5b2"
+checksum = "f0fee792e164f78f5fe0c296cc2eb3688a2ca2b70cdff33040922d298203f0c4"
 dependencies = [
  "num-integer",
  "num-traits",
@@ -391,7 +428,9 @@ dependencies = [
 name = "client"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "async-trait",
+ "bincode",
  "seed 0.7.0 (git+https://github.com/seed-rs/seed?rev=0a538f0)",
  "seed_style_preview",
  "serde",
@@ -409,17 +448,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ddfc5b9aa5d4507acaf872de71051dfd0e309860e88966e1051e462a077aac4f"
 dependencies = [
  "bitflags",
-]
-
-[[package]]
-name = "comp_state"
-version = "0.2.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7f4b1040d11b613ae2a99c49769771d4b6d5efa6057d8351d110ed744066b8a3"
-dependencies = [
- "anymap",
- "slotmap",
- "topo",
 ]
 
 [[package]]
@@ -1673,9 +1701,9 @@ dependencies = [
 
 [[package]]
 name = "pulldown-cmark"
-version = "0.7.1"
+version = "0.7.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3e142c3b8f49d2200605ee6ba0b1d757310e9e7a72afe78c36ee2ef67300ee00"
+checksum = "ca36dea94d187597e104a5c8e4b07576a8a45aa5db48a65e12940d3eb7461f55"
 dependencies = [
  "bitflags",
  "getopts",
@@ -1939,11 +1967,11 @@ dependencies = [
 
 [[package]]
 name = "seed_hooks"
-version = "0.1.3"
+version = "0.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "18ea895b8ec3a5b2e9ddb5f60b44682b302909cdfed59403d6378347c790990f"
+checksum = "b7bab9b663a5384d236a824ca4fcd5123a677c1892e164d450a935d20f115f44"
 dependencies = [
- "comp_state",
+ "atomic_hooks",
  "derive_more",
  "lazy_static",
  "seed 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1953,8 +1981,9 @@ dependencies = [
 
 [[package]]
 name = "seed_style_macros"
-version = "0.1.3"
-source = "git+https://github.com/ethanboxx/seed_style_preview.git#c83a29c947acb583ac39ecefb28c8ab0b5a3c6e0"
+version = "0.1.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f35f057d7e1f6be9b46784628ad82590e4d4a333a765ed0e0cdc68817cfd9e92"
 dependencies = [
  "darling",
  "eager",
@@ -1962,15 +1991,15 @@ dependencies = [
  "illicit",
  "proc-macro2 1.0.18",
  "quote 1.0.7",
- "seed 0.7.0 (git+https://github.com/seed-rs/seed?rev=0a538f0)",
+ "seed 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "seed_hooks",
  "syn 1.0.33",
 ]
 
 [[package]]
 name = "seed_style_preview"
-version = "0.1.7"
-source = "git+https://github.com/ethanboxx/seed_style_preview.git#c83a29c947acb583ac39ecefb28c8ab0b5a3c6e0"
+version = "0.1.8"
+source = "git+https://github.com/ethanboxx/seed_style_preview.git#605ded3c947857da919187a7da4bda819d4f0c99"
 dependencies = [
  "anymap",
  "derive_more",
@@ -2091,6 +2120,7 @@ dependencies = [
  "async-std",
  "async-trait",
  "bcrypt",
+ "bincode",
  "bson",
  "chrono",
  "cookie 0.14.1",
@@ -2522,6 +2552,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "traitobject"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "efd1f82c56340fdf16f2a953d7bda4f8fdffba13d93b00844c25572110b26079"
+
+[[package]]
 name = "trust-dns-proto"
 version = "0.19.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2570,6 +2606,15 @@ dependencies = [
  "proc-macro2 0.4.30",
  "quote 0.6.13",
  "syn 0.15.44",
+]
+
+[[package]]
+name = "typemap"
+version = "0.3.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "653be63c80a3296da5551e1bfd2cca35227e13cdd08c6668903ae2f4f77aa1f6"
+dependencies = [
+ "unsafe-any",
 ]
 
 [[package]]
@@ -2637,6 +2682,15 @@ checksum = "df0c900f2f9b4116803415878ff48b63da9edb268668e08cf9292d7503114a01"
 dependencies = [
  "generic-array 0.12.3",
  "subtle 2.2.3",
+]
+
+[[package]]
+name = "unsafe-any"
+version = "0.4.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f30360d7979f5e9c6e6cea48af192ea8fab4afb3cf72597154b8f08935bc9c7f"
+dependencies = [
+ "traitobject",
 ]
 
 [[package]]

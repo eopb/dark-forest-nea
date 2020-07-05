@@ -1,8 +1,9 @@
-use crate::{state, ui, updates};
+use crate::{state, ui, updates, RESPONSE_KIND};
 
 use {
     seed::{prelude::*, *},
     seed_style::*,
+    shared::Endpoint,
 };
 
 pub fn view(
@@ -14,7 +15,7 @@ pub fn view(
     let password = |err| ui::form::password_with_error(model, "password", "Password...", err);
     ui::form::view(
         model,
-        "/api/sign-in",
+        shared::Credentials::path(RESPONSE_KIND),
         vec![
             user_name(if let Some(UserNotFound) = error {
                 error

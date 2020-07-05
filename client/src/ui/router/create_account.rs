@@ -1,7 +1,11 @@
-use crate::{state, ui, updates};
-use seed::{prelude::*, *};
+use crate::{state, ui, updates, RESPONSE_KIND};
 
-use seed_style::*;
+use {
+    seed::{prelude::*, *},
+    seed_style::*,
+};
+
+use shared::Endpoint;
 
 pub fn view(
     model: &state::Model,
@@ -12,7 +16,7 @@ pub fn view(
     let password = |err| ui::form::password_with_error(model, "password", "Password...", err);
     ui::form::view(
         model,
-        "/api/create-account",
+        shared::CreateAccount::path(RESPONSE_KIND),
         match error {
             Some(error) => match error {
                 shared::data::create_account::Fail::AlreadyExists => vec![

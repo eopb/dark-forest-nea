@@ -1,12 +1,12 @@
 use crate::ui;
 
 use seed::virtual_dom::update_el::UpdateEl;
-use seed::{browser::fetch::FetchError, prelude::*, *};
+use seed::{prelude::*, *};
 
 #[derive(Default)]
 pub struct Server {
-    pub hello: Fetch<shared::Hello, FetchError>,
-    pub signed_in: Fetch<shared::SignedIn, FetchError>,
+    pub hello: Fetch<shared::Hello, anyhow::Error>,
+    pub signed_in: Fetch<shared::SignedIn, anyhow::Error>,
 }
 
 #[derive(Clone)]

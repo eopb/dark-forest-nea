@@ -10,7 +10,7 @@ pub enum SignedIn {
 }
 
 impl Endpoint for SignedIn {
-    const PATH: &'static str = "/api/signed-in";
+    const PATH: &'static str = "/signed-in";
 }
 
 impl SignedIn {

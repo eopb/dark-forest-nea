@@ -6,11 +6,19 @@ use {
     time::Duration,
 };
 
-use crate::{endpoint, security, state::State};
+use crate::{
+    endpoint::{self, Endpoint},
+    security,
+    state::State,
+};
+
+use shared::data::ResponseKind;
+
+impl Endpoint for shared::Credentials {}
 
 #[async_trait]
 impl endpoint::Post for shared::Credentials {
-    async fn post(mut req: Request<State>) -> tide::Result<Response> {
+    async fn post(mut req: Request<State>, _: ResponseKind) -> tide::Result<Response> {
         let credentials: Self = req.body_form().await?;
 
         let stored_user = req

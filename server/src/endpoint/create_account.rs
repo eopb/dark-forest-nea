@@ -6,15 +6,21 @@ use {
 };
 
 use crate::{
-    endpoint,
+    endpoint::{self, Endpoint},
     state::{database::Insert, State},
 };
 
-use shared::{data::create_account::Fail, data::validation::Post as _, Endpoint as _};
+use shared::{
+    data::validation::Post as _,
+    data::{create_account::Fail, ResponseKind},
+    Endpoint as _,
+};
+
+impl Endpoint for shared::CreateAccount {}
 
 #[async_trait]
 impl endpoint::Post for shared::CreateAccount {
-    async fn post(mut req: Request<State>) -> tide::Result<Response> {
+    async fn post(mut req: Request<State>, _: ResponseKind) -> tide::Result<Response> {
         let account_info: Self = req.body_form().await?;
 
         let validation = account_info.validate();

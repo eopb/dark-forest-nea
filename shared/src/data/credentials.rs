@@ -12,7 +12,7 @@ pub struct Credentials {
 }
 
 impl Endpoint for Credentials {
-    const PATH: &'static str = "/api/sign-in";
+    const PATH: &'static str = "/sign-in";
 }
 
 /// Reasons signing-in may fail.

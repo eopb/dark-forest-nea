@@ -2,10 +2,7 @@ use crate::{routes::Route, state, Endpoint as _};
 
 use shared::routes::SubRoute;
 
-use {
-    seed::{browser::fetch::FetchError, prelude::*},
-    web_sys::Window,
-};
+use {seed::prelude::*, web_sys::Window};
 
 // `Msg` describes the different events you can modify state with.
 pub enum Msg {
@@ -69,9 +66,9 @@ impl ToFetch {
 }
 
 pub enum Fetched {
-    Hello(Result<shared::Hello, FetchError>),
-    SignedIn(Result<shared::SignedIn, FetchError>),
-    RefreshToken(Result<shared::RefreshToken, FetchError>),
+    Hello(anyhow::Result<shared::Hello>),
+    SignedIn(anyhow::Result<shared::SignedIn>),
+    RefreshToken(anyhow::Result<shared::RefreshToken>),
 }
 
 impl Fetched {
