@@ -24,8 +24,8 @@ pub fn view(model: &state::Model) -> impl IntoNodes<updates::Msg> {
     Bordered::new(vec![nav(model), router::view(model), footer(model)])
         .outer(s().min_height(vh(100)))
         .inner(
-            s().display("grid")
-                .grid_auto_flow("row")
+            s().display_grid()
+                .grid_auto_flow_row()
                 .grid_template_rows("min-content auto min-content"),
         )
         .view(model)
@@ -52,8 +52,8 @@ fn nav(model: &state::Model) -> Node<updates::Msg> {
     let button = |model| style::button(model, 5);
 
     nav![
-        s().display("flex")
-            .justify_content("space-between")
+        s().display_flex()
+            .justify_content_space_between()
             .font_size(em(3)),
         div![
             if model.route == shared::Route::Index.into() {

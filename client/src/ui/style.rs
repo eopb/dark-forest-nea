@@ -13,27 +13,27 @@ pub fn pixel_cutouts(model: &state::Model) -> Vec<seed_style::Style> {
     .into_iter()
     .map(|s| {
         s.background_color(model.theme.background())
-            .display("block")
+            .display_block()
             .height(px(6))
             .width(px(6))
-            .position("absolute")
+            .position_absolute()
     })
     .collect()
 }
 
 pub fn button(model: &state::Model, height: i32) -> Vec<seed_style::Style> {
     vec![
-        s().display("inline-block")
-            .position("relative")
-            .text_decoration("none")
+        s().display_inline_block()
+            .position_relative()
+            .text_decoration_none()
             .color(model.theme.text()),
         s().after()
             .content("\"\"")
-            .display("block")
+            .display_block()
             .height(px(height))
             .background_color(model.theme.text())
-            .position("absolute")
-            .width("100%")
+            .position_absolute()
+            .width(pc(100))
             .bottom(px(4))
             .left(px(0)),
         s().pseudo(":hover::after").bottom(px(4 + height)),

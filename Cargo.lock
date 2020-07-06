@@ -1999,7 +1999,7 @@ dependencies = [
 [[package]]
 name = "seed_style_preview"
 version = "0.1.8"
-source = "git+https://github.com/ethanboxx/seed_style_preview.git#605ded3c947857da919187a7da4bda819d4f0c99"
+source = "git+https://github.com/ethanboxx/seed_style_preview.git?branch=justify_content_space_between_testing#df12b01148c39decbbc0887410b2b57e88c3ac30"
 dependencies = [
  "anymap",
  "derive_more",

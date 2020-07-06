@@ -12,7 +12,7 @@ use crate::{
 
 use {
     seed::{prelude::*, *},
-    seed_style::{em, px, *},
+    seed_style::{em, pc, px, *},
 };
 
 /// Type of item to accept.
@@ -50,10 +50,10 @@ fn input(
     vec![
         vec![if let Some(error) = error {
             p![
-                s().margin("0")
+                s().margin(0)
                     .margin_bottom(px(-15))
                     .width(px(600))
-                    .text_align("left")
+                    .text_align_left()
                     .font_size(em(2.9))
                     .color(model.theme.error()),
                 error.to_string()
@@ -73,10 +73,10 @@ fn input(
             } else {
                 attrs! {At::Placeholder => placeholder}
             },
-            s().margin("0")
-                .width("95%")
+            s().margin(0)
+                .width(pc(95))
                 .font_family("adobedia")
-                .box_sizing("border-box")
+                .box_sizing_border_box()
                 .border("none")
                 .font_size(em(3))
                 .background_color(model.theme.background())

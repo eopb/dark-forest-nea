@@ -6,7 +6,7 @@ pub fn init() {
         .style("img", s().box_sizing_content_box())
         .style(
             "body *, body *:before, body *:after",
-            s().box_sizing("inherit"),
+            s().box_sizing(CssBoxSizing::Inherit),
         )
         .style(
             "body",

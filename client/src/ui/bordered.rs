@@ -1,9 +1,11 @@
 //! Way of placing things in cool borders.
 
-use seed_style::{px, Style, *};
-
 use crate::{state, ui, updates};
-use seed::{prelude::*, *};
+
+use {
+    seed::{prelude::*, *},
+    seed_style::{pc, px, CssBorder::Border, Style, *},
+};
 
 /// Builder for creating the boarders.
 pub struct Bordered<Nodes> {
@@ -46,20 +48,21 @@ where
         div![
             s().background_color(model.theme.background())
                 .color(model.theme.text())
-                .text_align("center")
+                .text_align_center()
                 .padding(px(8))
-                .display("flex")
-                .flex_direction("column"),
+                .display_flex()
+                .flex_direction_column(),
             self.outer.clone(),
             div![
                 s().flex("1")
                     .padding(px(0))
-                    .min_height("100%")
-                    .border(AsRef::<str>::as_ref(&format!(
-                        "6px solid {}",
-                        model.theme.text()
-                    )))
-                    .position("relative"),
+                    .min_height(pc(100))
+                    .border(Border(
+                        px(6).into(),
+                        CssBorderStyle::Solid,
+                        model.theme.text().into()
+                    ))
+                    .position_relative(),
                 self.inner.clone(),
                 ui::style::pixel_cutouts(model),
                 self.nodes.clone().into_nodes()

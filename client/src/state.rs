@@ -35,6 +35,8 @@ impl Default for Theme {
     }
 }
 
+// TODO maybe return `seed_style_preview::CssColor` rather than strings.
+
 impl Theme {
     pub fn toggle(&mut self) {
         *self = match self {
