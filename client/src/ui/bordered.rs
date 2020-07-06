@@ -57,11 +57,17 @@ where
                 s().flex("1")
                     .padding(px(0))
                     .min_height(pc(100))
-                    .border(Border(
-                        px(6).into(),
-                        CssBorderStyle::Solid,
-                        model.theme.text().into()
-                    ))
+                    // TODO fixme when https://github.com/rebo/seed_style_preview/issues/6
+                    // is fixed
+                    //// .border(Border(
+                    ////     px(6).into(),
+                    ////     CssBorderStyle::Solid,
+                    ////     model.theme.text().into()
+                    //// ))
+                    .border(AsRef::<str>::as_ref(&format!(
+                        "6px solid {}",
+                        model.theme.text()
+                    )))
                     .position_relative(),
                 self.inner.clone(),
                 ui::style::pixel_cutouts(model),
