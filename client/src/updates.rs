@@ -1,19 +1,23 @@
+//! Update message definitions and handling.
+
+// TODO maybe look into using trait objects for `ToFetch` and `Fetched`
+
 use crate::{routes::Route, state, Endpoint as _};
 
 use shared::routes::SubRoute;
 
 use {seed::prelude::*, web_sys::Window};
 
-// `Msg` describes the different events you can modify state with.
+/// Describes the different events that can be invoked.
 pub enum Msg {
     ToggleTheme,
-    RefreshTokenIfNeed,
+    RefreshToken,
     ChangeRoute(Route),
     DataFetched(Fetched),
     ToFetch(ToFetch),
 }
 
-// `update` describes how to handle each `Msg`.
+/// Describes how to handle each `Msg` often by updating the model.
 pub fn update(msg: Msg, model: &mut state::Model, orders: &mut impl Orders<Msg>) {
     match msg {
         Msg::ToggleTheme => model.theme.toggle(),
@@ -37,7 +41,7 @@ pub fn update(msg: Msg, model: &mut state::Model, orders: &mut impl Orders<Msg>)
             orders.skip();
         }
         Msg::DataFetched(x) => x.add_to(model),
-        Msg::RefreshTokenIfNeed => {
+        Msg::RefreshToken => {
             use state::server::Fetch::Fetched;
             // Only run this When a user is signed in.
             if let Fetched(Ok(shared::SignedIn::As(_))) = model.server.signed_in {
@@ -47,6 +51,7 @@ pub fn update(msg: Msg, model: &mut state::Model, orders: &mut impl Orders<Msg>)
     }
 }
 
+/// An item that must be fetched.
 pub enum ToFetch {
     Hello,
     SignedIn,
@@ -54,6 +59,7 @@ pub enum ToFetch {
 }
 
 impl ToFetch {
+    /// Fetch an item and inform with a message.
     async fn order(self) -> Msg {
         match self {
             Self::Hello => Msg::DataFetched(Fetched::Hello(shared::Hello::fetch().await)),
@@ -65,6 +71,7 @@ impl ToFetch {
     }
 }
 
+/// An item that has been fetched ready to be handled.
 pub enum Fetched {
     Hello(anyhow::Result<shared::Hello>),
     SignedIn(anyhow::Result<shared::SignedIn>),
@@ -72,6 +79,7 @@ pub enum Fetched {
 }
 
 impl Fetched {
+    /// Add a fetched item to the model.
     fn add_to(self, model: &mut state::Model) {
         match self {
             Self::Hello(x) => model.server.hello = state::server::Fetch::Fetched(x),

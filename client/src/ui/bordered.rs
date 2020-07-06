@@ -1,11 +1,17 @@
+//! Way of placing things in cool borders.
+
 use seed_style::{px, Style, *};
 
 use crate::{state, ui, updates};
 use seed::{prelude::*, *};
 
+/// Builder for creating the boarders.
 pub struct Bordered<Nodes> {
+    /// Styles for the outer border `div`
     outer: Style,
+    /// Styles for the inner border `div`
     inner: Style,
+    /// Items to place in the border
     nodes: Nodes,
 }
 
@@ -20,10 +26,12 @@ impl<Nodes> Bordered<Nodes> {
 }
 
 impl<Nodes> Bordered<Nodes> {
+    /// Set styles for the outer border `div`
     pub fn outer(mut self, outer: Style) -> Self {
         self.outer = outer;
         self
     }
+    /// Set styles for the inner border `div`
     pub fn inner(mut self, inner: Style) -> Self {
         self.inner = inner;
         self

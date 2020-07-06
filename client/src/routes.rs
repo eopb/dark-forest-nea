@@ -1,9 +1,12 @@
+//! User facing routes.
+
 use crate::updates;
 
 use seed::{app::subs::UrlChanged, browser::url::Url, prelude::*};
 
 use std::convert::{TryFrom, TryInto};
 
+/// Contains `None` when a route is not found.
 #[derive(Default, Clone, PartialEq, Eq, Debug)]
 pub struct Route(pub Option<shared::Route>);
 
@@ -36,10 +39,12 @@ impl TryFrom<&Url> for Route {
     }
 }
 
+/// Error when the client can not handle an endpoint.
 pub struct ApiRoute;
 
 impl Route {
     #[allow(clippy::needless_pass_by_value)] // Update function does not register otherwise.
+    /// Parse URL and inform with a message to `update`.
     pub fn update(url: UrlChanged) -> Option<updates::Msg> {
         if let Ok(url) = (&url.0).try_into() {
             Some(updates::Msg::ChangeRoute(url))
@@ -48,6 +53,7 @@ impl Route {
             None
         }
     }
+    /// Request data required by an endpoint to be attached to the model.
     pub fn request_required_data(&self, orders: &mut impl Orders<updates::Msg>) {
         orders.send_msg(updates::Msg::ToFetch(updates::ToFetch::SignedIn));
         if let Some(shared::Route::Index) = self.0 {

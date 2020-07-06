@@ -1,5 +1,6 @@
 use seed_style::*;
 
+/// Styles to be applied when client starts.
 pub fn init() {
     GlobalStyle::default()
         .style("img", s().box_sizing_content_box())

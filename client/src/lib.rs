@@ -23,29 +23,31 @@ use std::convert::TryInto;
 
 use shared::data::ResponseKind::{self, Binary};
 
+/// The kind of response body to expect from server endpoints.
 pub const RESPONSE_KIND: ResponseKind = Binary;
 
-// `init` describes what should happen when your app started.
+/// Setup process invoked when client is started.
 fn init(url: Url, orders: &mut impl Orders<updates::Msg>) -> state::Model {
     ui::style::global::init();
 
     orders
         .subscribe(routes::Route::update)
         // Always refresh token on load to keep token update.
-        .send_msg(updates::Msg::RefreshTokenIfNeed)
+        .send_msg(updates::Msg::RefreshToken)
         .stream(streams::interval(
             Duration::minutes(14)
                 .whole_milliseconds()
                 .try_into()
                 .unwrap(),
-            || updates::Msg::RefreshTokenIfNeed,
+            || updates::Msg::RefreshToken,
         ))
         .notify(UrlChanged(url));
 
     state::Model::new()
 }
 
-// (This function is invoked by `init` function in `index.html`.)
+/// This function is invoked by `init` function from Javascript and is the entry
+/// point of our program.
 #[wasm_bindgen(start)]
 pub fn start() {
     let _app = App::start("app", init, updates::update, ui::view);

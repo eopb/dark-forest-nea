@@ -4,7 +4,7 @@ pub use server::Server;
 
 use crate::routes::Route;
 
-// `Model` describes our app state.
+/// Describes client state.
 pub struct Model {
     pub theme: Theme,
     pub route: Route,
@@ -23,6 +23,7 @@ impl Model {
 }
 
 #[derive(Copy, Clone)]
+/// Colour theme.
 pub enum Theme {
     Dark,
     Light,
@@ -59,7 +60,10 @@ impl Theme {
             Self::Light => "#330000",
         }
     }
-    pub fn toggle_buttons_color(&self) -> &str {
+    /// Colour of the button used to toggle the theme.
+    ///
+    /// This is close to the inverse colour of the theme.
+    pub fn toggle_button_color(&self) -> &str {
         match self {
             Self::Dark => "#FFF",
             Self::Light => "#000",

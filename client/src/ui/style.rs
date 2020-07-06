@@ -1,7 +1,10 @@
+//! Useful styles to apply to elements.
+
 pub mod global;
 use crate::state;
 use seed_style::{px, *};
 
+/// Cutouts for borders using pseudo-elements
 pub fn pixel_cutouts(model: &state::Model) -> Vec<seed_style::Style> {
     vec![
         s().before().content("\"\"").top(px(-6)).left(px(-6)),

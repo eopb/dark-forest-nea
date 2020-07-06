@@ -9,6 +9,7 @@ use shared::data::ResponseKind::{Binary, Json};
 
 use crate::RESPONSE_KIND;
 
+/// Extension for endpoints that can be fetched from the server
 #[async_trait(?Send)]
 pub trait Endpoint: 'static + shared::Endpoint + Serialize + for<'a> Deserialize<'a> {
     async fn fetch() -> anyhow::Result<Self> {

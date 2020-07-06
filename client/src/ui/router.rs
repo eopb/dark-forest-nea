@@ -5,8 +5,10 @@ mod not_found;
 mod sign_in;
 
 use crate::{state, updates};
+
 use seed::{prelude::*, *};
 
+/// Main router view showing items unique to a route.
 pub fn view(model: &state::Model) -> Node<updates::Msg> {
     match model.route.0 {
         Some(ref route) => match route {

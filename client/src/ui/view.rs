@@ -1,6 +1,7 @@
 use seed::virtual_dom::update_el::UpdateEl;
 use seed::{prelude::*, *};
 
+/// Type that can be drawn using data from the model.
 pub trait View<Msg, Model> {
     fn view(&self, model: &Model) -> Vec<Node<Msg>>;
 }

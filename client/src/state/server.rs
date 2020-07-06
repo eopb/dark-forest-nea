@@ -1,3 +1,5 @@
+//! Data from the server.
+
 use crate::ui;
 
 use seed::virtual_dom::update_el::UpdateEl;
@@ -9,6 +11,7 @@ pub struct Server {
     pub signed_in: Fetch<shared::SignedIn, anyhow::Error>,
 }
 
+/// Fetching status.
 #[derive(Clone)]
 pub enum Fetch<T, E> {
     Loading,
@@ -22,6 +25,7 @@ impl<T, E> Default for Fetch<T, E> {
 }
 
 impl<T, E> Fetch<T, E> {
+    /// Get underlying `T` assuming their is no error.
     pub fn ok(&self) -> Option<&T> {
         if let Self::Fetched(Ok(t)) = self {
             Some(t)

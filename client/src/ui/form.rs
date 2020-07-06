@@ -1,3 +1,7 @@
+//! Items used to create forms.
+
+// TODO maybe most things should be methods on `InputType`.
+
 use std::fmt;
 
 use crate::{
@@ -5,10 +9,13 @@ use crate::{
     ui::{self, View},
     updates,
 };
-use seed::{prelude::*, *};
 
-use seed_style::{em, px, *};
+use {
+    seed::{prelude::*, *},
+    seed_style::{em, px, *},
+};
 
+/// Type of item to accept.
 #[derive(Eq, PartialEq, Copy, Clone)]
 enum InputType {
     Text,
@@ -32,6 +39,7 @@ impl fmt::Display for InputType {
     }
 }
 
+/// Private base function for creating input boxes.
 fn input(
     model: &state::Model,
     id: &str,
@@ -94,14 +102,17 @@ fn input(
     .collect()
 }
 
+/// Text box.
 pub fn text(model: &state::Model, id: &str, placeholder: &str) -> Vec<Node<updates::Msg>> {
     text_with_error(model, id, placeholder, Option::<String>::None)
 }
 
+/// Password input box.
 pub fn password(model: &state::Model, id: &str, placeholder: &str) -> Vec<Node<updates::Msg>> {
     password_with_error(model, id, placeholder, Option::<String>::None)
 }
 
+/// Email input box.
 pub fn email(model: &state::Model, id: &str, placeholder: &str) -> Vec<Node<updates::Msg>> {
     email_with_error(model, id, placeholder, Option::<String>::None)
 }
@@ -133,6 +144,7 @@ pub fn email_with_error(
     input(model, id, InputType::Email, placeholder, error)
 }
 
+/// Submit button.
 fn submit(model: &state::Model, placeholder: &str) -> Vec<Node<updates::Msg>> {
     input(
         model,
@@ -143,6 +155,7 @@ fn submit(model: &state::Model, placeholder: &str) -> Vec<Node<updates::Msg>> {
     )
 }
 
+/// Full form with support of multiple input boxes and a submit button.
 pub fn view(
     model: &state::Model,
     action: impl fmt::Display,

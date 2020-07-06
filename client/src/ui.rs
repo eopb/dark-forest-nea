@@ -1,3 +1,7 @@
+//! Visible items to be added to the DOM.
+
+// TODO refactor styles items to be more strongly typed.
+
 pub mod bordered;
 pub mod form;
 pub mod router;
@@ -15,7 +19,7 @@ use {
     shared::Endpoint as _,
 };
 
-// `view` describes what to display.
+/// Main view describing what to show for all routes.
 pub fn view(model: &state::Model) -> impl IntoNodes<updates::Msg> {
     Bordered::new(vec![nav(model), router::view(model), footer(model)])
         .outer(s().min_height(vh(100)))
@@ -39,6 +43,7 @@ fn footer(model: &state::Model) -> Node<updates::Msg> {
     ]]
 }
 
+/// Global navigation bar at top of page.
 fn nav(model: &state::Model) -> Node<updates::Msg> {
     pub fn a() -> seed_style::Style {
         s().margin(px(14)).margin_top(px(8))
@@ -102,9 +107,9 @@ fn nav(model: &state::Model) -> Node<updates::Msg> {
             a![
                 a(),
                 button(model),
-                s().color(model.theme.toggle_buttons_color()),
+                s().color(model.theme.toggle_button_color()),
                 s().after()
-                    .background_color(model.theme.toggle_buttons_color()),
+                    .background_color(model.theme.toggle_button_color()),
                 "Light Mode",
                 attrs! {At::Href => "#"},
                 ev(Ev::Click, |_| updates::Msg::ToggleTheme)
@@ -113,6 +118,7 @@ fn nav(model: &state::Model) -> Node<updates::Msg> {
     ]
 }
 
+/// A subheading paragraph.
 pub fn subheading<Msg>(subheading: impl UpdateEl<Msg>) -> Node<Msg> {
     p![
         s().margin_top(px(5))
