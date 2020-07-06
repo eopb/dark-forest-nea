@@ -1,5 +1,8 @@
-use crate::{state, ui, updates};
+use crate::{state, ui, updates, RESPONSE_KIND};
+
 use seed::prelude::*;
+
+use shared::Endpoint;
 
 pub fn view(
     model: &state::Model,
@@ -9,7 +12,7 @@ pub fn view(
         |error| ui::form::text_with_error(model, "project_name", "Project Name...", error);
     ui::form::view(
         model,
-        "/api/new-project",
+        shared::NewProject::path(RESPONSE_KIND),
         project_name(error.and_then(|error| match error {
             shared::data::new_project::Fail::AlreadyExists => {
                 Some("You already have a project under that name.".to_owned())

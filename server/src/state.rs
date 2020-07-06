@@ -4,6 +4,7 @@ pub mod database;
 
 pub use database::Database;
 
+/// Current state of the application.
 #[derive(Debug)]
 pub struct State {
     database: Database,

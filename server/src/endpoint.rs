@@ -1,3 +1,5 @@
+//! API endpoints
+
 mod create_account;
 mod new_project;
 mod refresh_token;
@@ -6,6 +8,7 @@ mod sign_out;
 mod signed_in;
 
 use crate::State;
+
 use std::{thread, time};
 
 use {
@@ -15,7 +18,9 @@ use {
     tide::{Body, Request, Response, Server},
 };
 
+/// Server extension to API endpoints.
 pub trait Endpoint: shared::Endpoint + 'static {
+    /// Create a HTTP response body with a given kind from a type.
     fn body_from<T: Serialize>(value: T, res_kind: ResponseKind) -> tide::Result<Body> {
         Ok(match res_kind {
             Binary => Body::from_bytes(bincode::serialize(&value)?),
@@ -24,9 +29,12 @@ pub trait Endpoint: shared::Endpoint + 'static {
     }
 }
 
+/// API endpoint that uses the `post` HTTP verb.
 #[async_trait]
 pub trait Post: Endpoint {
+    /// Invoked on `post`.
     async fn post(req: Request<State>, res_kind: ResponseKind) -> tide::Result<Response>;
+    /// Add an endpoint as a `post` to a server.
     fn apply(app: &mut Server<State>) {
         for res_kind in &[Json, Binary] {
             app.at(&Self::path(*res_kind))
@@ -34,9 +42,13 @@ pub trait Post: Endpoint {
         }
     }
 }
+
+/// API endpoint that uses the `get` HTTP verb.
 #[async_trait]
 pub trait Get: Endpoint {
+    /// Invoked on `get`.
     async fn get(req: Request<State>, res_kind: ResponseKind) -> tide::Result<Response>;
+    /// Add an endpoint as a `get` to a server.
     fn apply(app: &mut Server<State>) {
         for res_kind in &[Json, Binary] {
             app.at(&Self::path(*res_kind))

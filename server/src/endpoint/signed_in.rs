@@ -4,6 +4,7 @@ use {
 };
 
 use crate::{
+    cookie,
     endpoint::{self, Endpoint},
     security::jwt,
     state::State,
@@ -30,7 +31,7 @@ pub trait Ext {
 #[async_trait]
 impl Ext for shared::SignedIn {
     async fn get_user(req: &Request<State>) -> Self {
-        let user = req.cookie("login").and_then(|cookie| {
+        let user = req.cookie(cookie::LOGIN).and_then(|cookie| {
             jwt::Claims::decode_token(cookie.value())
                 .map(|token| token.claims.sub)
                 .ok()

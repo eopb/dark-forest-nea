@@ -1,12 +1,13 @@
 use {
+    ::cookie::Cookie,
     async_trait::async_trait,
-    cookie::Cookie,
     shared::data::credentials::Fail::{IncorrectPassword, UserNotFound},
     tide::{Redirect, Request, Response},
     time::Duration,
 };
 
 use crate::{
+    cookie,
     endpoint::{self, Endpoint},
     security,
     state::State,
@@ -46,7 +47,7 @@ impl endpoint::Post for shared::Credentials {
 pub fn unsafe_sign_in(mut res: Response, user: String) -> tide::Result<Response> {
     let claims = security::jwt::Claims::new(user);
     res.insert_cookie(
-        Cookie::build("login", claims.get_token()?)
+        Cookie::build(cookie::LOGIN, claims.get_token()?)
             .max_age(Duration::minutes(security::jwt::Claims::max_age_minutes()))
             .secure(true)
             .http_only(true)

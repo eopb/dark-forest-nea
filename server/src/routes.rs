@@ -1,16 +1,16 @@
-//! Application endpoints.
-
-use maud::{html, PreEscaped, DOCTYPE};
+//! Server handled user facing endpoints.
 
 use super::State;
 
 use {
     http_types::mime,
+    maud::{html, PreEscaped, DOCTYPE},
     tide::{Request, Response, StatusCode},
 };
 
 use shared::routes::SubRoute;
 
+/// This index endpoint returns the `html` needed to start our client-side application.
 pub async fn index(_: Request<State>) -> tide::Result<impl Into<Response>> {
     Ok({
         let mut res = Response::new(StatusCode::Ok);

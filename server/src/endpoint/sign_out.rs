@@ -1,10 +1,11 @@
 use {
+    ::cookie::Cookie,
     async_trait::async_trait,
-    cookie::Cookie,
     tide::{Redirect, Request, Response},
 };
 
 use crate::{
+    cookie,
     endpoint::{self, Endpoint},
     state::State,
 };
@@ -17,7 +18,7 @@ impl Endpoint for shared::SignOut {}
 impl endpoint::Get for shared::SignOut {
     async fn get(_: Request<State>, _: ResponseKind) -> tide::Result<Response> {
         let mut res: Response = Redirect::new(shared::Route::Index.to_string()).into();
-        res.remove_cookie(Cookie::named("login"));
+        res.remove_cookie(Cookie::named(cookie::LOGIN));
         Ok(res)
     }
 }

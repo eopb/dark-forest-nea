@@ -1,19 +1,22 @@
+//! Dark forest uses JSON web tokens for authentication.
+
 use std::env;
 
-use once_cell::sync::Lazy;
 use {
     bson::doc,
     chrono::{offset::Utc, Duration},
     jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, TokenData, Validation},
+    once_cell::sync::Lazy,
     serde::{Deserialize, Serialize},
 };
 
+/// Secret bytes used to create tokens. These are stored as an environment variable.
 static SECRET: Lazy<Vec<u8>> = Lazy::new(|| env::var("SECRET").unwrap().as_bytes().to_vec());
 
-// `Claims` is the data we are going to encode in our tokens.
+/// `Claims` is the data we are going to encode in our tokens.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {
-    // Sub is where we are going to store the username of the user.
+    /// Sub is where we are going to store the username of the user.
     pub sub: String,
     company: String,
     // must have this rename for `jsonwebtoken` to validate correctly.
@@ -22,6 +25,9 @@ pub struct Claims {
 }
 
 impl Claims {
+    /// Create a token for a user.
+    ///
+    /// Only use for authenticated users.
     pub fn new(user: String) -> Self {
         Self {
             sub: user,
@@ -29,10 +35,11 @@ impl Claims {
             expires: (Utc::now() + Duration::minutes(Self::max_age_minutes())).timestamp(),
         }
     }
+    /// Encodes a claim into a token string.
     pub fn get_token(&self) -> jsonwebtoken::errors::Result<String> {
         encode(&Header::default(), self, &EncodingKey::from_secret(&SECRET))
     }
-    // Decodes a token to produce the underlying claim.
+    /// Decodes a token to produce the underlying claim.
     pub fn decode_token(token: &str) -> Result<TokenData<Self>, jsonwebtoken::errors::Error> {
         decode::<Self>(
             token,

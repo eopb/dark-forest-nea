@@ -1,19 +1,20 @@
 use std::convert::TryFrom;
 
-use bson::doc;
+use {
+    bcrypt::BcryptError,
+    bson::doc,
+    serde::{Deserialize, Serialize},
+};
 
 use crate::{
     state::{database::Insert, Database},
     util::BsonDoc,
 };
 
-use {
-    bcrypt::BcryptError,
-    serde::{Deserialize, Serialize},
-};
-
+/// The data stored about a user.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct User {
+    /// Primary key.
     #[serde(rename(serialize = "_id", deserialize = "_id"))]
     pub user_name: String,
     pub email: String,
@@ -44,10 +45,12 @@ impl User {
 }
 
 impl Database {
+    /// Collection where to store basic user information.
     pub fn users(&self) -> mongodb::Collection {
         self.main().collection("users")
     }
 
+    /// Add a new user to the database.
     pub async fn add_user(&self, user: User) -> tide::Result<Insert> {
         let filter = doc! { "_id": &user.user_name};
         let cursor = self.users().find_one(filter, None).await?;
@@ -60,6 +63,7 @@ impl Database {
         })
     }
 
+    /// Get user information for user attached to a username.
     pub async fn get_user(&self, user_name: &str) -> tide::Result<Option<User>> {
         Ok(
             if let Some(x) = self
