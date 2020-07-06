@@ -1,7 +1,5 @@
 //! Visible items to be added to the DOM.
 
-// TODO refactor styles items to be more strongly typed.
-
 pub mod bordered;
 pub mod form;
 pub mod router;
