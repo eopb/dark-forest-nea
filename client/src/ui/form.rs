@@ -168,6 +168,7 @@ pub fn view(
     update_msg: impl Fn(String) -> Option<updates::Msg> + Clone + 'static,
 ) -> Node<updates::Msg> {
     div![form![
+        attrs! {At::OnSubmit => "return false;"},
         s().display("flex")
             .align_items("center")
             .flex_direction("column")

@@ -20,26 +20,29 @@ impl Endpoint for shared::Credentials {}
 #[async_trait]
 impl endpoint::Post for shared::Credentials {
     async fn post(mut req: Request<State>, _: ResponseKind) -> tide::Result<Response> {
-        let credentials: Self = req.body_form().await?;
+        // let credentials: Self = req.body_form().await?;
 
-        let stored_user = req
-            .state()
-            .database()
-            .get_user(&credentials.user_name)
-            .await?;
+        // let stored_user = req
+        //     .state()
+        //     .database()
+        //     .get_user(&credentials.user_name)
+        //     .await?;
 
-        Ok(if let Some(stored_user) = stored_user {
-            if stored_user.verify_credentials(&credentials)? {
-                unsafe_sign_in(
-                    Redirect::new(shared::Route::Index.to_string()).into(),
-                    credentials.user_name,
-                )?
-            } else {
-                Redirect::new(shared::Route::SignIn(Some(IncorrectPassword)).to_string()).into()
-            }
-        } else {
-            Redirect::new(shared::Route::SignIn(Some(UserNotFound)).to_string()).into()
-        })
+        // Ok(if let Some(stored_user) = stored_user {
+        //     if stored_user.verify_credentials(&credentials)? {
+        //         unsafe_sign_in(
+        //             Redirect::new(shared::Route::Index.to_string()).into(),
+        //             credentials.user_name,
+        //         )?
+        //     } else {
+        //         Redirect::new(shared::Route::SignIn(Some(IncorrectPassword)).to_string()).into()
+        //     }
+        // } else {
+        //     Redirect::new(shared::Route::SignIn(Some(UserNotFound)).to_string()).into()
+        // })
+        let mut res = Response::new(200);
+        res.set_body("hello");
+        Ok(res)
     }
 }
 

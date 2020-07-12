@@ -26,29 +26,38 @@ impl Msg {
             Self::UsernameChanged(user_name) => model.form.user_name = user_name,
             Self::PasswordChanged(password) => model.form.password = password,
             Self::Submit => {
+                log!("Hello");
                 //   Url::go_and_load_with_str("/");
                 orders.skip(); // No need to rerender
 
-                let request = Request::new("/")
+                log!("Hello");
+                //   Url::go_and_load_with_str("/");
+                //   Url::go_and_load_with_str("/");
+                let request = Request::new("api/json/sign-in")
                     .method(Method::Post)
                     .header(Header::custom("Accept-Language", "en"))
                     .json(&model.form)
                     .expect("Serialization failed");
 
+                log!("Hello");
                 orders.perform_cmd(async {
                     let response = fetch(request).await.expect("HTTP request failed");
 
-                    if response.status().is_ok() {
+                    log!(response.text().await.unwrap());
+
+                    updates::Msg::from(if response.status().is_ok() {
                         Msg::Submited
                     } else {
                         Msg::SubmitFailed(response.status().text)
-                    }
+                    })
                 });
+                log!("Hello");
             }
             Self::Submited => {
-                model = &mut Model::default();
+                // model = &mut Model::default();
+                log!("there");
             }
-            Self::SubmitFailed(reason) => {}
+            Self::SubmitFailed(reason) => log!("Hi"),
         }
     }
 }
@@ -100,6 +109,6 @@ pub fn view(
             ]
             .into_nodes(),
         ],
-        |_| Some(Msg::Submit.into()),
+        |_| Some(updates::Msg::from(Msg::Submit)),
     )
 }
