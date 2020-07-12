@@ -11,26 +11,43 @@ pub fn view(
     model: &state::Model,
     error: Option<&shared::data::create_account::Fail>,
 ) -> Node<updates::Msg> {
-    let user_name = |err| ui::form::text_with_error(model, "user_name", "Username...", err);
-    let email = |err| ui::form::email_with_error(model, "email", "Email...", err);
-    let password = |err| ui::form::password_with_error(model, "password", "Password...", err);
+    let user_name = |err| {
+        ui::form::InputBuilder::text()
+            .id("user_name")
+            .placeholder("Username...")
+            .error(err)
+            .view(model, |_| None)
+    };
+    let email = |err| {
+        ui::form::InputBuilder::email()
+            .id("email")
+            .placeholder("Email...")
+            .error(err)
+            .view(model, |_| None)
+    };
+    let password = |err| {
+        ui::form::InputBuilder::password()
+            .id("password")
+            .placeholder("Password...")
+            .error(err)
+            .view(model, |_| None)
+    };
     ui::form::view(
         model,
-        shared::CreateAccount::path(RESPONSE_KIND),
         match error {
             Some(error) => match error {
                 shared::data::create_account::Fail::AlreadyExists => vec![
-                    user_name(Some("Username already taken.".to_owned())),
-                    email(None),
-                    password(None),
+                    user_name(&Some("Username already taken.".to_owned())),
+                    email(&None),
+                    password(&None),
                 ],
                 shared::data::create_account::Fail::InvalidField(error) => vec![
-                    user_name(error.user_name.map(|x| x.show("Username"))),
-                    email(error.email.map(|x| x.show("Email"))),
-                    password(error.password.map(|x| x.show("Password"))),
+                    user_name(&error.user_name.map(|x| x.show("Username"))),
+                    email(&error.email.map(|x| x.show("Email"))),
+                    password(&error.password.map(|x| x.show("Password"))),
                 ],
             },
-            None => vec![user_name(None), email(None), password(None)],
+            None => vec![user_name(&None), email(&None), password(&None)],
         },
         "Create Account",
         vec![
@@ -42,5 +59,6 @@ pub fn view(
             ]
             .into_nodes(),
         ],
+        |_| None,
     )
 }

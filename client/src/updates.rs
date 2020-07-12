@@ -2,7 +2,7 @@
 
 // TODO maybe look into using trait objects for `ToFetch` and `Fetched`
 
-use crate::{routes::Route, state, Endpoint as _};
+use crate::{routes::Route, state, ui, Endpoint as _};
 
 use shared::routes::SubRoute;
 
@@ -15,6 +15,7 @@ pub enum Msg {
     ChangeRoute(Route),
     DataFetched(Fetched),
     ToFetch(ToFetch),
+    SignInMsg(ui::router::sign_in::Msg),
 }
 
 /// Describes how to handle each `Msg` often by updating the model.
@@ -48,6 +49,7 @@ pub fn update(msg: Msg, model: &mut state::Model, orders: &mut impl Orders<Msg>)
                 orders.send_msg(Msg::ToFetch(ToFetch::RefreshToken));
             }
         }
+        Msg::SignInMsg(msg) => msg.update(model, orders),
     }
 }
 

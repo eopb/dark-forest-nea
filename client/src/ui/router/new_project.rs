@@ -8,12 +8,16 @@ pub fn view(
     model: &state::Model,
     error: Option<&shared::data::new_project::Fail>,
 ) -> Node<updates::Msg> {
-    let project_name =
-        |error| ui::form::text_with_error(model, "project_name", "Project Name...", error);
+    let project_name = |err| {
+        ui::form::InputBuilder::text()
+            .id("project_name")
+            .placeholder("Project Name...")
+            .error(err)
+            .view(model, |_| None)
+    };
     ui::form::view(
         model,
-        shared::NewProject::path(RESPONSE_KIND),
-        project_name(error.and_then(|error| match error {
+        project_name(&error.and_then(|error| match error {
             shared::data::new_project::Fail::AlreadyExists => {
                 Some("You already have a project under that name.".to_owned())
             }
@@ -23,5 +27,6 @@ pub fn view(
         })),
         "Create Project",
         Vec::<Node<updates::Msg>>::new(),
+        |_| None,
     )
 }

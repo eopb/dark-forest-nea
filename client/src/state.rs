@@ -2,13 +2,14 @@ pub mod server;
 
 pub use server::Server;
 
-use crate::routes::Route;
+use crate::{routes::Route, ui};
 
 /// Describes client state.
 pub struct Model {
     pub theme: Theme,
     pub route: Route,
     pub server: Server,
+    pub route_data: RouteData,
 }
 
 impl Model {
@@ -18,8 +19,13 @@ impl Model {
             theme: Theme::default(),
             route: Route::default(),
             server: Server::default(),
+            route_data: RouteData::default(),
         }
     }
+}
+#[derive(Default)]
+pub struct RouteData {
+    pub sign_in: ui::router::sign_in::Model,
 }
 
 #[derive(Copy, Clone)]

@@ -1,8 +1,8 @@
-mod create_account;
-mod index;
-mod new_project;
-mod not_found;
-mod sign_in;
+pub mod create_account;
+pub mod index;
+pub mod new_project;
+pub mod not_found;
+pub mod sign_in;
 
 use crate::{state, updates};
 
