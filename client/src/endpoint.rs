@@ -12,14 +12,37 @@ use crate::RESPONSE_KIND;
 
 /// Extension for endpoints that can be fetched from the server
 #[async_trait(?Send)]
-pub trait Endpoint: 'static + shared::Endpoint + Serialize + for<'a> Deserialize<'a> {
-    async fn fetch() -> anyhow::Result<Self> {
+pub trait Get: Endpoint + shared::Endpoint {
+    async fn fetch() -> anyhow::Result<Self::Response> {
         let path = Self::path(RESPONSE_KIND);
         let fetch = Request::new(&path)
-            .credentials(SameOrigin)
             .fetch()
             .await
             .map_err(|error| anyhow!("Failed to fetch: Path: {} Error: {:?}", &path, error))?;
+        Self::get(fetch).await
+    }
+}
+
+#[async_trait(?Send)]
+pub trait Post: Endpoint + shared::PostEndpoint {
+    async fn fetch(post: Self::Requires) -> anyhow::Result<Self::Response> {
+        let path = Self::path(RESPONSE_KIND);
+        let fetch = Request::new(&path)
+            .method(Method::Post)
+            .header(Header::custom("Accept-Language", "en"))
+            .json(&post)
+            .map_err(|error| anyhow!("Failed to fetch: Path: {} Error: {:?}", &path, error))?
+            .fetch()
+            .await
+            .map_err(|error| anyhow!("Failed to fetch: Path: {} Error: {:?}", &path, error))?;
+        Self::get(fetch).await
+    }
+}
+
+#[async_trait(?Send)]
+pub trait Endpoint: shared::Endpoint {
+    async fn get(fetch: Response) -> anyhow::Result<Self::Response> {
+        let path = Self::path(RESPONSE_KIND);
         match RESPONSE_KIND {
             Json => fetch
                 .json()
@@ -42,7 +65,6 @@ pub trait Endpoint: 'static + shared::Endpoint + Serialize + for<'a> Deserialize
         }
     }
 }
-
 impl Endpoint for shared::Hello {}
 impl Endpoint for shared::SignedIn {}
 impl Endpoint for shared::RefreshToken {}

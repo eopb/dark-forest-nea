@@ -1,7 +1,14 @@
 use {
     ::cookie::Cookie,
     async_trait::async_trait,
-    shared::data::sign_in::Fail::{IncorrectPassword, UserNotFound},
+    shared::data::{
+        self,
+        sign_in::{
+            self,
+            Fail::{IncorrectPassword, UserNotFound},
+        },
+        ResponseKind,
+    },
     tide::{Redirect, Request, Response},
     time::Duration,
 };
@@ -13,14 +20,12 @@ use crate::{
     state::State,
 };
 
-use shared::data::{sign_in, ResponseKind};
-
 #[async_trait]
 impl endpoint::Post for shared::SignIn {
     async fn post(
         req: Request<State>,
-        credentials: <Self as shared::PostEndpoint>::Requires,
-    ) -> tide::Result<<Self as shared::Endpoint>::Response> {
+        credentials: sign_in::Credentials,
+    ) -> tide::Result<Result<data::security::Token, sign_in::Fail>> {
         let stored_user = req
             .state()
             .database()
