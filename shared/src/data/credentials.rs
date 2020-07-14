@@ -12,8 +12,12 @@ pub struct Credentials {
 }
 
 impl Endpoint for Credentials {
+    type Response = Result<Token, Fail>;
     const PATH: &'static str = "/sign-in";
 }
+
+
+type Token = String;
 
 /// Reasons signing-in may fail.
 #[derive(Copy, Clone, Serialize, Deserialize, Debug, Eq, PartialEq)]

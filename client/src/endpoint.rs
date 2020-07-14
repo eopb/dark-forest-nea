@@ -3,6 +3,7 @@ use {
     async_trait::async_trait,
     seed::prelude::*,
     serde::{Deserialize, Serialize},
+    web_sys::RequestCredentials::SameOrigin,
 };
 
 use shared::data::ResponseKind::{Binary, Json};
@@ -15,6 +16,7 @@ pub trait Endpoint: 'static + shared::Endpoint + Serialize + for<'a> Deserialize
     async fn fetch() -> anyhow::Result<Self> {
         let path = Self::path(RESPONSE_KIND);
         let fetch = Request::new(&path)
+            .credentials(SameOrigin)
             .fetch()
             .await
             .map_err(|error| anyhow!("Failed to fetch: Path: {} Error: {:?}", &path, error))?;

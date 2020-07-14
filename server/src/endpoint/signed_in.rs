@@ -18,7 +18,7 @@ impl Endpoint for shared::SignedIn {}
 impl endpoint::Get for shared::SignedIn {
     async fn get(req: Request<State>, res_kind: ResponseKind) -> tide::Result<Response> {
         let mut res = Response::new(200);
-        res.set_body(Self::body_from(&Self::get_user(&req).await, res_kind)?);
+        res.set_body(Self::_body_from(&Self::get_user(&req).await, res_kind)?);
         Ok(res)
     }
 }

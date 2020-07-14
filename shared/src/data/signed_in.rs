@@ -10,6 +10,7 @@ pub enum SignedIn {
 }
 
 impl Endpoint for SignedIn {
+    type Response = ();
     const PATH: &'static str = "/signed-in";
 }
 

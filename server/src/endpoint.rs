@@ -20,8 +20,13 @@ use {
 
 /// Server extension to API endpoints.
 pub trait Endpoint: shared::Endpoint + 'static {
+    fn body_from(value: Self::Response, res_kind: ResponseKind) -> tide::Result<Body> {
+        Self::_body_from(value, res_kind)
+    }
     /// Create a HTTP response body with a given kind from a type.
-    fn body_from<T: Serialize>(value: T, res_kind: ResponseKind) -> tide::Result<Body> {
+    ///
+    /// TODO remove this function as it is less typed.
+    fn _body_from<T: Serialize>(value: T, res_kind: ResponseKind) -> tide::Result<Body> {
         Ok(match res_kind {
             Binary => Body::from_bytes(bincode::serialize(&value)?),
             Json => Body::from_json(&value)?,
@@ -64,7 +69,7 @@ impl Get for shared::Hello {
     async fn get(_: Request<State>, res_kind: ResponseKind) -> tide::Result<Response> {
         thread::sleep(time::Duration::from_secs(1)); // Simulate slow response time.
         let mut res = Response::new(200);
-        res.set_body(Self::body_from(
+        res.set_body(Self::_body_from(
             &Self {
                 msg: String::from("Hi peeps"),
             },

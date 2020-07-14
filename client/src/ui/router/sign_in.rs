@@ -1,9 +1,11 @@
 use crate::{state, ui, updates, RESPONSE_KIND};
 
+use seed::browser::web_storage::{LocalStorage, WebStorage};
 use {
     seed::{prelude::*, *},
     seed_style::*,
     shared::Endpoint,
+    web_sys::RequestCredentials::SameOrigin,
 };
 
 #[derive(Default)]
@@ -15,16 +17,16 @@ pub enum Msg {
     UsernameChanged(String),
     PasswordChanged(String),
     Submit,
-    Submited,
+    Submited(<shared::Credentials as Endpoint>::Response),
     SubmitFailed(String),
 }
 
 impl Msg {
     pub fn update(self, model: &mut state::Model, orders: &mut impl Orders<updates::Msg>) {
-        let mut model = &mut model.route_data.sign_in;
+        let mut inner_model = &mut model.route_data.sign_in;
         match self {
-            Self::UsernameChanged(user_name) => model.form.user_name = user_name,
-            Self::PasswordChanged(password) => model.form.password = password,
+            Self::UsernameChanged(user_name) => inner_model.form.user_name = user_name,
+            Self::PasswordChanged(password) => inner_model.form.password = password,
             Self::Submit => {
                 log!("Hello");
                 //   Url::go_and_load_with_str("/");
@@ -36,26 +38,28 @@ impl Msg {
                 let request = Request::new("api/json/sign-in")
                     .method(Method::Post)
                     .header(Header::custom("Accept-Language", "en"))
-                    .json(&model.form)
+                    .credentials(SameOrigin)
+                    // .header(Header::content_type("application/x-www-form-urlencoded"))
+                    .json(&inner_model.form)
                     .expect("Serialization failed");
 
                 log!("Hello");
                 orders.perform_cmd(async {
                     let response = fetch(request).await.expect("HTTP request failed");
 
-                    log!(response.text().await.unwrap());
-
                     updates::Msg::from(if response.status().is_ok() {
-                        Msg::Submited
+                        Msg::Submited(
+                            serde_json::from_str(&response.text().await.unwrap()).unwrap(),
+                        )
                     } else {
                         Msg::SubmitFailed(response.status().text)
                     })
                 });
                 log!("Hello");
             }
-            Self::Submited => {
-                // model = &mut Model::default();
-                log!("there");
+            Self::Submited(result) => {
+                model.login_token = result.clone().ok();
+                LocalStorage::insert("Login", &result.unwrap());
             }
             Self::SubmitFailed(reason) => log!("Hi"),
         }

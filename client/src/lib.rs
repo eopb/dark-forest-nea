@@ -21,10 +21,10 @@ use {
 
 use std::convert::TryInto;
 
-use shared::data::ResponseKind::{self, Binary};
+use shared::data::ResponseKind::{self, Json};
 
 /// The kind of response body to expect from server endpoints.
-pub const RESPONSE_KIND: ResponseKind = Binary;
+pub const RESPONSE_KIND: ResponseKind = Json;
 
 /// Setup process invoked when client is started.
 fn init(url: Url, orders: &mut impl Orders<updates::Msg>) -> state::Model {

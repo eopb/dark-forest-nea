@@ -4,5 +4,6 @@ use crate::Endpoint;
 pub struct SignOut;
 
 impl Endpoint for SignOut {
+    type Response = ();
     const PATH: &'static str = "/sign-out";
 }

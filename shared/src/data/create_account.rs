@@ -14,6 +14,8 @@ pub struct CreateAccount {
 }
 
 impl Endpoint for CreateAccount {
+    type Response = ();
+
     const PATH: &'static str = "/create-account";
 }
 

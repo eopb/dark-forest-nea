@@ -4,12 +4,14 @@ pub use server::Server;
 
 use crate::{routes::Route, ui};
 
+use seed::browser::web_storage::{LocalStorage, WebStorage};
 /// Describes client state.
 pub struct Model {
     pub theme: Theme,
     pub route: Route,
     pub server: Server,
     pub route_data: RouteData,
+    pub login_token: Option<String>,
 }
 
 impl Model {
@@ -20,6 +22,7 @@ impl Model {
             route: Route::default(),
             server: Server::default(),
             route_data: RouteData::default(),
+            login_token: LocalStorage::get("Login").ok(),
         }
     }
 }

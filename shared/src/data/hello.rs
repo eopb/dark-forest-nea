@@ -9,5 +9,6 @@ pub struct Hello {
 }
 
 impl Endpoint for Hello {
+    type Response = ();
     const PATH: &'static str = "/hello";
 }

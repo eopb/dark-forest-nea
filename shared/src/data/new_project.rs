@@ -12,6 +12,7 @@ pub struct NewProject {
 }
 
 impl Endpoint for NewProject {
+    type Response = ();
     const PATH: &'static str = "/new-project";
 }
 
