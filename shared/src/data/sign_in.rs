@@ -1,23 +1,25 @@
-use crate::Endpoint;
+use crate::{data::security, Endpoint, PostEndpoint};
 
 use std::fmt;
 
 use serde::{Deserialize, Serialize};
 
+pub struct SignIn;
+
+impl Endpoint for SignIn {
+    type Response = Result<security::Token, Fail>;
+    const PATH: &'static str = "/sign-in";
+}
+
+impl PostEndpoint for SignIn {
+    type Requires = Credentials;
+}
 /// A users credentials used to sign-in.
 #[derive(Clone, Serialize, Deserialize, Debug, Default)]
 pub struct Credentials {
     pub user_name: String,
     pub password: String,
 }
-
-impl Endpoint for Credentials {
-    type Response = Result<Token, Fail>;
-    const PATH: &'static str = "/sign-in";
-}
-
-
-type Token = String;
 
 /// Reasons signing-in may fail.
 #[derive(Copy, Clone, Serialize, Deserialize, Debug, Eq, PartialEq)]

@@ -63,10 +63,7 @@ mod tests {
     #[test]
     fn with_() {
         assert_eq!(
-            with_enum(
-                "/epic/path",
-                &Some(data::credentials::Fail::IncorrectPassword)
-            ),
+            with_enum("/epic/path", &Some(data::sign_in::Fail::IncorrectPassword)),
             "/epic/path?value=IncorrectPassword".to_owned()
         );
         // Don't worry I never serialize passwords to qs in real code.
@@ -79,7 +76,7 @@ mod tests {
     fn get_() {
         assert_eq!(
             get_enum("value=IncorrectPassword"),
-            Some(data::credentials::Fail::IncorrectPassword)
+            Some(data::sign_in::Fail::IncorrectPassword)
         );
         // Don't worry I never serialize passwords to qs in real code.
         assert_eq!(
@@ -89,10 +86,10 @@ mod tests {
     }
     #[test]
     fn empty() {
-        assert_eq!(get_enum::<data::credentials::Fail>(""), None);
+        assert_eq!(get_enum::<data::sign_in::Fail>(""), None);
         assert_eq!(get::<CreateAccount>(""), None);
         assert_eq!(
-            with_enum::<data::credentials::Fail>("/epic/path", &None),
+            with_enum::<data::sign_in::Fail>("/epic/path", &None),
             "/epic/path".to_owned()
         );
         assert_eq!(

@@ -41,12 +41,12 @@ async fn main() -> tide::Result<()> {
         .get(Redirect::new("https://www.youtube.com/watch?v=dQw4w9WgXcQ"));
 
     shared::Hello::apply(&mut app);
-    shared::Credentials::apply(&mut app);
-    shared::CreateAccount::apply(&mut app);
+    shared::SignIn::apply(&mut app);
+    // shared::CreateAccount::apply(&mut app);
     shared::SignedIn::apply(&mut app);
-    shared::SignOut::apply(&mut app);
-    shared::NewProject::apply(&mut app);
-    shared::RefreshToken::apply(&mut app);
+    // shared::SignOut::apply(&mut app);
+    // shared::NewProject::apply(&mut app);
+    // shared::RefreshToken::apply(&mut app);
 
     app.listen("localhost:8081").await?;
 

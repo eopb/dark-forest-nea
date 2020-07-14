@@ -1,6 +1,7 @@
 use crate::{state, ui, updates, RESPONSE_KIND};
 
 use seed::browser::web_storage::{LocalStorage, WebStorage};
+use shared::data::sign_in::Credentials;
 use {
     seed::{prelude::*, *},
     seed_style::*,
@@ -10,14 +11,14 @@ use {
 
 #[derive(Default)]
 pub struct Model {
-    form: shared::Credentials,
+    form: Credentials,
 }
 
 pub enum Msg {
     UsernameChanged(String),
     PasswordChanged(String),
     Submit,
-    Submited(<shared::Credentials as Endpoint>::Response),
+    Submited(<shared::SignIn as Endpoint>::Response),
     SubmitFailed(String),
 }
 
@@ -72,9 +73,9 @@ impl From<Msg> for updates::Msg {
 }
 pub fn view(
     model: &state::Model,
-    error: Option<&shared::data::credentials::Fail>,
+    error: Option<&shared::data::sign_in::Fail>,
 ) -> Node<updates::Msg> {
-    use shared::data::credentials::Fail::{IncorrectPassword, UserNotFound};
+    use shared::data::sign_in::Fail::{IncorrectPassword, UserNotFound};
     let user_name = |err| {
         ui::form::InputBuilder::text()
             .id("user_name")

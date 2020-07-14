@@ -1,7 +1,7 @@
 use {
     ::cookie::Cookie,
     async_trait::async_trait,
-    shared::data::credentials::Fail::{IncorrectPassword, UserNotFound},
+    shared::data::sign_in::Fail::{IncorrectPassword, UserNotFound},
     tide::{Redirect, Request, Response},
     time::Duration,
 };
@@ -13,15 +13,14 @@ use crate::{
     state::State,
 };
 
-use shared::data::{credentials, ResponseKind};
-
-impl Endpoint for shared::Credentials {}
+use shared::data::{sign_in, ResponseKind};
 
 #[async_trait]
-impl endpoint::Post for shared::Credentials {
-    async fn post(mut req: Request<State>, res_kind: ResponseKind) -> tide::Result<Response> {
-        let credentials: Self = dbg!(req.body_json().await)?;
-
+impl endpoint::Post for shared::SignIn {
+    async fn post(
+        req: Request<State>,
+        credentials: <Self as shared::PostEndpoint>::Requires,
+    ) -> tide::Result<<Self as shared::Endpoint>::Response> {
         let stored_user = req
             .state()
             .database()
@@ -29,20 +28,15 @@ impl endpoint::Post for shared::Credentials {
             .await?;
 
         Ok({
-            let mut res = Response::new(200);
-            res.set_body(Self::body_from(
-                if let Some(stored_user) = stored_user {
-                    if stored_user.verify_credentials(&credentials)? {
-                        Ok(security::jwt::Claims::new(credentials.user_name).get_token()?)
-                    } else {
-                        Err(credentials::Fail::IncorrectPassword)
-                    }
+            if let Some(stored_user) = stored_user {
+                if stored_user.verify_credentials(&credentials)? {
+                    Ok(security::jwt::Claims::new(credentials.user_name).get_token()?)
                 } else {
-                    Err(credentials::Fail::UserNotFound)
-                },
-                res_kind,
-            )?);
-            res
+                    Err(sign_in::Fail::IncorrectPassword)
+                }
+            } else {
+                Err(sign_in::Fail::UserNotFound)
+            }
         })
     }
 }

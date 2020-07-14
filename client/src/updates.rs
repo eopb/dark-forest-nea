@@ -45,7 +45,7 @@ pub fn update(msg: Msg, model: &mut state::Model, orders: &mut impl Orders<Msg>)
         Msg::RefreshToken => {
             use state::server::Fetch::Fetched;
             // Only run this When a user is signed in.
-            if let Fetched(Ok(shared::SignedIn::As(_))) = model.server.signed_in {
+            if let Fetched(Ok(shared::data::signed_in::Res::As(_))) = model.server.signed_in {
                 orders.send_msg(Msg::ToFetch(ToFetch::RefreshToken));
             }
         }
@@ -64,8 +64,8 @@ impl ToFetch {
     /// Fetch an item and inform with a message.
     async fn order(self) -> Msg {
         match self {
-            Self::Hello => Msg::DataFetched(Fetched::Hello(shared::Hello::fetch().await)),
-            Self::SignedIn => Msg::DataFetched(Fetched::SignedIn(shared::SignedIn::fetch().await)),
+            Self::Hello => Msg::DataFetched(Fetched::Hello(panic!())),
+            Self::SignedIn => Msg::DataFetched(Fetched::SignedIn(panic!())),
             Self::RefreshToken => {
                 Msg::DataFetched(Fetched::RefreshToken(shared::RefreshToken::fetch().await))
             }
@@ -75,8 +75,8 @@ impl ToFetch {
 
 /// An item that has been fetched ready to be handled.
 pub enum Fetched {
-    Hello(anyhow::Result<shared::Hello>),
-    SignedIn(anyhow::Result<shared::SignedIn>),
+    Hello(anyhow::Result<shared::data::hello::Res>),
+    SignedIn(anyhow::Result<shared::data::signed_in::Res>),
     RefreshToken(anyhow::Result<shared::RefreshToken>),
 }
 

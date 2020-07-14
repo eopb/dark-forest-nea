@@ -9,7 +9,7 @@ use std::{fmt, string::ToString};
 pub enum Route {
     Index,
     Explore,
-    SignIn(Option<data::credentials::Fail>),
+    SignIn(Option<data::sign_in::Fail>),
     CreateAccount(Option<data::create_account::Fail>),
     Users {
         user_name: String,

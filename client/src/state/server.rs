@@ -7,8 +7,8 @@ use seed::{prelude::*, *};
 
 #[derive(Default)]
 pub struct Server {
-    pub hello: Fetch<shared::Hello, anyhow::Error>,
-    pub signed_in: Fetch<shared::SignedIn, anyhow::Error>,
+    pub hello: Fetch<shared::data::hello::Res, anyhow::Error>,
+    pub signed_in: Fetch<shared::data::signed_in::Res, anyhow::Error>,
 }
 
 /// Fetching status.

@@ -11,3 +11,5 @@ impl<T> Authenticated<T> {
         Self { inner, token }
     }
 }
+
+pub type Token = String;

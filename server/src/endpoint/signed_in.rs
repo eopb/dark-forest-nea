@@ -10,33 +10,31 @@ use crate::{
     state::State,
 };
 
+use shared::data::signed_in;
 use shared::data::ResponseKind;
 
-impl Endpoint for shared::SignedIn {}
-
 #[async_trait]
-impl endpoint::Get for shared::SignedIn {
-    async fn get(req: Request<State>, res_kind: ResponseKind) -> tide::Result<Response> {
-        let mut res = Response::new(200);
-        res.set_body(Self::_body_from(&Self::get_user(&req).await, res_kind)?);
-        Ok(res)
+impl endpoint::Post for shared::SignedIn {
+    async fn post(
+        req: Request<State>,
+        token: <Self as shared::PostEndpoint>::Requires,
+    ) -> tide::Result<<Self as shared::Endpoint>::Response> {
+        Ok(Self::get_user(&token).await)
     }
 }
 
 #[async_trait]
-pub trait Ext {
-    async fn get_user(req: &Request<State>) -> Self;
+pub trait Ext: shared::Endpoint {
+    async fn get_user(token: &str) -> <Self as shared::Endpoint>::Response;
 }
 
 #[async_trait]
 impl Ext for shared::SignedIn {
-    async fn get_user(req: &Request<State>) -> Self {
-        let user = req.cookie(cookie::LOGIN).and_then(|cookie| {
-            jwt::Claims::decode_token(cookie.value())
-                .map(|token| token.claims.sub)
-                .ok()
-        });
+    async fn get_user(token: &str) -> <Self as shared::Endpoint>::Response {
+        let user = jwt::Claims::decode_token(token)
+            .map(|token| token.claims.sub)
+            .ok();
 
-        user.map_or(Self::Not, Self::As)
+        user.map_or(signed_in::Res::Not, signed_in::Res::As)
     }
 }

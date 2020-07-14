@@ -78,7 +78,7 @@ fn nav(model: &state::Model) -> Node<updates::Msg> {
         div![
             if let Some(signed_in) = model.server.signed_in.ok() {
                 match signed_in {
-                    shared::SignedIn::As(_) => vec![
+                    shared::data::signed_in::Res::As(_) => vec![
                         a![
                             a(),
                             button(model),
@@ -92,7 +92,7 @@ fn nav(model: &state::Model) -> Node<updates::Msg> {
                             attrs! {At::Href => shared::SignOut::PATH}
                         ],
                     ],
-                    shared::SignedIn::Not => vec![a![
+                    shared::data::signed_in::Res::Not => vec![a![
                         a(),
                         button(model),
                         "Sign In",
