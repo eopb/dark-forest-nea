@@ -23,24 +23,23 @@ pub trait Post: Endpoint + shared::PostEndpoint {
     async fn fetch(post: Self::Requires) -> anyhow::Result<Self::Response> {
         let path = Self::path(DATA_KINDS);
         let fetch = Request::new(&path).method(Method::Post);
-        let data = bincode::serialize(&post)
-            .map_err(|error| anyhow!("Failed to fetch: Path: {} Error: {:?}", &path, error))?;
         let fetch = match DATA_KINDS.server_requires {
             Json => fetch
+                //TODO test not having this line
                 .header(Header::custom("Accept-Language", "en"))
                 .json(&post)
                 .map_err(|error| anyhow!("Failed to fetch: Path: {} Error: {:?}", &path, error))?,
-            Binary => bytes(fetch, &data),
+            Binary => {
+                fetch.bytes(&bincode::serialize(&post).map_err(|error| {
+                    anyhow!("Failed to fetch: Path: {} Error: {:?}", &path, error)
+                })?)
+            }
         }
         .fetch()
         .await
         .map_err(|error| anyhow!("Failed to fetch: Path: {} Error: {:?}", &path, error))?;
         Self::get(fetch).await
     }
-}
-pub fn bytes<'a>(req: Request<'a>, data: &'a [u8]) -> Request<'a> {
-    req.body(js_sys::Uint8Array::from(data).into())
-        .header(Header::content_type("application/octet-stream"))
 }
 
 #[async_trait(?Send)]
