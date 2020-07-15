@@ -2,13 +2,15 @@
 
 // TODO maybe look into using trait objects for `ToFetch` and `Fetched`
 
+pub mod sign_in;
+
 use crate::{
     endpoint::{Get, Post},
     routes::Route,
     state, ui, Endpoint as _,
 };
-
 use shared::routes::SubRoute;
+use sign_in::SignIn;
 
 use {
     seed::{log, prelude::*},
@@ -22,8 +24,10 @@ pub enum Msg {
     ChangeRoute(Route),
     DataFetched(Fetched),
     ToFetch(ToFetch),
-
+    SignIn(SignIn),
     SignInMsg(ui::router::sign_in::Msg),
+    CreateAccountMsg(ui::router::create_account::Msg),
+    NewProjectMsg(ui::router::new_project::Msg),
     SignOut,
 }
 
@@ -60,11 +64,14 @@ pub fn update(msg: Msg, model: &mut state::Model, orders: &mut impl Orders<Msg>)
             }
         }
         Msg::SignInMsg(msg) => msg.update(model, orders),
+        Msg::CreateAccountMsg(msg) => msg.update(model, orders),
+        Msg::NewProjectMsg(msg) => msg.update(model, orders),
         Msg::SignOut => {
             model.login_token = None;
             LocalStorage::remove("Login");
             orders.send_msg(Msg::ToFetch(ToFetch::SignedIn));
         }
+        Msg::SignIn(x) => x.update(model, orders),
     }
 }
 

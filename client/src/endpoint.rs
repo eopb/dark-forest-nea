@@ -67,9 +67,18 @@ pub trait Endpoint: shared::Endpoint {
 }
 impl Get for shared::Hello {}
 impl Endpoint for shared::Hello {}
+
 impl Post for shared::SignedIn {}
 impl Endpoint for shared::SignedIn {}
+
 impl Post for shared::RefreshToken {}
 impl Endpoint for shared::RefreshToken {}
+
 impl Post for shared::SignIn {}
 impl Endpoint for shared::SignIn {}
+
+impl Post for shared::CreateAccount {}
+impl Endpoint for shared::CreateAccount {}
+
+impl Post for shared::NewProject {}
+impl Endpoint for shared::NewProject {}

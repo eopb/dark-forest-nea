@@ -1,6 +1,8 @@
 use crate::{
     endpoint::{Get, Post},
-    state, ui, updates, RESPONSE_KIND,
+    state, ui, updates,
+    updates::sign_in::SignIn,
+    RESPONSE_KIND,
 };
 
 use std::str::FromStr;
@@ -18,15 +20,13 @@ use {
 #[derive(Clone, Default)]
 pub struct Model {
     form: Credentials,
-    error: Option<shared::data::sign_in::Fail>,
+    pub error: Option<shared::data::sign_in::Fail>,
 }
 
 pub enum Msg {
     UsernameChanged(String),
     PasswordChanged(String),
     Submit,
-    Submited(<shared::SignIn as Endpoint>::Response),
-    SubmitFailed(String),
 }
 
 impl Msg {
@@ -37,34 +37,21 @@ impl Msg {
             Self::PasswordChanged(password) => inner_model.form.password = password,
             Self::Submit => {
                 orders.skip(); // No need to rerender
-                shadow_clone!(inner_model);
-                orders.perform_cmd(async move {
-                    updates::Msg::from(
-                        if let Some(response) = shared::SignIn::fetch(inner_model.form).await.ok() {
-                            Msg::Submited(response)
-                        } else {
-                            Msg::SubmitFailed("Http request failed".to_owned())
-                        },
-                    )
-                });
+                orders.send_msg(
+                    SignIn::Submit(inner_model.form.clone(), shared::Route::Index).into(),
+                );
+                inner_model = &mut Model::default();
             }
-            Self::Submited(result) => match result {
-                Ok(result) => {
-                    model.login_token = Some(result.clone());
-                    LocalStorage::insert("Login", &result);
-                    Url::go_and_load_with_str(&shared::Route::Index.to_string());
-                }
-                Err(error) => inner_model.error = Some(error),
-            },
-            Self::SubmitFailed(reason) => log!(reason),
         }
     }
 }
+
 impl From<Msg> for updates::Msg {
     fn from(msg: Msg) -> Self {
         Self::SignInMsg(msg)
     }
 }
+
 pub fn view(
     model: &state::Model,
     error: Option<&shared::data::sign_in::Fail>,

@@ -1,4 +1,7 @@
-use crate::{data::security, Endpoint, PostEndpoint};
+use crate::{
+    data::{create_account, security},
+    Endpoint, PostEndpoint,
+};
 
 use std::fmt;
 
@@ -38,5 +41,20 @@ impl fmt::Display for Fail {
                 Self::IncorrectPassword => "Incorrect password",
             }
         )
+    }
+}
+
+impl From<create_account::Details> for Credentials {
+    fn from(
+        create_account::Details {
+            user_name,
+            password,
+            ..
+        }: create_account::Details,
+    ) -> Self {
+        Self {
+            user_name,
+            password,
+        }
     }
 }

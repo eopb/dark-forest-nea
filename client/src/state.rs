@@ -29,6 +29,8 @@ impl Model {
 #[derive(Default)]
 pub struct RouteData {
     pub sign_in: ui::router::sign_in::Model,
+    pub create_account: ui::router::create_account::Model,
+    pub new_project: ui::router::new_project::Model,
 }
 
 #[derive(Copy, Clone)]

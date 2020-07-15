@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize};
 pub struct NewProject;
 
 /// Data sent when a user creates an account.
-#[derive(Clone, Serialize, Deserialize, Debug, Eq, PartialEq)]
+#[derive(Clone, Default, Serialize, Deserialize, Debug, Eq, PartialEq)]
 pub struct Details {
     pub project_name: String,
 }
