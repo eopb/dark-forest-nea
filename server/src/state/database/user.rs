@@ -23,9 +23,9 @@ pub struct User {
 
 impl BsonDoc for User {}
 
-impl TryFrom<shared::CreateAccount> for User {
+impl TryFrom<shared::data::create_account::Details> for User {
     type Error = BcryptError;
-    fn try_from(value: shared::CreateAccount) -> Result<Self, Self::Error> {
+    fn try_from(value: shared::data::create_account::Details) -> Result<Self, Self::Error> {
         Ok(Self {
             user_name: value.user_name,
             email: value.email,

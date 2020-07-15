@@ -1,25 +1,32 @@
 use crate::{
     data::{validation, Validation},
-    Endpoint,
+    Endpoint, PostEndpoint,
 };
 
 use serde::{Deserialize, Serialize};
 
+#[derive(Clone, Serialize, Deserialize, Debug, Eq, PartialEq)]
+pub struct CreateAccount;
+
+impl Endpoint for CreateAccount {
+    type Response = Result<(), Fail>;
+
+    const PATH: &'static str = "/create-account";
+}
+
+impl PostEndpoint for CreateAccount {
+    type Requires = Details;
+}
+
 /// Data sent when a user creates an account.
 #[derive(Clone, Serialize, Deserialize, Debug, Eq, PartialEq)]
-pub struct CreateAccount {
+pub struct Details {
     pub user_name: String,
     pub email: String,
     pub password: String,
 }
 
-impl Endpoint for CreateAccount {
-    type Response = ();
-
-    const PATH: &'static str = "/create-account";
-}
-
-impl validation::Post for CreateAccount {
+impl validation::Post for Details {
     type Invalid = Invalid;
     fn validate(&self) -> Result<(), Self::Invalid> {
         let user_name = Validation {
@@ -72,7 +79,7 @@ pub struct Invalid {
 }
 
 #[cfg(test)]
-impl CreateAccount {
+impl Details {
     pub fn mock() -> Self {
         Self {
             user_name: "Ethan".to_owned(),

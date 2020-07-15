@@ -2,8 +2,8 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Authenticated<T> {
-    inner: T,
-    token: String,
+    pub inner: T,
+    pub token: String,
 }
 
 impl<T> Authenticated<T> {

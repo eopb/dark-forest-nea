@@ -1,10 +1,9 @@
 //! API endpoints
 
-// mod create_account;
-// mod new_project;
-// mod refresh_token;
+mod create_account;
+mod new_project;
+mod refresh_token;
 pub mod sign_in;
-// mod sign_out;
 mod signed_in;
 
 use crate::State;

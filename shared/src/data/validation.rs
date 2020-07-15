@@ -8,7 +8,7 @@ use {
 use crate::Endpoint;
 
 /// An endpoint that can be validated.
-pub trait Post: Endpoint {
+pub trait Post {
     type Invalid: Serialize + for<'a> Deserialize<'a>;
     fn validate(&self) -> Result<(), Self::Invalid>;
 }

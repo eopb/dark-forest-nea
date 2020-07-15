@@ -1,6 +1,6 @@
 //! Code wrapping `serde_qs` to provide better support for enums and more query string related things.
 
-pub use crate::data;
+pub use crate::data::{self, create_account::Details};
 
 use serde::{Deserialize, Serialize};
 
@@ -68,7 +68,7 @@ mod tests {
         );
         // Don't worry I never serialize passwords to qs in real code.
         assert_eq!(
-            with("/epic/path", &Some(CreateAccount::mock())),
+            with("/epic/path", &Some(Details::mock())),
             "/epic/path?user_name=Ethan&email=example%40example.com&password=hunter2".to_owned()
         );
     }
@@ -81,7 +81,7 @@ mod tests {
         // Don't worry I never serialize passwords to qs in real code.
         assert_eq!(
             get("user_name=Ethan&email=example%40example.com&password=hunter2"),
-            Some(CreateAccount::mock())
+            Some(Details::mock())
         );
     }
     #[test]

@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 pub struct RefreshToken;
 
 impl Endpoint for RefreshToken {
-    type Response = Token;
+    type Response = Option<Token>;
     const PATH: &'static str = "/refresh-token";
 }
 

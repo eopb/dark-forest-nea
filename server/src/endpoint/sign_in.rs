@@ -45,16 +45,3 @@ impl endpoint::Post for shared::SignIn {
         })
     }
 }
-
-#[allow(clippy::module_name_repetitions)]
-pub fn unsafe_sign_in(mut res: Response, user: String) -> tide::Result<Response> {
-    let claims = security::jwt::Claims::new(user);
-    res.insert_cookie(
-        Cookie::build(cookie::LOGIN, claims.get_token()?)
-            .max_age(Duration::minutes(security::jwt::Claims::max_age_minutes()))
-            .secure(true)
-            .http_only(true)
-            .finish(),
-    );
-    Ok(res)
-}

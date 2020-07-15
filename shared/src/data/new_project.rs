@@ -1,22 +1,30 @@
 use crate::{
-    data::{validation, Validation},
-    Endpoint,
+    data::{security::Authenticated, validation, Validation},
+    Endpoint, PostEndpoint,
 };
 
 use serde::{Deserialize, Serialize};
 
 /// Data sent when a user creates an account.
 #[derive(Clone, Serialize, Deserialize, Debug, Eq, PartialEq)]
-pub struct NewProject {
+pub struct NewProject;
+
+/// Data sent when a user creates an account.
+#[derive(Clone, Serialize, Deserialize, Debug, Eq, PartialEq)]
+pub struct Details {
     pub project_name: String,
 }
 
 impl Endpoint for NewProject {
-    type Response = ();
+    type Response = Result<(), Fail>;
     const PATH: &'static str = "/new-project";
 }
 
-impl validation::Post for NewProject {
+impl PostEndpoint for NewProject {
+    type Requires = Authenticated<Details>;
+}
+
+impl validation::Post for Details {
     type Invalid = Invalid;
     fn validate(&self) -> Result<(), Self::Invalid> {
         let project_name = Validation {
