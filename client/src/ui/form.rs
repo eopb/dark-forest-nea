@@ -1,6 +1,6 @@
 //! Items used to create forms.
 
-use std::{fmt, rc::Rc, string::ToString};
+use std::{fmt, string::ToString};
 
 use crate::{
     state,

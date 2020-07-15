@@ -1,10 +1,7 @@
-use {
-    async_trait::async_trait,
-    tide::{Redirect, Request, Response},
-};
+use {async_trait::async_trait, tide::Request};
 
 use crate::{
-    endpoint::{self, signed_in::Ext, Endpoint},
+    endpoint::{self, signed_in::Ext},
     state::{database::Insert, State},
 };
 
@@ -13,7 +10,7 @@ use shared::{
     data::{
         new_project::{self, Fail},
         security::Authenticated,
-        signed_in, ResponseKind,
+        signed_in,
     },
 };
 

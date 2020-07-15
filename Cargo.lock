@@ -2086,7 +2086,6 @@ dependencies = [
  "bincode",
  "bson",
  "chrono",
- "cookie",
  "dotenv",
  "env_logger",
  "femme",
@@ -2144,7 +2143,6 @@ version = "0.1.0"
 dependencies = [
  "regex",
  "serde",
- "serde_qs",
 ]
 
 [[package]]

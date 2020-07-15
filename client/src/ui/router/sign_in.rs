@@ -1,21 +1,11 @@
-use crate::{
-    endpoint::{Get, Post},
-    state, ui, updates,
-    updates::sign_in::SignIn,
-    RESPONSE_KIND,
-};
+use crate::{state, ui, updates, updates::sign_in::SignIn};
 
-use std::str::FromStr;
-
-use seed::browser::web_storage::{LocalStorage, WebStorage};
-use shared::data::sign_in::Credentials;
 use {
     seed::{prelude::*, *},
     seed_style::*,
-    shadow_clone::shadow_clone,
-    shared::Endpoint,
-    web_sys::RequestCredentials::SameOrigin,
 };
+
+use shared::data::sign_in::Credentials;
 
 #[derive(Clone, Default)]
 pub struct Model {

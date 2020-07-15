@@ -14,7 +14,7 @@ use {
     async_trait::async_trait,
     serde::{Deserialize, Serialize},
     shared::data::ResponseKind::{self, Binary, Json},
-    tide::{Body, Endpoint, Request, Response, Server},
+    tide::{Body, Request, Response, Server},
 };
 
 /// API endpoint that uses the `post` HTTP verb.

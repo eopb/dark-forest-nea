@@ -1,10 +1,7 @@
-use {
-    async_trait::async_trait,
-    tide::{http::StatusCode, Request, Response},
-};
+use {async_trait::async_trait, tide::Request};
 
 use crate::{
-    endpoint::{self, signed_in::Ext, Endpoint},
+    endpoint::{self, signed_in::Ext},
     security,
     state::State,
 };

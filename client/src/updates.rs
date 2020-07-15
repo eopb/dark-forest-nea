@@ -7,15 +7,14 @@ pub mod sign_in;
 use crate::{
     endpoint::{Get, Post},
     routes::Route,
-    state, ui, Endpoint as _,
+    state, ui,
 };
-use shared::routes::SubRoute;
+
 use sign_in::SignIn;
 
-use {
-    seed::{log, prelude::*},
-    web_sys::Window,
-};
+use {seed::prelude::*, web_sys::Window};
+
+use shared::routes::SubRoute;
 
 /// Describes the different events that can be invoked.
 pub enum Msg {

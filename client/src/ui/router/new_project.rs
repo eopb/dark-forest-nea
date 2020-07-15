@@ -1,7 +1,9 @@
-use crate::{endpoint::Post, state, ui, updates, RESPONSE_KIND};
+use crate::{endpoint::Post, state, ui, updates};
 
-use seed::{log, prelude::*};
-use shadow_clone::shadow_clone;
+use {
+    seed::{log, prelude::*},
+    shadow_clone::shadow_clone,
+};
 
 use shared::data::{new_project, security::Authenticated};
 

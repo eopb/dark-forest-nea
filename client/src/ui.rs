@@ -14,7 +14,6 @@ use crate::{state, updates};
 use {
     seed::{prelude::*, *},
     seed_style::{em, px, vh, *},
-    shared::Endpoint as _,
 };
 
 /// Main view describing what to show for all routes.

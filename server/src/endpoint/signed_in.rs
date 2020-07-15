@@ -1,22 +1,13 @@
-use {
-    async_trait::async_trait,
-    tide::{Request, Response},
-};
+use {async_trait::async_trait, tide::Request};
 
-use crate::{
-    cookie,
-    endpoint::{self, Endpoint},
-    security::jwt,
-    state::State,
-};
+use crate::{endpoint, security::jwt, state::State};
 
 use shared::data::signed_in;
-use shared::data::ResponseKind;
 
 #[async_trait]
 impl endpoint::Post for shared::SignedIn {
     async fn post(
-        req: Request<State>,
+        _: Request<State>,
         token: <Self as shared::PostEndpoint>::Requires,
     ) -> tide::Result<<Self as shared::Endpoint>::Response> {
         Ok(Self::get_user(&token).await)

@@ -1,10 +1,4 @@
-use {
-    anyhow::anyhow,
-    async_trait::async_trait,
-    seed::prelude::*,
-    serde::{Deserialize, Serialize},
-    web_sys::RequestCredentials::SameOrigin,
-};
+use {anyhow::anyhow, async_trait::async_trait, seed::prelude::*};
 
 use shared::data::ResponseKind::{Binary, Json};
 

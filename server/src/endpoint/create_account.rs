@@ -1,22 +1,15 @@
 use std::convert::TryInto;
 
-use {
-    async_trait::async_trait,
-    tide::{Redirect, Request, Response},
-};
+use {async_trait::async_trait, tide::Request};
 
 use crate::{
-    endpoint::{self, Endpoint},
+    endpoint::{self},
     state::{database::Insert, State},
 };
 
 use shared::{
+    data::create_account::{self, Fail},
     data::validation::Post as _,
-    data::{
-        create_account::{self, Fail},
-        ResponseKind,
-    },
-    Endpoint as _,
 };
 
 #[async_trait]

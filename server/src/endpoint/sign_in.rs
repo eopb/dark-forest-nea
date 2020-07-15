@@ -1,24 +1,8 @@
-use {
-    ::cookie::Cookie,
-    async_trait::async_trait,
-    shared::data::{
-        self,
-        sign_in::{
-            self,
-            Fail::{IncorrectPassword, UserNotFound},
-        },
-        ResponseKind,
-    },
-    tide::{Redirect, Request, Response},
-    time::Duration,
-};
+use {async_trait::async_trait, tide::Request};
 
-use crate::{
-    cookie,
-    endpoint::{self, Endpoint},
-    security,
-    state::State,
-};
+use crate::{endpoint, security, state::State};
+
+use shared::data::{self, sign_in};
 
 #[async_trait]
 impl endpoint::Post for shared::SignIn {

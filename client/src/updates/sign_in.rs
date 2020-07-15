@@ -1,19 +1,15 @@
-use crate::{
-    endpoint::{Get, Post},
-    state, ui, updates, RESPONSE_KIND,
-};
+use crate::{endpoint::Post, state, updates};
 
-use std::str::FromStr;
-
-use seed::browser::web_storage::{LocalStorage, WebStorage};
-use shared::data::sign_in::Credentials;
 use {
-    seed::{prelude::*, *},
-    seed_style::*,
+    seed::{
+        browser::web_storage::{LocalStorage, WebStorage},
+        prelude::*,
+        *,
+    },
     shadow_clone::shadow_clone,
-    shared::{Endpoint, Route},
-    web_sys::RequestCredentials::SameOrigin,
 };
+
+use shared::{data::sign_in::Credentials, Endpoint, Route};
 
 pub enum SignIn {
     Submit(Credentials, Route),
