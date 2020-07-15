@@ -13,14 +13,59 @@ pub use validation::Validation;
 
 use serde::{Deserialize, Serialize};
 
-/// Enum to specify in what format data should be sent between client and server.
+/// The kind of response body to expect from server endpoints.
+pub const DATA_KINDS: DataKinds = DataKinds::default();
+
+/// Struct to specify in what format data should be sent between client and server.
+
 #[derive(Copy, Clone)]
-pub enum ResponseKind {
+pub struct DataKinds {
+    pub server_response: DataKind,
+    pub server_requires: DataKind,
+}
+impl DataKinds {
+    const fn default() -> Self {
+        Self {
+            server_requires: Binary,
+            server_response: Binary,
+        }
+    }
+    pub fn possible() -> &'static [Self; 4] {
+        &[
+            Self {
+                server_requires: Binary,
+                server_response: Binary,
+            },
+            Self {
+                server_requires: Json,
+                server_response: Binary,
+            },
+            Self {
+                server_requires: Binary,
+                server_response: Json,
+            },
+            Self {
+                server_requires: Json,
+                server_response: Json,
+            },
+        ]
+    }
+}
+#[derive(Copy, Clone)]
+pub enum DataKind {
     Json,
     Binary,
 }
-use ResponseKind::{Binary, Json};
+use DataKind::{Binary, Json};
 
+impl DataKind {
+    fn path(&self) -> &str {
+        match self {
+            Binary => "/bin",
+            Json => "/json",
+        }
+    }
+}
 /// A type that is related to a path.
 pub trait Endpoint: 'static {
     type Response: for<'a> Deserialize<'a> + Serialize;
@@ -30,13 +75,11 @@ pub trait Endpoint: 'static {
     const PATH: &'static str;
 
     /// Full relative path for this endpoint with a given response body type.
-    fn path(res_kind: ResponseKind) -> String {
+    fn path(data_kinds: DataKinds) -> String {
         format!(
-            "/{}{}",
-            match res_kind {
-                Binary => "api/bin",
-                Json => "api/json",
-            },
+            "/api{}{}{}",
+            data_kinds.server_requires.path(),
+            data_kinds.server_response.path(),
             Self::PATH
         )
     }

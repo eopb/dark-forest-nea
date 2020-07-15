@@ -13,7 +13,10 @@ use std::{future::Future, thread, time};
 use {
     async_trait::async_trait,
     serde::{Deserialize, Serialize},
-    shared::data::ResponseKind::{self, Binary, Json},
+    shared::data::{
+        DataKind::{self, Binary, Json},
+        DataKinds,
+    },
     tide::{Body, Request, Response, Server},
 };
 
@@ -27,7 +30,7 @@ pub trait Post: shared::PostEndpoint {
     ) -> tide::Result<<Self as shared::Endpoint>::Response>;
     /// Add an endpoint as a `post` to a server.
     fn apply(app: &mut Server<State>) {
-        for res_kind in &[Json, Binary] {
+        for res_kind in DataKinds::possible() {
             app.at(&Self::path(*res_kind))
                 .post(move |req| post_response(req, *res_kind, Self::post));
         }
@@ -41,7 +44,7 @@ pub trait Get: shared::Endpoint {
     async fn get(req: Request<State>) -> tide::Result<<Self as shared::Endpoint>::Response>;
     /// Add an endpoint as a `get` to a server.
     fn apply(app: &mut Server<State>) {
-        for res_kind in &[Json, Binary] {
+        for res_kind in DataKinds::possible() {
             app.at(&Self::path(*res_kind))
                 .get(move |req| get_response(req, *res_kind, Self::get));
         }
@@ -50,7 +53,7 @@ pub trait Get: shared::Endpoint {
 
 async fn get_response<Func, Output, Fut>(
     req: Request<State>,
-    res_kind: ResponseKind,
+    res_kind: DataKinds,
     endpoint: Func,
 ) -> tide::Result<Response>
 where
@@ -64,7 +67,7 @@ where
 }
 async fn post_response<Func, Output, Fut, Data>(
     mut req: Request<State>,
-    res_kind: ResponseKind,
+    res_kind: DataKinds,
     endpoint: Func,
 ) -> tide::Result<Response>
 where
@@ -73,16 +76,19 @@ where
     Output: Serialize,
     Data: for<'a> Deserialize<'a> + Send + Sync,
 {
-    let data = req.body_json().await?;
+    let data = match res_kind.server_requires {
+        Binary => bincode::deserialize(&req.body_bytes().await?)?,
+        Json => req.body_json().await?,
+    };
     let value = endpoint(req, data).await?;
 
     response(value, res_kind)
 }
 
-fn response(value: impl Serialize, res_kind: ResponseKind) -> tide::Result<Response> {
+fn response(value: impl Serialize, res_kind: DataKinds) -> tide::Result<Response> {
     let mut res = Response::new(200);
 
-    res.set_body(match res_kind {
+    res.set_body(match res_kind.server_response {
         Binary => Body::from_bytes(bincode::serialize(&value)?),
         Json => Body::from_json(&value)?,
     });
