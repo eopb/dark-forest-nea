@@ -89,7 +89,7 @@ fn nav(model: &state::Model) -> Node<updates::Msg> {
                             a(),
                             button(model),
                             "Sign Out",
-                            attrs! {At::Href => shared::SignOut::PATH}
+                            input_ev(Ev::Click, |_| updates::Msg::SignOut)
                         ],
                     ],
                     shared::data::signed_in::Res::Not => vec![a![

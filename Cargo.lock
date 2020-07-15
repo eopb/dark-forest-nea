@@ -442,6 +442,7 @@ dependencies = [
  "seed_style_preview",
  "serde",
  "serde_json",
+ "shadow-clone",
  "shared",
  "time 0.2.16",
  "wasm-bindgen-test",
@@ -2130,6 +2131,12 @@ dependencies = [
  "fake-simd",
  "opaque-debug",
 ]
+
+[[package]]
+name = "shadow-clone"
+version = "1.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "99e3d62f6165d200916d9918a3ff1f4a28b9e2492a241b2e514961a395fe4adf"
 
 [[package]]
 name = "shared"

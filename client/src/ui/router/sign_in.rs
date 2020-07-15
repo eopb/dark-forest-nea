@@ -1,17 +1,24 @@
-use crate::{state, ui, updates, RESPONSE_KIND};
+use crate::{
+    endpoint::{Get, Post},
+    state, ui, updates, RESPONSE_KIND,
+};
+
+use std::str::FromStr;
 
 use seed::browser::web_storage::{LocalStorage, WebStorage};
 use shared::data::sign_in::Credentials;
 use {
     seed::{prelude::*, *},
     seed_style::*,
+    shadow_clone::shadow_clone,
     shared::Endpoint,
     web_sys::RequestCredentials::SameOrigin,
 };
 
-#[derive(Default)]
+#[derive(Clone, Default)]
 pub struct Model {
     form: Credentials,
+    error: Option<shared::data::sign_in::Fail>,
 }
 
 pub enum Msg {
@@ -29,40 +36,27 @@ impl Msg {
             Self::UsernameChanged(user_name) => inner_model.form.user_name = user_name,
             Self::PasswordChanged(password) => inner_model.form.password = password,
             Self::Submit => {
-                log!("Hello");
-                //   Url::go_and_load_with_str("/");
                 orders.skip(); // No need to rerender
-
-                log!("Hello");
-                //   Url::go_and_load_with_str("/");
-                //   Url::go_and_load_with_str("/");
-                let request = Request::new("api/json/sign-in")
-                    .method(Method::Post)
-                    .header(Header::custom("Accept-Language", "en"))
-                    .credentials(SameOrigin)
-                    // .header(Header::content_type("application/x-www-form-urlencoded"))
-                    .json(&inner_model.form)
-                    .expect("Serialization failed");
-
-                log!("Hello");
-                orders.perform_cmd(async {
-                    let response = fetch(request).await.expect("HTTP request failed");
-
-                    updates::Msg::from(if response.status().is_ok() {
-                        Msg::Submited(
-                            serde_json::from_str(&response.text().await.unwrap()).unwrap(),
-                        )
-                    } else {
-                        Msg::SubmitFailed(response.status().text)
-                    })
+                shadow_clone!(inner_model);
+                orders.perform_cmd(async move {
+                    updates::Msg::from(
+                        if let Some(response) = shared::SignIn::fetch(inner_model.form).await.ok() {
+                            Msg::Submited(response)
+                        } else {
+                            Msg::SubmitFailed("Http request failed".to_owned())
+                        },
+                    )
                 });
-                log!("Hello");
             }
-            Self::Submited(result) => {
-                model.login_token = result.clone().ok();
-                LocalStorage::insert("Login", &result.unwrap());
-            }
-            Self::SubmitFailed(reason) => log!("Hi"),
+            Self::Submited(result) => match result {
+                Ok(result) => {
+                    model.login_token = Some(result.clone());
+                    LocalStorage::insert("Login", &result);
+                    Url::go_and_load_with_str(&shared::Route::Index.to_string());
+                }
+                Err(error) => inner_model.error = Some(error),
+            },
+            Self::SubmitFailed(reason) => log!(reason),
         }
     }
 }
@@ -75,6 +69,7 @@ pub fn view(
     model: &state::Model,
     error: Option<&shared::data::sign_in::Fail>,
 ) -> Node<updates::Msg> {
+    let error = model.route_data.sign_in.error;
     use shared::data::sign_in::Fail::{IncorrectPassword, UserNotFound};
     let user_name = |err| {
         ui::form::InputBuilder::text()
