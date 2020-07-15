@@ -19,7 +19,6 @@ impl From<shared::Route> for Route {
 impl TryFrom<&Url> for Route {
     type Error = ApiRoute;
     fn try_from(url: &Url) -> Result<Self, Self::Error> {
-        let qs = &url.search().to_string();
         match &url
             .path()
             .iter()

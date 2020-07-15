@@ -7,7 +7,7 @@ pub mod sign_in;
 use crate::{
     endpoint::{Get, Post},
     routes::Route,
-    state, ui,
+    state, ui, LOGIN_KEY,
 };
 
 use sign_in::SignIn;
@@ -32,6 +32,7 @@ pub enum Msg {
 
 /// Describes how to handle each `Msg` often by updating the model.
 pub fn update(msg: Msg, model: &mut state::Model, orders: &mut impl Orders<Msg>) {
+    #[allow(unused_must_use)] // The best thing to do with failed `LocalStorage` is to ignore.
     match msg {
         Msg::ToggleTheme => model.theme.toggle(),
         Msg::ChangeRoute(route) => {
@@ -67,7 +68,7 @@ pub fn update(msg: Msg, model: &mut state::Model, orders: &mut impl Orders<Msg>)
         Msg::NewProjectMsg(msg) => msg.update(model, orders),
         Msg::SignOut => {
             model.login_token = None;
-            LocalStorage::remove("Login");
+            LocalStorage::remove(LOGIN_KEY);
             orders.send_msg(Msg::ToFetch(ToFetch::SignedIn));
         }
         Msg::SignIn(x) => x.update(model, orders),

@@ -2,7 +2,7 @@ pub mod server;
 
 pub use server::Server;
 
-use crate::{routes::Route, ui};
+use crate::{routes::Route, ui, LOGIN_KEY};
 
 use seed::browser::web_storage::{LocalStorage, WebStorage};
 /// Describes client state.
@@ -22,7 +22,7 @@ impl Model {
             route: Route::default(),
             server: Server::default(),
             route_data: RouteData::default(),
-            login_token: LocalStorage::get("Login").ok(),
+            login_token: LocalStorage::get(LOGIN_KEY).ok(),
         }
     }
 }

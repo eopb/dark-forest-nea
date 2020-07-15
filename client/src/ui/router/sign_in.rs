@@ -30,7 +30,7 @@ impl Msg {
                 orders.send_msg(
                     SignIn::Submit(inner_model.form.clone(), shared::Route::Index).into(),
                 );
-                inner_model = &mut Model::default();
+                *inner_model = Model::default();
             }
         }
     }

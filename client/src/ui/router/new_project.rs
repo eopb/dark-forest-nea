@@ -59,7 +59,7 @@ impl Msg {
                         }))
                         .to_string(),
                     );
-                    inner_model = &mut Model::default();
+                    *inner_model = Model::default();
                 }
             }
             Self::SubmitFailed(reason) => log!(reason),

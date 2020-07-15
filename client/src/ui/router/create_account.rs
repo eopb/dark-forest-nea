@@ -1,4 +1,4 @@
-use crate::{endpoint::Post, state, ui, updates, updates::sign_in::SignIn, RESPONSE_KIND};
+use crate::{endpoint::Post, state, ui, updates, updates::sign_in::SignIn};
 
 use {
     seed::{prelude::*, *},
@@ -51,7 +51,7 @@ impl Msg {
                         SignIn::Submit(inner_model.form.clone().into(), shared::Route::Index)
                             .into(),
                     );
-                    inner_model = &mut Model::default();
+                    *inner_model = Model::default();
                 }
             }
             Self::SubmitFailed(reason) => log!(reason),

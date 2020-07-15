@@ -1,4 +1,4 @@
-use crate::{endpoint::Post, state, updates};
+use crate::{endpoint::Post, state, updates, LOGIN_KEY};
 
 use {
     seed::{
@@ -18,6 +18,7 @@ pub enum SignIn {
 }
 impl SignIn {
     pub fn update(self, model: &mut state::Model, orders: &mut impl Orders<updates::Msg>) {
+        #![allow(unused_must_use)] // The best thing to do with failed `LocalStorage` is to ignore.
         let mut inner_model = &mut model.route_data.sign_in;
         match self {
             Self::Submit(credentials, route) => {
@@ -36,7 +37,7 @@ impl SignIn {
             Self::Submited(result, route) => match result {
                 Ok(result) => {
                     model.login_token = Some(result.clone());
-                    LocalStorage::insert("Login", &result);
+                    LocalStorage::insert(LOGIN_KEY, &result);
                     Url::go_and_load_with_str(&route.to_string());
                 }
                 Err(error) => inner_model.error = Some(error),

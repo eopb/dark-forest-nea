@@ -6,7 +6,6 @@
     clippy::missing_const_for_fn
 )]
 
-pub mod cookie;
 pub mod endpoint;
 mod routes;
 pub mod security;

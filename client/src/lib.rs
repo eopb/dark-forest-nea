@@ -23,6 +23,8 @@ use std::convert::TryInto;
 
 use shared::data::ResponseKind::{self, Json};
 
+pub static LOGIN_KEY: &str = "Login";
+
 /// The kind of response body to expect from server endpoints.
 pub const RESPONSE_KIND: ResponseKind = Json;
 
