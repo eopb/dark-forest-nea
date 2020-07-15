@@ -32,7 +32,6 @@ impl endpoint::Post for shared::CreateAccount {
                 Insert::Success => Ok(()),
                 Insert::AlreadyExists => Err(Fail::AlreadyExists),
             }
-            .into()
         })
     }
 }

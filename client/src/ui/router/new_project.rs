@@ -31,19 +31,18 @@ impl Msg {
                 orders.perform_cmd(async move {
                     updates::Msg::from({
                         if let Some(login_token) = login_token {
-                            if let Some(response) = shared::NewProject::fetch(Authenticated::new(
+                            if let Ok(response) = shared::NewProject::fetch(Authenticated::new(
                                 inner_model.form,
                                 login_token,
                             ))
                             .await
-                            .ok()
                             {
-                                Msg::Submited(response)
+                                Self::Submited(response)
                             } else {
-                                Msg::SubmitFailed("Http request failed".to_owned())
+                                Self::SubmitFailed("Http request failed".to_owned())
                             }
                         } else {
-                            Msg::SubmitFailed("No login token".to_owned())
+                            Self::SubmitFailed("No login token".to_owned())
                         }
                     })
                 });
@@ -68,7 +67,7 @@ impl Msg {
 }
 impl From<Msg> for updates::Msg {
     fn from(msg: Msg) -> Self {
-        Self::NewProjectMsg(msg)
+        Self::NewProjectForm(msg)
     }
 }
 pub fn view(model: &state::Model) -> Node<updates::Msg> {

@@ -33,12 +33,10 @@ impl Msg {
                 shadow_clone!(inner_model);
                 orders.perform_cmd(async move {
                     updates::Msg::from(
-                        if let Some(response) =
-                            shared::CreateAccount::fetch(inner_model.form).await.ok()
-                        {
-                            Msg::Submited(response)
+                        if let Ok(response) = shared::CreateAccount::fetch(inner_model.form).await {
+                            Self::Submited(response)
                         } else {
-                            Msg::SubmitFailed("Http request failed".to_owned())
+                            Self::SubmitFailed("Http request failed".to_owned())
                         },
                     )
                 });
@@ -60,7 +58,7 @@ impl Msg {
 }
 impl From<Msg> for updates::Msg {
     fn from(msg: Msg) -> Self {
-        Self::CreateAccountMsg(msg)
+        Self::CreateAccountForm(msg)
     }
 }
 pub fn view(model: &state::Model) -> Node<updates::Msg> {

@@ -95,7 +95,7 @@ impl InputBuilder {
                         attrs! {At::Placeholder => placeholder}
                     }
                 }),
-                if &InputType::Submit == &self.input_type {
+                if InputType::Submit == self.input_type {
                     input_ev(Ev::Click, update_msg)
                 } else {
                     input_ev(Ev::Input, update_msg)

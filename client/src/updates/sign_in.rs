@@ -26,10 +26,10 @@ impl SignIn {
                 shadow_clone!(inner_model);
                 orders.perform_cmd(async move {
                     updates::Msg::from(
-                        if let Some(response) = shared::SignIn::fetch(credentials).await.ok() {
-                            SignIn::Submited(response, route)
+                        if let Ok(response) = shared::SignIn::fetch(credentials).await {
+                            Self::Submited(response, route)
                         } else {
-                            SignIn::SubmitFailed("Http request failed".to_owned())
+                            Self::SubmitFailed("Http request failed".to_owned())
                         },
                     )
                 });

@@ -24,9 +24,9 @@ pub enum Msg {
     DataFetched(Fetched),
     ToFetch(ToFetch),
     SignIn(SignIn),
-    SignInMsg(ui::router::sign_in::Msg),
-    CreateAccountMsg(ui::router::create_account::Msg),
-    NewProjectMsg(ui::router::new_project::Msg),
+    SignInForm(ui::router::sign_in::Msg),
+    CreateAccountForm(ui::router::create_account::Msg),
+    NewProjectForm(ui::router::new_project::Msg),
     SignOut,
 }
 
@@ -63,9 +63,9 @@ pub fn update(msg: Msg, model: &mut state::Model, orders: &mut impl Orders<Msg>)
                 orders.send_msg(Msg::ToFetch(ToFetch::RefreshToken));
             }
         }
-        Msg::SignInMsg(msg) => msg.update(model, orders),
-        Msg::CreateAccountMsg(msg) => msg.update(model, orders),
-        Msg::NewProjectMsg(msg) => msg.update(model, orders),
+        Msg::SignInForm(msg) => msg.update(model, orders),
+        Msg::CreateAccountForm(msg) => msg.update(model, orders),
+        Msg::NewProjectForm(msg) => msg.update(model, orders),
         Msg::SignOut => {
             model.login_token = None;
             LocalStorage::remove(LOGIN_KEY);

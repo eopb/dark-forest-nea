@@ -38,13 +38,13 @@ impl Msg {
 
 impl From<Msg> for updates::Msg {
     fn from(msg: Msg) -> Self {
-        Self::SignInMsg(msg)
+        Self::SignInForm(msg)
     }
 }
 
 pub fn view(model: &state::Model) -> Node<updates::Msg> {
-    let error = model.route_data.sign_in.error;
     use shared::data::sign_in::Fail::{IncorrectPassword, UserNotFound};
+    let error = model.route_data.sign_in.error;
     let user_name = |err| {
         ui::form::InputBuilder::text()
             .id("user_name")

@@ -71,7 +71,7 @@ where
     Func: Send + Sync + 'static + Fn(Request<State>, Data) -> Fut,
     Fut: Future<Output = tide::Result<Output>> + Send + 'static,
     Output: Serialize,
-    Data: for<'a> Deserialize<'a>,
+    Data: for<'a> Deserialize<'a> + Send + Sync,
 {
     let data = req.body_json().await?;
     let value = endpoint(req, data).await?;
