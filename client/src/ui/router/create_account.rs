@@ -63,10 +63,7 @@ impl From<Msg> for updates::Msg {
         Self::CreateAccountMsg(msg)
     }
 }
-pub fn view(
-    model: &state::Model,
-    error: Option<&shared::data::create_account::Fail>,
-) -> Node<updates::Msg> {
+pub fn view(model: &state::Model) -> Node<updates::Msg> {
     let error = model.route_data.create_account.error.as_ref();
     let user_name = |err| {
         ui::form::InputBuilder::text()
@@ -112,7 +109,7 @@ pub fn view(
             a![
                 ui::style::button(model, 3),
                 "Sign In.",
-                attrs! {At::Href => shared::Route::SignIn(None)}
+                attrs! {At::Href => shared::Route::SignIn}
             ]
             .into_nodes(),
         ],

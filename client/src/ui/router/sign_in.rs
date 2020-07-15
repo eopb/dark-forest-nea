@@ -52,10 +52,7 @@ impl From<Msg> for updates::Msg {
     }
 }
 
-pub fn view(
-    model: &state::Model,
-    error: Option<&shared::data::sign_in::Fail>,
-) -> Node<updates::Msg> {
+pub fn view(model: &state::Model) -> Node<updates::Msg> {
     let error = model.route_data.sign_in.error;
     use shared::data::sign_in::Fail::{IncorrectPassword, UserNotFound};
     let user_name = |err| {
@@ -92,7 +89,7 @@ pub fn view(
             a![
                 ui::style::button(model, 3),
                 "Create account.",
-                attrs! {At::Href => shared::Route::CreateAccount(None)}
+                attrs! {At::Href => shared::Route::CreateAccount}
             ]
             .into_nodes(),
         ],

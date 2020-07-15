@@ -1,4 +1,4 @@
-pub use crate::{data, qs};
+pub use crate::data;
 
 use std::{fmt, string::ToString};
 
@@ -9,13 +9,13 @@ use std::{fmt, string::ToString};
 pub enum Route {
     Index,
     Explore,
-    SignIn(Option<data::sign_in::Fail>),
-    CreateAccount(Option<data::create_account::Fail>),
+    SignIn,
+    CreateAccount,
     Users {
         user_name: String,
         nest: Option<UserRoute>,
     },
-    NewProject(Option<data::new_project::Fail>),
+    NewProject,
 }
 
 #[derive(Clone, PartialEq, Eq, Debug)]
@@ -48,9 +48,9 @@ impl fmt::Display for Route {
             match self {
                 Self::Index => "/".to_owned(),
                 Self::Explore => "/explore".to_owned(),
-                Self::SignIn(fail) => qs::with_enum("/sign-in", fail),
-                Self::CreateAccount(fail) => qs::with_enum("/create-account", fail),
-                Self::NewProject(fail) => qs::with_enum("/new-project", fail),
+                Self::SignIn => "/sign-in".to_owned(),
+                Self::CreateAccount => "/create-account".to_owned(),
+                Self::NewProject => "/new-project".to_owned(),
                 Self::Users { user_name, nest } =>
                     format!("/users/{}{}", user_name, maybe_show(nest)),
             }
@@ -109,9 +109,9 @@ impl SubRoute for Route {
         match self {
             Self::Index => "Dark Forest".to_owned(),
             Self::Explore => "Explore Dark Forest".to_owned(),
-            Self::SignIn(_) => "Sign In".to_owned(),
-            Self::CreateAccount(_) => "Create Account".to_owned(),
-            Self::NewProject(_) => "New Project".to_owned(),
+            Self::SignIn => "Sign In".to_owned(),
+            Self::CreateAccount => "Create Account".to_owned(),
+            Self::NewProject => "New Project".to_owned(),
             Self::Users { user_name, nest } => {
                 format!("{}{}", user_name.to_owned(), Self::nest(nest),)
             }

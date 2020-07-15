@@ -14,9 +14,9 @@ pub fn view(model: &state::Model) -> Node<updates::Msg> {
         Some(ref route) => match route {
             shared::Route::Index => index::view(model),
             shared::Route::Explore => p!["explore"],
-            shared::Route::SignIn(error) => sign_in::view(model, error.as_ref()),
-            shared::Route::CreateAccount(error) => create_account::view(model, error.as_ref()),
-            shared::Route::NewProject(error) => new_project::view(model, error.as_ref()),
+            shared::Route::SignIn => sign_in::view(model),
+            shared::Route::CreateAccount => create_account::view(model),
+            shared::Route::NewProject => new_project::view(model),
             shared::Route::Users { .. } => todo!(),
         },
         None => not_found::view(model),

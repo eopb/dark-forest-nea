@@ -83,7 +83,7 @@ fn nav(model: &state::Model) -> Node<updates::Msg> {
                             a(),
                             button(model),
                             "New Project",
-                            attrs! {At::Href => shared::Route::NewProject(None)}
+                            attrs! {At::Href => shared::Route::NewProject}
                         ],
                         a![
                             a(),
@@ -96,7 +96,7 @@ fn nav(model: &state::Model) -> Node<updates::Msg> {
                         a(),
                         button(model),
                         "Sign In",
-                        attrs! {At::Href => shared::Route::SignIn(None)}
+                        attrs! {At::Href => shared::Route::SignIn}
                     ]],
                 }
             } else {

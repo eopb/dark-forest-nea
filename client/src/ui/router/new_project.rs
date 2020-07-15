@@ -69,10 +69,7 @@ impl From<Msg> for updates::Msg {
         Self::NewProjectMsg(msg)
     }
 }
-pub fn view(
-    model: &state::Model,
-    error: Option<&shared::data::new_project::Fail>,
-) -> Node<updates::Msg> {
+pub fn view(model: &state::Model) -> Node<updates::Msg> {
     let error = model.route_data.new_project.error.as_ref();
     let project_name = |err| {
         ui::form::InputBuilder::text()
