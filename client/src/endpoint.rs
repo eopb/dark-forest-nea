@@ -2,7 +2,13 @@ use std::fmt;
 
 use {anyhow::anyhow, async_trait::async_trait, seed::prelude::*};
 
-use shared::data::{
+use shared::endpoint::{
+    create_account::CreateAccount,
+    hello::Hello,
+    new_project::NewProject,
+    refresh_token::RefreshToken,
+    sign_in::SignIn,
+    signed_in::SignedIn,
     Kind::{Binary, Json},
     KINDS,
 };
@@ -60,20 +66,20 @@ pub trait Endpoint: shared::Endpoint {
     }
 }
 
-impl Get for shared::Hello {}
-impl Endpoint for shared::Hello {}
+impl Get for Hello {}
+impl Endpoint for Hello {}
 
-impl Post for shared::SignedIn {}
-impl Endpoint for shared::SignedIn {}
+impl Post for SignedIn {}
+impl Endpoint for SignedIn {}
 
-impl Post for shared::RefreshToken {}
-impl Endpoint for shared::RefreshToken {}
+impl Post for RefreshToken {}
+impl Endpoint for RefreshToken {}
 
-impl Post for shared::SignIn {}
-impl Endpoint for shared::SignIn {}
+impl Post for SignIn {}
+impl Endpoint for SignIn {}
 
-impl Post for shared::CreateAccount {}
-impl Endpoint for shared::CreateAccount {}
+impl Post for CreateAccount {}
+impl Endpoint for CreateAccount {}
 
-impl Post for shared::NewProject {}
-impl Endpoint for shared::NewProject {}
+impl Post for NewProject {}
+impl Endpoint for NewProject {}

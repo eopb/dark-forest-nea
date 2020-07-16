@@ -23,9 +23,9 @@ pub struct User {
 
 impl BsonDoc for User {}
 
-impl TryFrom<shared::data::create_account::Details> for User {
+impl TryFrom<shared::endpoint::create_account::Details> for User {
     type Error = BcryptError;
-    fn try_from(value: shared::data::create_account::Details) -> Result<Self, Self::Error> {
+    fn try_from(value: shared::endpoint::create_account::Details) -> Result<Self, Self::Error> {
         Ok(Self {
             user_name: value.user_name,
             email: value.email,
@@ -37,7 +37,7 @@ impl TryFrom<shared::data::create_account::Details> for User {
 impl User {
     pub fn verify_credentials(
         &self,
-        credentials: &shared::data::sign_in::Credentials,
+        credentials: &shared::endpoint::sign_in::Credentials,
     ) -> Result<bool, BcryptError> {
         Ok(self.user_name == credentials.user_name
             && bcrypt::verify(&credentials.password, &self.password_hash)?)

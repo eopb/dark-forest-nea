@@ -4,7 +4,7 @@ use seed::{prelude::*, *};
 use seed_style::*;
 use shadow_clone::shadow_clone;
 
-use shared::data::create_account;
+use shared::endpoint::create_account::{self, CreateAccount};
 #[derive(Clone, Default)]
 pub struct Model {
     form: create_account::Details,
@@ -16,9 +16,10 @@ pub enum Msg {
     EmailChanged(String),
     PasswordChanged(String),
     Submit,
-    Submited(<shared::CreateAccount as shared::Endpoint>::Response),
+    Submited(<CreateAccount as shared::Endpoint>::Response),
     SubmitFailed(String),
 }
+
 impl Msg {
     pub fn update(self, model: &mut state::Model, orders: &mut impl Orders<updates::Msg>) {
         let mut inner_model = &mut model.route_data.create_account;
@@ -31,7 +32,7 @@ impl Msg {
                 shadow_clone!(inner_model);
                 orders.perform_cmd(async move {
                     updates::Msg::from(
-                        if let Ok(response) = shared::CreateAccount::fetch(inner_model.form).await {
+                        if let Ok(response) = CreateAccount::fetch(inner_model.form).await {
                             Self::Submited(response)
                         } else {
                             Self::SubmitFailed("Http request failed".to_owned())
@@ -89,12 +90,12 @@ pub fn view(model: &state::Model) -> Node<updates::Msg> {
         model,
         match error {
             Some(error) => match error {
-                shared::data::create_account::Fail::AlreadyExists => vec![
+                create_account::Fail::AlreadyExists => vec![
                     user_name(&Some("Username already taken.".to_owned())),
                     email(&None),
                     password(&None),
                 ],
-                shared::data::create_account::Fail::InvalidField(error) => vec![
+                create_account::Fail::InvalidField(error) => vec![
                     user_name(&error.user_name.map(|x| x.show("Username"))),
                     email(&error.email.map(|x| x.show("Email"))),
                     password(&error.password.map(|x| x.show("Password"))),

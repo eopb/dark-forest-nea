@@ -14,7 +14,14 @@ use sign_in::SignIn;
 
 use {seed::prelude::*, web_sys::Window};
 
-use shared::routes::SubRoute;
+use shared::{
+    endpoint::{
+        hello::Hello,
+        refresh_token::RefreshToken,
+        signed_in::{self, SignedIn},
+    },
+    routes::SubRoute,
+};
 
 /// Describes the different events that can be invoked.
 pub enum Msg {
@@ -58,7 +65,7 @@ pub fn update(msg: Msg, model: &mut state::Model, orders: &mut impl Orders<Msg>)
         Msg::RefreshToken => {
             use state::server::Fetch::Fetched;
             // Only run this When a user is signed in.
-            if let Fetched(Ok(shared::data::signed_in::Res::As(_))) = model.server.signed_in {
+            if let Fetched(Ok(signed_in::Res::As(_))) = model.server.signed_in {
                 orders.send_msg(Msg::ToFetch(ToFetch::RefreshToken));
             }
         }
@@ -85,12 +92,12 @@ impl ToFetch {
     /// Fetch an item and inform with a message.
     async fn order(self, login_token: Option<String>) -> Option<Msg> {
         Some(match self {
-            Self::Hello => Msg::DataFetched(Fetched::Hello(shared::Hello::fetch().await)),
+            Self::Hello => Msg::DataFetched(Fetched::Hello(Hello::fetch().await)),
             Self::SignedIn => Msg::DataFetched(Fetched::SignedIn(
-                shared::SignedIn::fetch(login_token.unwrap_or_default()).await,
+                SignedIn::fetch(login_token.unwrap_or_default()).await,
             )),
             Self::RefreshToken => Msg::DataFetched(Fetched::RefreshToken(
-                shared::RefreshToken::fetch(login_token?).await,
+                RefreshToken::fetch(login_token?).await,
             )),
         })
     }
@@ -98,9 +105,9 @@ impl ToFetch {
 
 /// An item that has been fetched ready to be handled.
 pub enum Fetched {
-    Hello(anyhow::Result<<shared::Hello as shared::Endpoint>::Response>),
-    SignedIn(anyhow::Result<<shared::SignedIn as shared::Endpoint>::Response>),
-    RefreshToken(anyhow::Result<<shared::RefreshToken as shared::Endpoint>::Response>),
+    Hello(anyhow::Result<<Hello as shared::Endpoint>::Response>),
+    SignedIn(anyhow::Result<<SignedIn as shared::Endpoint>::Response>),
+    RefreshToken(anyhow::Result<<RefreshToken as shared::Endpoint>::Response>),
 }
 
 impl Fetched {

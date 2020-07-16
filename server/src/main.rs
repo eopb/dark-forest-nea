@@ -20,6 +20,11 @@ use {
     tide::Redirect,
 };
 
+use shared::endpoint::{
+    create_account::CreateAccount, hello::Hello, new_project::NewProject,
+    refresh_token::RefreshToken, sign_in::SignIn, signed_in::SignedIn,
+};
+
 #[async_std::main]
 async fn main() -> tide::Result<()> {
     dotenv().ok();
@@ -43,12 +48,12 @@ async fn main() -> tide::Result<()> {
         .get(Redirect::new("https://www.youtube.com/watch?v=dQw4w9WgXcQ"));
 
     // REST endpoints.
-    shared::Hello::apply(&mut app);
-    shared::SignIn::apply(&mut app);
-    shared::CreateAccount::apply(&mut app);
-    shared::SignedIn::apply(&mut app);
-    shared::NewProject::apply(&mut app);
-    shared::RefreshToken::apply(&mut app);
+    Hello::apply(&mut app);
+    SignIn::apply(&mut app);
+    CreateAccount::apply(&mut app);
+    SignedIn::apply(&mut app);
+    NewProject::apply(&mut app);
+    RefreshToken::apply(&mut app);
 
     app.listen("localhost:8081").await?;
 

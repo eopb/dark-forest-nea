@@ -2,14 +2,17 @@ use {async_trait::async_trait, tide::Request};
 
 use crate::{endpoint, security, state::State};
 
-use shared::data::{self, sign_in};
+use shared::{
+    endpoint::sign_in::{self, SignIn},
+    security::Token,
+};
 
 #[async_trait]
-impl endpoint::Post for shared::SignIn {
+impl endpoint::Post for SignIn {
     async fn post(
         req: Request<State>,
         credentials: sign_in::Credentials,
-    ) -> tide::Result<Result<data::security::Token, sign_in::Fail>> {
+    ) -> tide::Result<Result<Token, sign_in::Fail>> {
         let stored_user = req
             .state()
             .database()

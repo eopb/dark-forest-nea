@@ -2,10 +2,13 @@ use {async_trait::async_trait, tide::Request};
 
 use crate::{endpoint, security::jwt, state::State};
 
-use shared::data::{security::Token, signed_in};
+use shared::{
+    endpoint::signed_in::{self, SignedIn},
+    security::Token,
+};
 
 #[async_trait]
-impl endpoint::Post for shared::SignedIn {
+impl endpoint::Post for SignedIn {
     async fn post(_: Request<State>, token: Token) -> tide::Result<signed_in::Res> {
         Ok(Self::get_user(&token).await)
     }
@@ -19,7 +22,7 @@ pub trait Ext: shared::Endpoint {
 }
 
 #[async_trait]
-impl Ext for shared::SignedIn {
+impl Ext for SignedIn {
     async fn get_user(token: &Token) -> signed_in::Res {
         let user = jwt::Claims::decode_token(token)
             .map(|token| token.claims.sub)

@@ -13,7 +13,8 @@ use std::{future::Future, thread, time};
 use {
     async_trait::async_trait,
     serde::{Deserialize, Serialize},
-    shared::data::{
+    shared::endpoint::{
+        hello::{self, Hello},
         Kind::{Binary, Json},
         Kinds,
     },
@@ -97,10 +98,10 @@ fn response(value: impl Serialize, res_kind: Kinds) -> tide::Result<Response> {
 }
 
 #[async_trait]
-impl Get for shared::Hello {
+impl Get for Hello {
     async fn get(_: Request<State>) -> tide::Result<<Self as shared::Endpoint>::Response> {
         thread::sleep(time::Duration::from_secs(1)); // Simulate slow response time.
-        Ok(shared::data::hello::Res {
+        Ok(hello::Res {
             msg: String::from("Hi peeps"),
         })
     }

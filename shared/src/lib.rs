@@ -10,14 +10,14 @@
     clippy::must_use_candidate
 )]
 
-pub mod data;
+pub mod endpoint;
 pub mod routes;
+pub mod security;
+pub mod validation;
 
 #[doc(inline)]
 pub use {
-    data::{
-        create_account::CreateAccount, hello::Hello, new_project::NewProject,
-        refresh_token::RefreshToken, sign_in::SignIn, signed_in::SignedIn, Endpoint, PostEndpoint,
-    },
+    endpoint::{Endpoint, PostEndpoint},
     routes::Route,
+    validation::Validation,
 };

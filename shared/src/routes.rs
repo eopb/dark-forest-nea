@@ -1,5 +1,3 @@
-pub use crate::data;
-
 use std::{fmt, string::ToString};
 
 /// An enum for all routes used by both server and client.

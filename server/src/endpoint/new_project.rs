@@ -6,16 +6,16 @@ use crate::{
 };
 
 use shared::{
-    data::validation::Post as _,
-    data::{
-        new_project::{self, Fail},
-        security::Authenticated,
-        signed_in,
+    endpoint::{
+        new_project::{self, Fail, NewProject},
+        signed_in::{self, SignedIn},
     },
+    security::Authenticated,
+    validation::Post as _,
 };
 
 #[async_trait]
-impl endpoint::Post for shared::NewProject {
+impl endpoint::Post for NewProject {
     async fn post(
         req: Request<State>,
         Authenticated {
@@ -23,7 +23,7 @@ impl endpoint::Post for shared::NewProject {
             token,
         }: Authenticated<new_project::Details>,
     ) -> tide::Result<Result<(), new_project::Fail>> {
-        let user = shared::SignedIn::get_user(&token).await;
+        let user = SignedIn::get_user(&token).await;
 
         let validation = new_project.validate();
 

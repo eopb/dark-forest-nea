@@ -5,12 +5,12 @@ use {
     seed_style::*,
 };
 
-use shared::data::sign_in::Credentials;
+use shared::endpoint::sign_in::Credentials;
 
 #[derive(Clone, Default)]
 pub struct Model {
     form: Credentials,
-    pub error: Option<shared::data::sign_in::Fail>,
+    pub error: Option<shared::endpoint::sign_in::Fail>,
 }
 
 pub enum Msg {
@@ -47,7 +47,7 @@ impl From<Msg> for updates::Msg {
 }
 
 pub fn view(model: &state::Model) -> Node<updates::Msg> {
-    use shared::data::sign_in::Fail::{IncorrectPassword, UserNotFound};
+    use shared::endpoint::sign_in::Fail::{IncorrectPassword, UserNotFound};
     let error = model.route_data.sign_in.error;
     let user_name = |err| {
         ui::form::InputBuilder::text()

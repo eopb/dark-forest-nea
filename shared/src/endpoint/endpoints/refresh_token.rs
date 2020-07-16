@@ -1,4 +1,4 @@
-use crate::{data::security::Token, Endpoint, PostEndpoint};
+use crate::{security::Token, Endpoint, PostEndpoint};
 use serde::{Deserialize, Serialize};
 
 /// Endpoint for getting a new jwt.

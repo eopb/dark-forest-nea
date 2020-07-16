@@ -12,11 +12,8 @@ use {
 };
 
 use shared::{
-    data::{
-        security,
-        sign_in::{self, Credentials},
-    },
-    Route,
+    endpoint::sign_in::{self, Credentials},
+    security, Route,
 };
 
 /// Sign in states.
@@ -46,7 +43,7 @@ impl SignIn {
                 shadow_clone!(inner_model);
                 orders.perform_cmd(async move {
                     updates::Msg::from(
-                        if let Ok(response) = shared::SignIn::fetch(credentials).await {
+                        if let Ok(response) = sign_in::SignIn::fetch(credentials).await {
                             Self::Responded { response, goes_to }
                         } else {
                             Self::Failed("Http request failed".to_owned())

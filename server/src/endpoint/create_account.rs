@@ -8,12 +8,12 @@ use crate::{
 };
 
 use shared::{
-    data::create_account::{self, Fail},
-    data::validation::Post as _,
+    endpoint::create_account::{self, CreateAccount, Fail},
+    validation::Post as _,
 };
 
 #[async_trait]
-impl endpoint::Post for shared::CreateAccount {
+impl endpoint::Post for CreateAccount {
     async fn post(
         req: Request<State>,
         account_info: create_account::Details,

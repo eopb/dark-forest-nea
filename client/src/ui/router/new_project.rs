@@ -5,7 +5,10 @@ use {
     shadow_clone::shadow_clone,
 };
 
-use shared::data::{new_project, security::Authenticated};
+use shared::{
+    endpoint::new_project::{self, NewProject},
+    security::Authenticated,
+};
 
 #[derive(Clone, Default)]
 pub struct Model {
@@ -32,11 +35,9 @@ impl Msg {
                 orders.perform_cmd(async move {
                     updates::Msg::from({
                         if let Some(login_token) = login_token {
-                            if let Ok(response) = shared::NewProject::fetch(Authenticated::new(
-                                inner_model.form,
-                                login_token,
-                            ))
-                            .await
+                            if let Ok(response) =
+                                NewProject::fetch(Authenticated::new(inner_model.form, login_token))
+                                    .await
                             {
                                 Self::Submited(response)
                             } else {
@@ -83,12 +84,10 @@ pub fn view(model: &state::Model) -> Node<updates::Msg> {
     ui::form::view(
         model,
         project_name(&error.and_then(|error| match error {
-            shared::data::new_project::Fail::AlreadyExists => {
+            new_project::Fail::AlreadyExists => {
                 Some("You already have a project under that name.".to_owned())
             }
-            shared::data::new_project::Fail::InvalidField(error) => {
-                error.project_name.map(|x| x.show("Project"))
-            }
+            new_project::Fail::InvalidField(error) => error.project_name.map(|x| x.show("Project")),
         })),
         "Create Project",
         Vec::<Node<updates::Msg>>::new(),

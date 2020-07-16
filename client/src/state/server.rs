@@ -6,8 +6,8 @@ use seed::{prelude::*, virtual_dom::update_el::UpdateEl, *};
 
 #[derive(Default)]
 pub struct Server {
-    pub hello: Fetch<shared::data::hello::Res, anyhow::Error>,
-    pub signed_in: Fetch<shared::data::signed_in::Res, anyhow::Error>,
+    pub hello: Fetch<shared::endpoint::hello::Res, anyhow::Error>,
+    pub signed_in: Fetch<shared::endpoint::signed_in::Res, anyhow::Error>,
 }
 
 /// Fetching status.

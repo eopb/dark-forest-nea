@@ -1,4 +1,4 @@
-use crate::{data::security, Endpoint, PostEndpoint};
+use crate::{security, Endpoint, PostEndpoint};
 
 use serde::{Deserialize, Serialize};
 

@@ -1,15 +1,8 @@
 //! Data types sent over HTTP
-pub mod create_account;
-pub mod hello;
-pub mod new_project;
-pub mod refresh_token;
-pub mod security;
-pub mod sign_in;
-pub mod signed_in;
-pub mod validation;
 
-#[doc(inline)]
-pub use validation::Validation;
+pub mod endpoints;
+
+pub use endpoints::{create_account, hello, new_project, refresh_token, sign_in, signed_in};
 
 use serde::{Deserialize, Serialize};
 
@@ -92,6 +85,7 @@ pub trait Endpoint: 'static {
 /// A REST Endpoint that can be `POST`ed to.
 ///
 /// If an Endpoint does not implement this it is `Get`.
+#[allow(clippy::module_name_repetitions)]
 pub trait PostEndpoint: Endpoint {
     /// The data that this endpoint requires to process.
     type Requires: for<'a> Deserialize<'a> + Serialize + Send + Sync + 'static;

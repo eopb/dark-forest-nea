@@ -1,7 +1,4 @@
-use crate::{
-    data::{create_account, security},
-    Endpoint, PostEndpoint,
-};
+use crate::{endpoint::create_account, security, Endpoint, PostEndpoint};
 
 use std::fmt;
 
