@@ -1,5 +1,7 @@
-use crate::ui;
+use crate::{ui, updates};
+use gloo_timers::callback::Timeout;
 use seed::{prelude::*, *};
+use seed_hooks::*;
 use seed_style::{em, px, *};
 
 pub fn view<Msg>(header: &str, subheading: &str) -> Node<Msg> {
@@ -12,6 +14,31 @@ pub fn view<Msg>(header: &str, subheading: &str) -> Node<Msg> {
         ],
         ui::subheading(subheading),
     ]
+}
+
+fn typewriter(input: &str) -> Node<updates::Msg> {
+    let input = use_state(|| input.chars().rev().collect::<String>());
+    let current_display = use_state(|| "".to_string());
+    let remaining = input.set(
+        current_display
+            .trim_start_matches(&current_display.get())
+            .to_owned(),
+    );
+
+    let mut input_to_pop = input.get();
+    let next_character = input_to_pop.pop();
+    // input_to_pop.set(input_to_pop);
+
+    if let Some(next_character) = next_character {
+        current_display.update(|current_display| current_display.push(next_character));
+        span![current_display]
+    } else {
+        // we are finished
+        let timeout = Timeout::new(100, move || {
+            // Do something...\
+        });
+        span![current_display]
+    }
 }
 
 #[cfg(test)]
