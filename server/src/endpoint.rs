@@ -17,7 +17,7 @@ use {
         Kind::{Binary, Json},
         Kinds,
     },
-    tide::{Body, Request, Response, Server},
+    tide::{Body, Request, Response, Server, StatusCode},
 };
 
 /// API endpoint that uses the `post` HTTP verb.
@@ -86,7 +86,7 @@ where
 }
 
 fn response(value: impl Serialize, res_kind: Kinds) -> tide::Result<Response> {
-    let mut res = Response::new(200);
+    let mut res = Response::new(StatusCode::Ok);
 
     res.set_body(match res_kind.server_response {
         Binary => Body::from_bytes(bincode::serialize(&value)?),
