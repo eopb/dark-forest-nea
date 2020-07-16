@@ -1,15 +1,15 @@
 use {anyhow::anyhow, async_trait::async_trait, seed::prelude::*};
 
 use shared::data::{
-    DataKind::{Binary, Json},
-    DATA_KINDS,
+    Kind::{Binary, Json},
+    KINDS,
 };
 
 /// Extension for endpoints that can be fetched from the server
 #[async_trait(?Send)]
 pub trait Get: Endpoint + shared::Endpoint {
     async fn fetch() -> anyhow::Result<Self::Response> {
-        let path = Self::path(DATA_KINDS);
+        let path = Self::path(KINDS);
         let fetch = Request::new(&path)
             .fetch()
             .await
@@ -21,9 +21,9 @@ pub trait Get: Endpoint + shared::Endpoint {
 #[async_trait(?Send)]
 pub trait Post: Endpoint + shared::PostEndpoint {
     async fn fetch(post: Self::Requires) -> anyhow::Result<Self::Response> {
-        let path = Self::path(DATA_KINDS);
+        let path = Self::path(KINDS);
         let fetch = Request::new(&path).method(Method::Post);
-        let fetch = match DATA_KINDS.server_requires {
+        let fetch = match KINDS.server_requires {
             Json => fetch
                 //TODO test not having this line
                 .header(Header::custom("Accept-Language", "en"))
@@ -45,8 +45,8 @@ pub trait Post: Endpoint + shared::PostEndpoint {
 #[async_trait(?Send)]
 pub trait Endpoint: shared::Endpoint {
     async fn get(fetch: Response) -> anyhow::Result<Self::Response> {
-        let path = Self::path(DATA_KINDS);
-        match DATA_KINDS.server_response {
+        let path = Self::path(KINDS);
+        match KINDS.server_response {
             Json => fetch
                 .json()
                 .await

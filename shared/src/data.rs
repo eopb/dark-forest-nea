@@ -14,23 +14,21 @@ pub use validation::Validation;
 use serde::{Deserialize, Serialize};
 
 /// The kind of response body to expect from server endpoints.
-pub const DATA_KINDS: DataKinds = DataKinds::default();
+pub const KINDS: Kinds = Kinds {
+    server_requires: Binary,
+    server_response: Binary,
+};
 
 /// Struct to specify in what format data should be sent between client and server.
 
 #[derive(Copy, Clone)]
-pub struct DataKinds {
-    pub server_response: DataKind,
-    pub server_requires: DataKind,
+pub struct Kinds {
+    pub server_response: Kind,
+    pub server_requires: Kind,
 }
-impl DataKinds {
-    const fn default() -> Self {
-        Self {
-            server_requires: Binary,
-            server_response: Binary,
-        }
-    }
-    pub fn possible() -> &'static [Self; 4] {
+
+impl Kinds {
+    pub const fn possible() -> &'static [Self; 4] {
         &[
             Self {
                 server_requires: Binary,
@@ -52,14 +50,14 @@ impl DataKinds {
     }
 }
 #[derive(Copy, Clone)]
-pub enum DataKind {
+pub enum Kind {
     Json,
     Binary,
 }
-use DataKind::{Binary, Json};
+use Kind::{Binary, Json};
 
-impl DataKind {
-    fn path(&self) -> &str {
+impl Kind {
+    const fn path(&self) -> &str {
         match self {
             Binary => "/bin",
             Json => "/json",
@@ -75,7 +73,7 @@ pub trait Endpoint: 'static {
     const PATH: &'static str;
 
     /// Full relative path for this endpoint with a given response body type.
-    fn path(data_kinds: DataKinds) -> String {
+    fn path(data_kinds: Kinds) -> String {
         format!(
             "/api{}{}{}",
             data_kinds.server_requires.path(),

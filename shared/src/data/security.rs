@@ -7,7 +7,7 @@ pub struct Authenticated<T> {
 }
 
 impl<T> Authenticated<T> {
-    pub fn new(inner: T, token: String) -> Self {
+    pub const fn new(inner: T, token: String) -> Self {
         Self { inner, token }
     }
 }
