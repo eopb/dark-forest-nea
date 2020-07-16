@@ -1,9 +1,7 @@
 image: "rust:latest"
 
 before_script:
-  - rustup component add rustfmt
   - rustup default nightly
-  - rustup component add rustfmt
   - cargo install cargo-make
 
 stages:
@@ -21,6 +19,7 @@ verify:
   script:
     - apt update
     - apt install firefox-esr -y
+    - rustup component add rustfmt
     - cargo make verify
 # coverage:
 #   stage: coverage
