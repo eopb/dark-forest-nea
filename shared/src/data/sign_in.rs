@@ -33,14 +33,10 @@ pub enum Fail {
 
 impl fmt::Display for Fail {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{}",
-            match self {
-                Self::UserNotFound => "User not found",
-                Self::IncorrectPassword => "Incorrect password",
-            }
-        )
+        write!(f, "{}", match self {
+            Self::UserNotFound => "User not found",
+            Self::IncorrectPassword => "Incorrect password",
+        })
     }
 }
 

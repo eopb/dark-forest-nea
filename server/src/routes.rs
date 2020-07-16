@@ -10,7 +10,8 @@ use {
 
 use shared::routes::SubRoute;
 
-/// This index endpoint returns the `html` needed to start our client-side application.
+/// This index endpoint returns the `html` needed to start our client-side
+/// application.
 pub async fn index(_: Request<State>) -> tide::Result<impl Into<Response>> {
     Ok({
         let mut res = Response::new(StatusCode::Ok);

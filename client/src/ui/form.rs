@@ -141,16 +141,12 @@ pub enum InputType {
 
 impl fmt::Display for InputType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{}",
-            match self {
-                Self::Text => "text",
-                Self::Password => "password",
-                Self::Submit => "submit",
-                Self::Email => "email",
-            }
-        )
+        write!(f, "{}", match self {
+            Self::Text => "text",
+            Self::Password => "password",
+            Self::Submit => "submit",
+            Self::Email => "email",
+        })
     }
 }
 

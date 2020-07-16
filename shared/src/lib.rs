@@ -1,6 +1,7 @@
 //! `shared` is depended on by both the client and server.
 //!
-//! `shared` defines all types serialized, deserialized and sent over HTTP along with other types required by both the client and server
+//! `shared` defines all types serialized, deserialized and sent over HTTP along
+//! with other types required by both the client and server
 
 #![deny(clippy::all, clippy::pedantic, clippy::nursery)]
 #![allow(

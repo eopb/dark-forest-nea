@@ -40,31 +40,22 @@ impl Default for Route {
 
 impl fmt::Display for Route {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{}",
-            match self {
-                Self::Index => "/".to_owned(),
-                Self::Explore => "/explore".to_owned(),
-                Self::SignIn => "/sign-in".to_owned(),
-                Self::CreateAccount => "/create-account".to_owned(),
-                Self::NewProject => "/new-project".to_owned(),
-                Self::Users { user_name, nest } =>
-                    format!("/users/{}{}", user_name, maybe_show(nest)),
-            }
-        )
+        write!(f, "{}", match self {
+            Self::Index => "/".to_owned(),
+            Self::Explore => "/explore".to_owned(),
+            Self::SignIn => "/sign-in".to_owned(),
+            Self::CreateAccount => "/create-account".to_owned(),
+            Self::NewProject => "/new-project".to_owned(),
+            Self::Users { user_name, nest } => format!("/users/{}{}", user_name, maybe_show(nest)),
+        })
     }
 }
 
 impl fmt::Display for UserRoute {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{}",
-            match self {
-                Self::Projects(project) => format!("/projects{}", maybe_show(project)),
-            }
-        )
+        write!(f, "{}", match self {
+            Self::Projects(project) => format!("/projects{}", maybe_show(project)),
+        })
     }
 }
 
@@ -80,13 +71,9 @@ impl fmt::Display for Project {
 
 impl fmt::Display for ProjectRoute {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{}",
-            match self {
-                Self::Edit => "/edit",
-            }
-        )
+        write!(f, "{}", match self {
+            Self::Edit => "/edit",
+        })
     }
 }
 

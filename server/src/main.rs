@@ -29,7 +29,8 @@ async fn main() -> tide::Result<()> {
     let state = State::new().await?;
     let mut app = tide::with_state(state);
 
-    // By default all routes should be handled by the client if not specified otherwise.
+    // By default all routes should be handled by the client if not specified
+    // otherwise.
     app.at("/").get(routes::index);
     app.at("*").get(routes::index);
 

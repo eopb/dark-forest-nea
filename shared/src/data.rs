@@ -19,7 +19,8 @@ pub const KINDS: Kinds = Kinds {
     server_response: Json,
 };
 
-/// Struct to specify in what format data should be sent between client and server.
+/// Struct to specify in what format data should be sent between client and
+/// server.
 #[derive(Copy, Clone)]
 pub struct Kinds {
     pub server_response: Kind,
@@ -76,7 +77,8 @@ pub trait Endpoint: 'static {
     /// This path will be nested in a response kind.
     const PATH: &'static str;
 
-    /// Full relative path for the version of this endpoint accepting given data format.
+    /// Full relative path for the version of this endpoint accepting given data
+    /// format.
     fn path(data_kinds: Kinds) -> String {
         format!(
             "/api{}{}{}",
