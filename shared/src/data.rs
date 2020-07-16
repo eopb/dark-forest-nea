@@ -15,8 +15,8 @@ use serde::{Deserialize, Serialize};
 
 /// The kind of response body to expect from server endpoints.
 pub const KINDS: Kinds = Kinds {
-    server_requires: Binary,
-    server_response: Binary,
+    server_requires: Json,
+    server_response: Json,
 };
 
 /// Struct to specify in what format data should be sent between client and server.

@@ -23,21 +23,18 @@ pub trait Post: Endpoint + shared::PostEndpoint {
     async fn fetch(post: Self::Requires) -> anyhow::Result<Self::Response> {
         let path = Self::path(KINDS);
         let fetch = Request::new(&path).method(Method::Post);
-        let fetch = match KINDS.server_requires {
-            Json => fetch
-                //TODO test not having this line
-                .header(Header::custom("Accept-Language", "en"))
-                .json(&post)
-                .map_err(|error| anyhow!("Failed to fetch: Path: {} Error: {:?}", &path, error))?,
-            Binary => {
-                fetch.bytes(&bincode::serialize(&post).map_err(|error| {
+        let fetch =
+            match KINDS.server_requires {
+                Json => fetch.json(&post).map_err(|error| {
                     anyhow!("Failed to fetch: Path: {} Error: {:?}", &path, error)
-                })?)
+                })?,
+                Binary => fetch.bytes(&bincode::serialize(&post).map_err(|error| {
+                    anyhow!("Failed to fetch: Path: {} Error: {:?}", &path, error)
+                })?),
             }
-        }
-        .fetch()
-        .await
-        .map_err(|error| anyhow!("Failed to fetch: Path: {} Error: {:?}", &path, error))?;
+            .fetch()
+            .await
+            .map_err(|error| anyhow!("Failed to fetch: Path: {} Error: {:?}", &path, error))?;
         Self::get(fetch).await
     }
 }
