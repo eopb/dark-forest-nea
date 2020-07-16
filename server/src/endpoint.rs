@@ -20,23 +20,6 @@ use {
     tide::{Body, Request, Response, Server, StatusCode},
 };
 
-/// API endpoint that uses the `post` HTTP verb.
-#[async_trait]
-pub trait Post: shared::PostEndpoint {
-    /// Invoked on `post`.
-    async fn post(
-        req: Request<State>,
-        data: <Self as shared::PostEndpoint>::Requires,
-    ) -> tide::Result<<Self as shared::Endpoint>::Response>;
-    /// Add an endpoint as a `post` to a server.
-    fn apply(app: &mut Server<State>) {
-        for res_kind in Kinds::possible() {
-            app.at(&Self::path(*res_kind))
-                .post(move |req| post_response(req, *res_kind, Self::post));
-        }
-    }
-}
-
 /// API endpoint that uses the `get` HTTP verb.
 #[async_trait]
 pub trait Get: shared::Endpoint {
@@ -65,6 +48,24 @@ where
 
     response(value, res_kind)
 }
+
+/// API endpoint that uses the `post` HTTP verb.
+#[async_trait]
+pub trait Post: shared::PostEndpoint {
+    /// Invoked on `post`.
+    async fn post(
+        req: Request<State>,
+        data: <Self as shared::PostEndpoint>::Requires,
+    ) -> tide::Result<<Self as shared::Endpoint>::Response>;
+    /// Add an endpoint as a `post` to a server.
+    fn apply(app: &mut Server<State>) {
+        for res_kind in Kinds::possible() {
+            app.at(&Self::path(*res_kind))
+                .post(move |req| post_response(req, *res_kind, Self::post));
+        }
+    }
+}
+
 async fn post_response<Func, Output, Fut, Data>(
     mut req: Request<State>,
     res_kind: Kinds,
@@ -94,6 +95,7 @@ fn response(value: impl Serialize, res_kind: Kinds) -> tide::Result<Response> {
     });
     Ok(res)
 }
+
 #[async_trait]
 impl Get for shared::Hello {
     async fn get(_: Request<State>) -> tide::Result<<Self as shared::Endpoint>::Response> {
