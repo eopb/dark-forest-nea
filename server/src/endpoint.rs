@@ -5,6 +5,7 @@ mod new_project;
 mod refresh_token;
 pub mod sign_in;
 mod signed_in;
+mod start_editor;
 
 use crate::State;
 

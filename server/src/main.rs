@@ -21,7 +21,7 @@ use {
 };
 
 use shared::endpoint::{
-    create_account::CreateAccount, hello::Hello, new_project::NewProject,
+    create_account::CreateAccount, edit::init::StartEditor, hello::Hello, new_project::NewProject,
     refresh_token::RefreshToken, sign_in::SignIn, signed_in::SignedIn,
 };
 
@@ -54,6 +54,7 @@ async fn main() -> tide::Result<()> {
     SignedIn::apply(&mut app);
     NewProject::apply(&mut app);
     RefreshToken::apply(&mut app);
+    StartEditor::apply(&mut app);
 
     app.listen("localhost:8081").await?;
 

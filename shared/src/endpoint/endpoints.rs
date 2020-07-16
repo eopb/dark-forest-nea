@@ -1,4 +1,5 @@
 pub mod create_account;
+pub mod edit;
 pub mod hello;
 pub mod new_project;
 pub mod refresh_token;

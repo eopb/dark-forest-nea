@@ -2,7 +2,7 @@
 
 pub mod endpoints;
 
-pub use endpoints::{create_account, hello, new_project, refresh_token, sign_in, signed_in};
+pub use endpoints::{create_account, edit, hello, new_project, refresh_token, sign_in, signed_in};
 
 use serde::{Deserialize, Serialize};
 
