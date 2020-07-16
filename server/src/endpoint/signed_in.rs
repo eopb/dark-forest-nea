@@ -1,42 +1,30 @@
-use {
-    async_trait::async_trait,
-    tide::{Request, Response},
-};
+use {async_trait::async_trait, tide::Request};
 
-use crate::{
-    cookie,
-    endpoint::{self, Endpoint},
-    security::jwt,
-    state::State,
-};
+use crate::{endpoint, security::jwt, state::State};
 
-use shared::data::ResponseKind;
-
-impl Endpoint for shared::SignedIn {}
+use shared::data::{security::Token, signed_in};
 
 #[async_trait]
-impl endpoint::Get for shared::SignedIn {
-    async fn get(req: Request<State>, res_kind: ResponseKind) -> tide::Result<Response> {
-        let mut res = Response::new(200);
-        res.set_body(Self::body_from(&Self::get_user(&req).await, res_kind)?);
-        Ok(res)
+impl endpoint::Post for shared::SignedIn {
+    async fn post(_: Request<State>, token: Token) -> tide::Result<signed_in::Res> {
+        Ok(Self::get_user(&token).await)
     }
 }
 
+/// Server functionality extension for `SignedIn`
 #[async_trait]
-pub trait Ext {
-    async fn get_user(req: &Request<State>) -> Self;
+pub trait Ext: shared::Endpoint {
+    #[allow(clippy::ptr_arg)]
+    async fn get_user(token: &Token) -> signed_in::Res;
 }
 
 #[async_trait]
 impl Ext for shared::SignedIn {
-    async fn get_user(req: &Request<State>) -> Self {
-        let user = req.cookie(cookie::LOGIN).and_then(|cookie| {
-            jwt::Claims::decode_token(cookie.value())
-                .map(|token| token.claims.sub)
-                .ok()
-        });
+    async fn get_user(token: &Token) -> signed_in::Res {
+        let user = jwt::Claims::decode_token(token)
+            .map(|token| token.claims.sub)
+            .ok();
 
-        user.map_or(Self::Not, Self::As)
+        user.map_or(signed_in::Res::Not, signed_in::Res::As)
     }
 }

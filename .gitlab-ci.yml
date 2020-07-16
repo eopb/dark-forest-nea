@@ -19,6 +19,7 @@ verify:
   script:
     - apt update
     - apt install firefox-esr -y
+    - rustup component add rustfmt
     - cargo make verify
 # coverage:
 #   stage: coverage

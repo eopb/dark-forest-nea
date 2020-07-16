@@ -14,7 +14,6 @@ use crate::{state, updates};
 use {
     seed::{prelude::*, *},
     seed_style::{em, px, vh, *},
-    shared::Endpoint as _,
 };
 
 /// Main view describing what to show for all routes.
@@ -78,25 +77,25 @@ fn nav(model: &state::Model) -> Node<updates::Msg> {
         div![
             if let Some(signed_in) = model.server.signed_in.ok() {
                 match signed_in {
-                    shared::SignedIn::As(_) => vec![
+                    shared::data::signed_in::Res::As(_) => vec![
                         a![
                             a(),
                             button(model),
                             "New Project",
-                            attrs! {At::Href => shared::Route::NewProject(None)}
+                            attrs! {At::Href => shared::Route::NewProject}
                         ],
                         a![
                             a(),
                             button(model),
                             "Sign Out",
-                            attrs! {At::Href => shared::SignOut::PATH}
+                            input_ev(Ev::Click, |_| updates::Msg::SignOut)
                         ],
                     ],
-                    shared::SignedIn::Not => vec![a![
+                    shared::data::signed_in::Res::Not => vec![a![
                         a(),
                         button(model),
                         "Sign In",
-                        attrs! {At::Href => shared::Route::SignIn(None)}
+                        attrs! {At::Href => shared::Route::SignIn}
                     ]],
                 }
             } else {

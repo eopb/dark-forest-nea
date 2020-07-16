@@ -2,13 +2,16 @@ pub mod server;
 
 pub use server::Server;
 
-use crate::routes::Route;
+use crate::{routes::Route, ui, LOGIN_KEY};
 
+use seed::browser::web_storage::{LocalStorage, WebStorage};
 /// Describes client state.
 pub struct Model {
     pub theme: Theme,
     pub route: Route,
     pub server: Server,
+    pub route_data: RouteData,
+    pub login_token: Option<String>,
 }
 
 impl Model {
@@ -18,8 +21,18 @@ impl Model {
             theme: Theme::default(),
             route: Route::default(),
             server: Server::default(),
+            route_data: RouteData::default(),
+            login_token: LocalStorage::get(LOGIN_KEY).ok(),
         }
     }
+}
+
+/// Data used only by particular routes.
+#[derive(Default)]
+pub struct RouteData {
+    pub sign_in: ui::router::sign_in::Model,
+    pub create_account: ui::router::create_account::Model,
+    pub new_project: ui::router::new_project::Model,
 }
 
 #[derive(Copy, Clone)]

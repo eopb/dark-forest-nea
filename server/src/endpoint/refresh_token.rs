@@ -1,25 +1,21 @@
-use {
-    async_trait::async_trait,
-    tide::{http::StatusCode, Request, Response},
-};
+use {async_trait::async_trait, tide::Request};
 
 use crate::{
-    endpoint::{self, sign_in::unsafe_sign_in, signed_in::Ext, Endpoint},
+    endpoint::{self, signed_in::Ext},
+    security,
     state::State,
 };
 
-use shared::data::ResponseKind;
-
-impl Endpoint for shared::RefreshToken {}
+use shared::data::{security::Token, signed_in};
 
 #[async_trait]
-impl endpoint::Get for shared::RefreshToken {
-    async fn get(req: Request<State>, _: ResponseKind) -> tide::Result<Response> {
-        let user = shared::SignedIn::get_user(&req).await;
+impl endpoint::Post for shared::RefreshToken {
+    async fn post(_: Request<State>, token: Token) -> tide::Result<Option<Token>> {
+        let user = shared::SignedIn::get_user(&token).await;
 
         Ok(match user {
-            shared::SignedIn::As(user) => unsafe_sign_in(Response::new(StatusCode::Ok), user)?,
-            shared::SignedIn::Not => Response::new(StatusCode::Forbidden),
+            signed_in::Res::As(user) => Some(security::jwt::Claims::new(user).get_token()?),
+            signed_in::Res::Not => None,
         })
     }
 }

@@ -1,19 +1,27 @@
-use crate::Endpoint;
+use crate::{data::security, Endpoint, PostEndpoint};
 
 use serde::{Deserialize, Serialize};
 
 /// Endpoint used by the client to check if a user is signed-in.
 #[derive(Clone, Serialize, Deserialize, Debug, Eq, PartialEq)]
-pub enum SignedIn {
+pub struct SignedIn;
+
+impl Endpoint for SignedIn {
+    type Response = Res;
+    const PATH: &'static str = "/signed-in";
+}
+
+impl PostEndpoint for SignedIn {
+    type Requires = security::Token;
+}
+
+#[derive(Clone, Serialize, Deserialize, Debug, Eq, PartialEq)]
+pub enum Res {
     As(String),
     Not,
 }
 
-impl Endpoint for SignedIn {
-    const PATH: &'static str = "/signed-in";
-}
-
-impl SignedIn {
+impl Res {
     pub fn is_signed_in(&self) -> bool {
         self != &Self::Not
     }

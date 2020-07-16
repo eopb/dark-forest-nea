@@ -1,6 +1,7 @@
 //! `shared` is depended on by both the client and server.
 //!
-//! `shared` defines all types serialized, deserialized and sent over HTTP along with other types required by both the client and server
+//! `shared` defines all types serialized, deserialized and sent over HTTP along
+//! with other types required by both the client and server
 
 #![deny(clippy::all, clippy::pedantic, clippy::nursery)]
 #![allow(
@@ -10,15 +11,13 @@
 )]
 
 pub mod data;
-pub mod qs;
 pub mod routes;
 
 #[doc(inline)]
 pub use {
     data::{
-        create_account::CreateAccount, credentials::Credentials, hello::Hello,
-        new_project::NewProject, refresh_token::RefreshToken, sign_out::SignOut,
-        signed_in::SignedIn, Endpoint,
+        create_account::CreateAccount, hello::Hello, new_project::NewProject,
+        refresh_token::RefreshToken, sign_in::SignIn, signed_in::SignedIn, Endpoint, PostEndpoint,
     },
     routes::Route,
 };

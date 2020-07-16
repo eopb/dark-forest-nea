@@ -10,7 +10,8 @@ use {
     serde::{Deserialize, Serialize},
 };
 
-/// Secret bytes used to create tokens. These are stored as an environment variable.
+/// Secret bytes used to create tokens. These are stored as an environment
+/// variable.
 static SECRET: Lazy<Vec<u8>> = Lazy::new(|| env::var("SECRET").unwrap().as_bytes().to_vec());
 
 /// `Claims` is the data we are going to encode in our tokens.
@@ -47,7 +48,8 @@ impl Claims {
             &Validation::default(),
         )
     }
-    /// Can't simply return duration due to time crate version miss-match with `chrono` and `cookie`
+    /// Can't simply return duration due to time crate version miss-match with
+    /// `chrono` and `cookie`
     pub const fn max_age_minutes() -> i64 {
         15
     }

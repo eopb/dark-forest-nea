@@ -1,40 +1,98 @@
 //! Data types sent over HTTP
 pub mod create_account;
-pub mod credentials;
 pub mod hello;
 pub mod new_project;
 pub mod refresh_token;
-pub mod sign_out;
+pub mod security;
+pub mod sign_in;
 pub mod signed_in;
 pub mod validation;
 
 #[doc(inline)]
 pub use validation::Validation;
 
-/// Enum to specify in what format data should be sent between client and server.
+use serde::{Deserialize, Serialize};
+
+/// The kind of body to request from and send to server endpoints.
+pub const KINDS: Kinds = Kinds {
+    server_requires: Binary,
+    server_response: Binary,
+};
+
+/// Struct to specify in what format data should be sent between client and
+/// server.
 #[derive(Copy, Clone)]
-pub enum ResponseKind {
+pub struct Kinds {
+    pub server_response: Kind,
+    pub server_requires: Kind,
+}
+
+impl Kinds {
+    /// All possible server setups.
+    pub const fn possible() -> &'static [Self; 4] {
+        &[
+            Self {
+                server_requires: Binary,
+                server_response: Binary,
+            },
+            Self {
+                server_requires: Json,
+                server_response: Binary,
+            },
+            Self {
+                server_requires: Binary,
+                server_response: Json,
+            },
+            Self {
+                server_requires: Json,
+                server_response: Json,
+            },
+        ]
+    }
+}
+
+/// The format to send data in.
+#[derive(Copy, Clone)]
+pub enum Kind {
     Json,
     Binary,
 }
-use ResponseKind::{Binary, Json};
+use Kind::{Binary, Json};
 
-/// A type that is related to a path.
-pub trait Endpoint {
+impl Kind {
+    const fn path(&self) -> &str {
+        match self {
+            Binary => "/bin",
+            Json => "/json",
+        }
+    }
+}
+
+/// A REST Endpoint
+pub trait Endpoint: 'static {
+    /// The data that this endpoint responds with.
+    type Response: for<'a> Deserialize<'a> + Serialize;
     /// Relative API path.
     ///
     /// This path will be nested in a response kind.
     const PATH: &'static str;
 
-    /// Full relative path for this endpoint with a given response body type.
-    fn path(res_kind: ResponseKind) -> String {
+    /// Full relative path for the version of this endpoint accepting given data
+    /// format.
+    fn path(data_kinds: Kinds) -> String {
         format!(
-            "/{}{}",
-            match res_kind {
-                Binary => "api/bin",
-                Json => "api/json",
-            },
+            "/api{}{}{}",
+            data_kinds.server_requires.path(),
+            data_kinds.server_response.path(),
             Self::PATH
         )
     }
+}
+
+/// A REST Endpoint that can be `POST`ed to.
+///
+/// If an Endpoint does not implement this it is `Get`.
+pub trait PostEndpoint: Endpoint {
+    /// The data that this endpoint requires to process.
+    type Requires: for<'a> Deserialize<'a> + Serialize + Send + Sync + 'static;
 }

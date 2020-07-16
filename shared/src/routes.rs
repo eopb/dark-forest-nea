@@ -1,21 +1,19 @@
-pub use crate::{data, qs};
+pub use crate::data;
 
 use std::{fmt, string::ToString};
 
 /// An enum for all routes used by both server and client.
-///
-/// Routes can also store query strings.
 #[derive(Clone, PartialEq, Eq, Debug)]
 pub enum Route {
     Index,
     Explore,
-    SignIn(Option<data::credentials::Fail>),
-    CreateAccount(Option<data::create_account::Fail>),
+    SignIn,
+    CreateAccount,
     Users {
         user_name: String,
         nest: Option<UserRoute>,
     },
-    NewProject(Option<data::new_project::Fail>),
+    NewProject,
 }
 
 #[derive(Clone, PartialEq, Eq, Debug)]
@@ -42,31 +40,22 @@ impl Default for Route {
 
 impl fmt::Display for Route {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{}",
-            match self {
-                Self::Index => "/".to_owned(),
-                Self::Explore => "/explore".to_owned(),
-                Self::SignIn(fail) => qs::with_enum("/sign-in", fail),
-                Self::CreateAccount(fail) => qs::with_enum("/create-account", fail),
-                Self::NewProject(fail) => qs::with_enum("/new-project", fail),
-                Self::Users { user_name, nest } =>
-                    format!("/users/{}{}", user_name, maybe_show(nest)),
-            }
-        )
+        write!(f, "{}", match self {
+            Self::Index => "/".to_owned(),
+            Self::Explore => "/explore".to_owned(),
+            Self::SignIn => "/sign-in".to_owned(),
+            Self::CreateAccount => "/create-account".to_owned(),
+            Self::NewProject => "/new-project".to_owned(),
+            Self::Users { user_name, nest } => format!("/users/{}{}", user_name, maybe_show(nest)),
+        })
     }
 }
 
 impl fmt::Display for UserRoute {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{}",
-            match self {
-                Self::Projects(project) => format!("/projects{}", maybe_show(project)),
-            }
-        )
+        write!(f, "{}", match self {
+            Self::Projects(project) => format!("/projects{}", maybe_show(project)),
+        })
     }
 }
 
@@ -82,13 +71,9 @@ impl fmt::Display for Project {
 
 impl fmt::Display for ProjectRoute {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{}",
-            match self {
-                Self::Edit => "/edit",
-            }
-        )
+        write!(f, "{}", match self {
+            Self::Edit => "/edit",
+        })
     }
 }
 
@@ -109,9 +94,9 @@ impl SubRoute for Route {
         match self {
             Self::Index => "Dark Forest".to_owned(),
             Self::Explore => "Explore Dark Forest".to_owned(),
-            Self::SignIn(_) => "Sign In".to_owned(),
-            Self::CreateAccount(_) => "Create Account".to_owned(),
-            Self::NewProject(_) => "New Project".to_owned(),
+            Self::SignIn => "Sign In".to_owned(),
+            Self::CreateAccount => "Create Account".to_owned(),
+            Self::NewProject => "New Project".to_owned(),
             Self::Users { user_name, nest } => {
                 format!("{}{}", user_name.to_owned(), Self::nest(nest),)
             }

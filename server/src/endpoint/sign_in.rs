@@ -1,57 +1,31 @@
-use {
-    ::cookie::Cookie,
-    async_trait::async_trait,
-    shared::data::credentials::Fail::{IncorrectPassword, UserNotFound},
-    tide::{Redirect, Request, Response},
-    time::Duration,
-};
+use {async_trait::async_trait, tide::Request};
 
-use crate::{
-    cookie,
-    endpoint::{self, Endpoint},
-    security,
-    state::State,
-};
+use crate::{endpoint, security, state::State};
 
-use shared::data::ResponseKind;
-
-impl Endpoint for shared::Credentials {}
+use shared::data::{self, sign_in};
 
 #[async_trait]
-impl endpoint::Post for shared::Credentials {
-    async fn post(mut req: Request<State>, _: ResponseKind) -> tide::Result<Response> {
-        let credentials: Self = req.body_form().await?;
-
+impl endpoint::Post for shared::SignIn {
+    async fn post(
+        req: Request<State>,
+        credentials: sign_in::Credentials,
+    ) -> tide::Result<Result<data::security::Token, sign_in::Fail>> {
         let stored_user = req
             .state()
             .database()
             .get_user(&credentials.user_name)
             .await?;
 
-        Ok(if let Some(stored_user) = stored_user {
-            if stored_user.verify_credentials(&credentials)? {
-                unsafe_sign_in(
-                    Redirect::new(shared::Route::Index.to_string()).into(),
-                    credentials.user_name,
-                )?
+        Ok({
+            if let Some(stored_user) = stored_user {
+                if stored_user.verify_credentials(&credentials)? {
+                    Ok(security::jwt::Claims::new(credentials.user_name).get_token()?)
+                } else {
+                    Err(sign_in::Fail::IncorrectPassword)
+                }
             } else {
-                Redirect::new(shared::Route::SignIn(Some(IncorrectPassword)).to_string()).into()
+                Err(sign_in::Fail::UserNotFound)
             }
-        } else {
-            Redirect::new(shared::Route::SignIn(Some(UserNotFound)).to_string()).into()
         })
     }
-}
-
-#[allow(clippy::module_name_repetitions)]
-pub fn unsafe_sign_in(mut res: Response, user: String) -> tide::Result<Response> {
-    let claims = security::jwt::Claims::new(user);
-    res.insert_cookie(
-        Cookie::build(cookie::LOGIN, claims.get_token()?)
-            .max_age(Duration::minutes(security::jwt::Claims::max_age_minutes()))
-            .secure(true)
-            .http_only(true)
-            .finish(),
-    );
-    Ok(res)
 }

@@ -1,33 +1,27 @@
 use std::convert::TryInto;
 
-use {
-    async_trait::async_trait,
-    tide::{Redirect, Request, Response},
-};
+use {async_trait::async_trait, tide::Request};
 
 use crate::{
-    endpoint::{self, Endpoint},
+    endpoint::{self},
     state::{database::Insert, State},
 };
 
 use shared::{
+    data::create_account::{self, Fail},
     data::validation::Post as _,
-    data::{create_account::Fail, ResponseKind},
-    Endpoint as _,
 };
-
-impl Endpoint for shared::CreateAccount {}
 
 #[async_trait]
 impl endpoint::Post for shared::CreateAccount {
-    async fn post(mut req: Request<State>, _: ResponseKind) -> tide::Result<Response> {
-        let account_info: Self = req.body_form().await?;
-
+    async fn post(
+        req: Request<State>,
+        account_info: create_account::Details,
+    ) -> tide::Result<Result<(), create_account::Fail>> {
         let validation = account_info.validate();
 
         Ok(if let Err(error) = validation {
-            Redirect::new(shared::Route::CreateAccount(Some(Fail::InvalidField(error))).to_string())
-                .into()
+            Err(Fail::InvalidField(error))
         } else {
             match req
                 .state()
@@ -35,12 +29,9 @@ impl endpoint::Post for shared::CreateAccount {
                 .add_user(account_info.try_into()?)
                 .await?
             {
-                Insert::Success => Redirect::temporary(shared::Credentials::PATH.to_owned()),
-                Insert::AlreadyExists => Redirect::new(
-                    shared::Route::CreateAccount(Some(Fail::AlreadyExists)).to_string(),
-                ),
+                Insert::Success => Ok(()),
+                Insert::AlreadyExists => Err(Fail::AlreadyExists),
             }
-            .into()
         })
     }
 }

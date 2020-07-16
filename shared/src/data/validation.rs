@@ -5,10 +5,8 @@ use {
     serde::{Deserialize, Serialize},
 };
 
-use crate::Endpoint;
-
-/// An endpoint that can be validated.
-pub trait Post: Endpoint {
+/// An endpoints required data that can be validated.
+pub trait Post {
     type Invalid: Serialize + for<'a> Deserialize<'a>;
     fn validate(&self) -> Result<(), Self::Invalid>;
 }
@@ -84,16 +82,12 @@ use Fail::*;
 
 impl Fail {
     pub fn show(self, field: &str) -> String {
-        format!(
-            "{} {}.",
-            field,
-            match self {
-                TooLong => "must be shorter",
-                TooShort => "must be longer",
-                NotAscii => "must only contain ASCII characters",
-                InvalidEmail => "must be a valid email",
-            }
-        )
+        format!("{} {}.", field, match self {
+            TooLong => "must be shorter",
+            TooShort => "must be longer",
+            NotAscii => "must only contain ASCII characters",
+            InvalidEmail => "must be a valid email",
+        })
     }
 }
 

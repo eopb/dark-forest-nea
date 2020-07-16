@@ -1,8 +1,6 @@
 //! Items used to create forms.
 
-// TODO maybe most things should be methods on `InputType`.
-
-use std::fmt;
+use std::{fmt, string::ToString};
 
 use crate::{
     state,
@@ -15,9 +13,126 @@ use {
     seed_style::{em, pc, px, *},
 };
 
+/// Builder for creating input boxes.
+#[derive(Default)]
+pub struct InputBuilder {
+    input_type: InputType,
+    id: Option<String>,
+    placeholder: Option<String>,
+    error: Option<String>,
+}
+
+impl InputBuilder {
+    fn new(input_type: InputType) -> Self {
+        Self {
+            input_type,
+            id: None,
+            placeholder: None,
+            error: None,
+        }
+    }
+    /// Text box.
+    pub fn text() -> Self {
+        Self::new(InputType::Text)
+    }
+
+    /// Password input box.
+    pub fn password() -> Self {
+        Self::new(InputType::Password)
+    }
+
+    /// Email input box.
+    pub fn email() -> Self {
+        Self::new(InputType::Email)
+    }
+    /// Submit button.
+    pub fn submit() -> Self {
+        Self::new(InputType::Submit)
+    }
+    pub fn id(mut self, id: impl fmt::Display) -> Self {
+        self.id = Some(id.to_string());
+        self
+    }
+    pub fn placeholder(mut self, placeholder: impl fmt::Display) -> Self {
+        self.placeholder = Some(placeholder.to_string());
+        self
+    }
+    pub fn error(mut self, error: &Option<impl fmt::Display>) -> Self {
+        self.error = error.as_ref().map(ToString::to_string);
+        self
+    }
+    pub fn view(
+        self,
+        model: &state::Model,
+        update_msg: impl Fn(String) -> Option<updates::Msg> + Clone + 'static,
+    ) -> Vec<Node<updates::Msg>> {
+        vec![
+            vec![if let Some(ref error) = self.error {
+                p![
+                    s().margin("0")
+                        .margin_bottom(px(-15))
+                        .width(px(600))
+                        .text_align_left()
+                        .font_size(em(2.9))
+                        .color(model.theme.error()),
+                    error.to_string()
+                ]
+            } else {
+                empty()
+            }],
+            ui::Bordered::new(input![
+                self.id.as_ref().map(|id| attrs! {
+                        At::Id => id,
+                        At::Name => id,
+                }),
+                attrs! {
+                    At::Type => self.input_type,
+                },
+                self.placeholder.as_ref().map(|placeholder| {
+                    if InputType::Submit == self.input_type {
+                        attrs! {At::Value => placeholder}
+                    } else {
+                        attrs! {At::Placeholder => placeholder}
+                    }
+                }),
+                if InputType::Submit == self.input_type {
+                    input_ev(Ev::Click, update_msg)
+                } else {
+                    input_ev(Ev::Input, update_msg)
+                },
+                s().margin("0")
+                    .width(pc(95))
+                    .font_family("adobedia")
+                    .box_sizing_border_box()
+                    .border("none")
+                    .font_size(em(3))
+                    .background_color(model.theme.background())
+                    .color(model.theme.text()),
+                if InputType::Password == self.input_type {
+                    s().pseudo(":not(:placeholder-shown)")
+                        .font_size(em(1.5))
+                        .font_family("prstart")
+                        .margin("11px 7px")
+                } else {
+                    s()
+                }
+            ])
+            .inner(s().width(px(if InputType::Submit == self.input_type {
+                300
+            } else {
+                600
+            })))
+            .view(model),
+        ]
+        .into_iter()
+        .flatten()
+        .collect()
+    }
+}
+
 /// Type of item to accept.
 #[derive(Eq, PartialEq, Copy, Clone)]
-enum InputType {
+pub enum InputType {
     Text,
     Password,
     Submit,
@@ -26,151 +141,38 @@ enum InputType {
 
 impl fmt::Display for InputType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{}",
-            match self {
-                Self::Text => "text",
-                Self::Password => "password",
-                Self::Submit => "submit",
-                Self::Email => "email",
-            }
-        )
+        write!(f, "{}", match self {
+            Self::Text => "text",
+            Self::Password => "password",
+            Self::Submit => "submit",
+            Self::Email => "email",
+        })
     }
 }
 
-/// Private base function for creating input boxes.
-fn input(
-    model: &state::Model,
-    id: &str,
-    input_type: InputType,
-    placeholder: &str,
-    error: Option<impl fmt::Display>,
-) -> Vec<Node<updates::Msg>> {
-    vec![
-        vec![if let Some(error) = error {
-            p![
-                s().margin("0")
-                    .margin_bottom(px(-15))
-                    .width(px(600))
-                    .text_align_left()
-                    .font_size(em(2.9))
-                    .color(model.theme.error()),
-                error.to_string()
-            ]
-        } else {
-            empty()
-        }],
-        ui::Bordered::new(input![
-            attrs! {
-                At::Id => id,
-                At::Name => id,
-                At::Type => input_type,
-
-            },
-            if InputType::Submit == input_type {
-                attrs! {At::Value => placeholder}
-            } else {
-                attrs! {At::Placeholder => placeholder}
-            },
-            s().margin("0")
-                .width(pc(95))
-                .font_family("adobedia")
-                .box_sizing_border_box()
-                .border("none")
-                .font_size(em(3))
-                .background_color(model.theme.background())
-                .color(model.theme.text()),
-            if InputType::Password == input_type {
-                s().pseudo(":not(:placeholder-shown)")
-                    .font_size(em(1.5))
-                    .font_family("prstart")
-                    .margin("11px 7px")
-            } else {
-                s()
-            }
-        ])
-        .inner(s().width(px(if InputType::Submit == input_type {
-            300
-        } else {
-            600
-        })))
-        .view(model),
-    ]
-    .into_iter()
-    .flatten()
-    .collect()
+impl Default for InputType {
+    fn default() -> Self {
+        Self::Text
+    }
 }
-
-/// Text box.
-pub fn text(model: &state::Model, id: &str, placeholder: &str) -> Vec<Node<updates::Msg>> {
-    text_with_error(model, id, placeholder, Option::<String>::None)
-}
-
-/// Password input box.
-pub fn password(model: &state::Model, id: &str, placeholder: &str) -> Vec<Node<updates::Msg>> {
-    password_with_error(model, id, placeholder, Option::<String>::None)
-}
-
-/// Email input box.
-pub fn email(model: &state::Model, id: &str, placeholder: &str) -> Vec<Node<updates::Msg>> {
-    email_with_error(model, id, placeholder, Option::<String>::None)
-}
-
-pub fn text_with_error(
-    model: &state::Model,
-    id: &str,
-    placeholder: &str,
-    error: Option<impl fmt::Display>,
-) -> Vec<Node<updates::Msg>> {
-    input(model, id, InputType::Text, placeholder, error)
-}
-
-pub fn password_with_error(
-    model: &state::Model,
-    id: &str,
-    placeholder: &str,
-    error: Option<impl fmt::Display>,
-) -> Vec<Node<updates::Msg>> {
-    input(model, id, InputType::Password, placeholder, error)
-}
-
-pub fn email_with_error(
-    model: &state::Model,
-    id: &str,
-    placeholder: &str,
-    error: Option<impl fmt::Display>,
-) -> Vec<Node<updates::Msg>> {
-    input(model, id, InputType::Email, placeholder, error)
-}
-
-/// Submit button.
-fn submit(model: &state::Model, placeholder: &str) -> Vec<Node<updates::Msg>> {
-    input(
-        model,
-        "",
-        InputType::Submit,
-        placeholder,
-        Option::<String>::None,
-    )
-}
-
 /// Full form with support of multiple input boxes and a submit button.
 pub fn view(
     model: &state::Model,
-    action: impl fmt::Display,
     items: impl UpdateEl<updates::Msg>,
     submit_text: &str,
     note: impl UpdateEl<updates::Msg>,
+    update_msg: impl Fn(String) -> Option<updates::Msg> + Clone + 'static,
 ) -> Node<updates::Msg> {
     div![form![
-        attrs! {At::Action => action, At::Method => "post"},
+        attrs! {At::OnSubmit => "return false;"},
         s().display("flex")
             .align_items("center")
             .flex_direction("column")
             .margin("auto"),
         items,
-        submit(model, submit_text),
+        InputBuilder::submit()
+            .placeholder(submit_text)
+            .view(model, update_msg),
         ui::subheading(note)
     ]]
 }
