@@ -5,7 +5,7 @@ use {
     serde::{Deserialize, Serialize},
 };
 
-/// An endpoint that can be validated.
+/// An endpoints required data that can be validated.
 pub trait Post {
     type Invalid: Serialize + for<'a> Deserialize<'a>;
     fn validate(&self) -> Result<(), Self::Invalid>;

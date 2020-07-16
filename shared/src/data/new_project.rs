@@ -5,7 +5,6 @@ use crate::{
 
 use serde::{Deserialize, Serialize};
 
-/// Data sent when a user creates an account.
 #[derive(Clone, Serialize, Deserialize, Debug, Eq, PartialEq)]
 pub struct NewProject;
 
@@ -42,7 +41,7 @@ impl validation::Post for Details {
     }
 }
 
-/// Reasons creating an account may fail.
+/// Reasons creating a new project may fail.
 #[derive(Clone, Serialize, Deserialize, Debug, Eq, PartialEq)]
 pub enum Fail {
     AlreadyExists,

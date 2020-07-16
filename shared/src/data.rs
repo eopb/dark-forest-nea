@@ -13,14 +13,13 @@ pub use validation::Validation;
 
 use serde::{Deserialize, Serialize};
 
-/// The kind of response body to expect from server endpoints.
+/// The kind of body to request from and send to server endpoints.
 pub const KINDS: Kinds = Kinds {
     server_requires: Json,
     server_response: Json,
 };
 
 /// Struct to specify in what format data should be sent between client and server.
-
 #[derive(Copy, Clone)]
 pub struct Kinds {
     pub server_response: Kind,
@@ -28,6 +27,7 @@ pub struct Kinds {
 }
 
 impl Kinds {
+    /// All possible server setups.
     pub const fn possible() -> &'static [Self; 4] {
         &[
             Self {
@@ -49,6 +49,8 @@ impl Kinds {
         ]
     }
 }
+
+/// The format to send data in.
 #[derive(Copy, Clone)]
 pub enum Kind {
     Json,
@@ -64,15 +66,17 @@ impl Kind {
         }
     }
 }
-/// A type that is related to a path.
+
+/// A REST Endpoint
 pub trait Endpoint: 'static {
+    /// The data that this endpoint responds with.
     type Response: for<'a> Deserialize<'a> + Serialize;
     /// Relative API path.
     ///
     /// This path will be nested in a response kind.
     const PATH: &'static str;
 
-    /// Full relative path for this endpoint with a given response body type.
+    /// Full relative path for the version of this endpoint accepting given data format.
     fn path(data_kinds: Kinds) -> String {
         format!(
             "/api{}{}{}",
@@ -83,6 +87,10 @@ pub trait Endpoint: 'static {
     }
 }
 
+/// A REST Endpoint that can be `POST`ed to.
+///
+/// If an Endpoint does not implement this it is `Get`.
 pub trait PostEndpoint: Endpoint {
+    /// The data that this endpoint requires to process.
     type Requires: for<'a> Deserialize<'a> + Serialize + Send + Sync + 'static;
 }

@@ -22,3 +22,6 @@
 - `cargo make doc_watch`
 - `cargo make coverage` Note: coverage does not work on WASM files such as client
 - `cargo make coverage_open`
+
+
+TODO Cleanup makefiles.

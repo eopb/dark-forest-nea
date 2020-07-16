@@ -10,6 +10,7 @@ impl Endpoint for SignedIn {
     type Response = Res;
     const PATH: &'static str = "/signed-in";
 }
+
 impl PostEndpoint for SignedIn {
     type Requires = security::Token;
 }
