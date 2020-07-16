@@ -1,9 +1,8 @@
-//! Data from the server.
+//! Data fetched from the server.
 
 use crate::ui;
 
-use seed::virtual_dom::update_el::UpdateEl;
-use seed::{prelude::*, *};
+use seed::{prelude::*, virtual_dom::update_el::UpdateEl, *};
 
 #[derive(Default)]
 pub struct Server {

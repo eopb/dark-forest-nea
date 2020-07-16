@@ -14,6 +14,7 @@ impl endpoint::Post for shared::SignedIn {
 /// Server functionality extension for `SignedIn`
 #[async_trait]
 pub trait Ext: shared::Endpoint {
+    #[allow(clippy::ptr_arg)]
     async fn get_user(token: &Token) -> signed_in::Res;
 }
 

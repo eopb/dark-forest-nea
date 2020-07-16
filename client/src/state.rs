@@ -26,6 +26,8 @@ impl Model {
         }
     }
 }
+
+/// Data used only by particular routes.
 #[derive(Default)]
 pub struct RouteData {
     pub sign_in: ui::router::sign_in::Model,

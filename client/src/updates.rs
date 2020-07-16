@@ -51,7 +51,6 @@ pub fn update(msg: Msg, model: &mut state::Model, orders: &mut impl Orders<Msg>)
             }
         }
         Msg::ToFetch(x) => {
-            //TODO This clone could be too expensie.
             orders.perform_cmd(x.order(model.login_token.clone()));
             orders.skip();
         }
@@ -110,7 +109,7 @@ impl Fetched {
         match self {
             Self::Hello(x) => model.server.hello = state::server::Fetch::Fetched(x),
             Self::SignedIn(x) => model.server.signed_in = state::server::Fetch::Fetched(x),
-            // Refresh token only affects cookies so it does not have to be handled here.
+            //TODO handle refresh tokens!
             Self::RefreshToken(_) => {}
         }
     }

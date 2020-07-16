@@ -1,10 +1,8 @@
 use crate::{endpoint::Post, state, ui, updates, updates::sign_in::SignIn};
 
-use {
-    seed::{prelude::*, *},
-    seed_style::*,
-    shadow_clone::shadow_clone,
-};
+use seed::{prelude::*, *};
+use seed_style::*;
+use shadow_clone::shadow_clone;
 
 use shared::data::create_account;
 #[derive(Clone, Default)]
@@ -46,8 +44,11 @@ impl Msg {
                     inner_model.error = Some(error)
                 } else {
                     orders.send_msg(
-                        SignIn::Submit(inner_model.form.clone().into(), shared::Route::Index)
-                            .into(),
+                        SignIn::Start {
+                            credentials: inner_model.form.clone().into(),
+                            goes_to: shared::Route::Index,
+                        }
+                        .into(),
                     );
                     *inner_model = Model::default();
                 }

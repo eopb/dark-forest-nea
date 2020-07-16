@@ -2,7 +2,7 @@
 
 use crate::updates;
 
-use seed::{app::subs::UrlChanged, browser::url::Url, log, prelude::*};
+use seed::{app::subs::UrlChanged, browser::url::Url, prelude::*};
 
 use std::convert::{TryFrom, TryInto};
 
@@ -54,7 +54,6 @@ impl Route {
     }
     /// Request data required by an endpoint to be attached to the model.
     pub fn request_required_data(&self, orders: &mut impl Orders<updates::Msg>) {
-        log!("hi bro");
         orders.send_msg(updates::Msg::ToFetch(updates::ToFetch::SignedIn));
         if let Some(shared::Route::Index) = self.0 {
             orders.send_msg(updates::Msg::ToFetch(updates::ToFetch::Hello));

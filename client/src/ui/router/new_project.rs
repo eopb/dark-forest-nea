@@ -16,9 +16,10 @@ pub struct Model {
 pub enum Msg {
     ProjectNameChanged(String),
     Submit,
-    Submited(<shared::NewProject as shared::Endpoint>::Response),
+    Submited(Result<(), new_project::Fail>),
     SubmitFailed(String),
 }
+
 impl Msg {
     pub fn update(self, model: &mut state::Model, orders: &mut impl Orders<updates::Msg>) {
         let mut inner_model = &mut model.route_data.new_project;

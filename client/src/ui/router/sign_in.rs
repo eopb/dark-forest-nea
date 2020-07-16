@@ -28,7 +28,11 @@ impl Msg {
             Self::Submit => {
                 orders.skip(); // No need to rerender
                 orders.send_msg(
-                    SignIn::Submit(inner_model.form.clone(), shared::Route::Index).into(),
+                    SignIn::Start {
+                        credentials: inner_model.form.clone(),
+                        goes_to: shared::Route::Index,
+                    }
+                    .into(),
                 );
                 *inner_model = Model::default();
             }

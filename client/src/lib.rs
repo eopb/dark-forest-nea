@@ -21,6 +21,7 @@ use {
 
 use std::convert::TryInto;
 
+/// Key where to store the login token on `LocalStorage`.
 pub static LOGIN_KEY: &str = "Login";
 
 /// Setup process invoked when client is started.
