@@ -1,4 +1,5 @@
 pub mod create_account;
+pub mod editor;
 pub mod index;
 pub mod new_project;
 pub mod not_found;
@@ -17,7 +18,7 @@ pub fn view(model: &state::Model) -> Node<updates::Msg> {
             shared::Route::SignIn => sign_in::view(model),
             shared::Route::CreateAccount => create_account::view(model),
             shared::Route::NewProject => new_project::view(model),
-            shared::Route::Users { .. } => todo!(),
+            shared::Route::Users { .. } => editor::view(model),
         },
         None => not_found::view(model),
     }

@@ -1,23 +1,19 @@
 use {async_trait::async_trait, tide::Request};
 
-use crate::{
-    endpoint::{self, signed_in::Ext},
-    security,
-    state::State,
-};
+use crate::{endpoint, state::State};
 
 use shared::{
     data::Project,
-    endpoint::{
-        edit::init::StartEditor,
-        signed_in::{self, SignedIn},
-    },
-    security::Token,
+    endpoint::edit::init::{Fail, ProjectPath, StartEditor},
+    security::Authenticated,
 };
 
 #[async_trait]
-impl endpoint::Get for StartEditor {
-    async fn get(_: Request<State>) -> tide::Result<<Self as shared::Endpoint>::Response> {
+impl endpoint::Post for StartEditor {
+    async fn post(
+        _: Request<State>,
+        _project_path: Authenticated<ProjectPath>,
+    ) -> tide::Result<Result<Project, Fail>> {
         Ok(Ok(Project::example()))
     }
 }

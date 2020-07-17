@@ -31,6 +31,18 @@ impl TryFrom<&Url> for Route {
             ["sign-in"] => Ok(Some(shared::Route::SignIn)),
             ["create-account"] => Ok(Some(shared::Route::CreateAccount)),
             ["new-project"] => Ok(Some(shared::Route::NewProject)),
+
+            ["users", user_name, "projects", project_name, "edit"] => {
+                Ok(Some(shared::Route::Users {
+                    user_name: user_name.to_string(),
+                    nest: Some(shared::routes::UserRoute::Projects(Some(
+                        shared::routes::Project {
+                            project_name: project_name.to_string(),
+                            nest: Some(shared::routes::ProjectRoute::Edit),
+                        },
+                    ))),
+                }))
+            }
             ["api", ..] => Err(ApiRoute),
             _ => Ok(None),
         }
@@ -55,8 +67,28 @@ impl Route {
     /// Request data required by an endpoint to be attached to the model.
     pub fn request_required_data(&self, orders: &mut impl Orders<updates::Msg>) {
         orders.send_msg(updates::Msg::ToFetch(updates::ToFetch::SignedIn));
-        if let Some(shared::Route::Index) = self.0 {
-            orders.send_msg(updates::Msg::ToFetch(updates::ToFetch::Hello));
+        if let Some(ref route) = self.0 {
+            match route {
+                shared::Route::Index => {
+                    orders.send_msg(updates::Msg::ToFetch(updates::ToFetch::Hello));
+                }
+                shared::Route::Users {
+                    user_name,
+                    nest:
+                        Some(shared::routes::UserRoute::Projects(Some(shared::routes::Project {
+                            project_name,
+                            nest: Some(shared::routes::ProjectRoute::Edit),
+                        }))),
+                } => {
+                    orders.send_msg(updates::Msg::ToFetch(updates::ToFetch::Editor(
+                        shared::endpoint::edit::init::ProjectPath {
+                            project_name: project_name.to_owned(),
+                            user_name: user_name.to_owned(),
+                        },
+                    )));
+                }
+                _ => {}
+            };
         };
     }
 }

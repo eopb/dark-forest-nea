@@ -7,11 +7,11 @@ use {
 
 #[derive(Clone, Debug, Serialize, Deserialize, Default)]
 pub struct Project {
-    name: String,
+    pub name: String,
     // TODO theme
-    theme: (),
+    pub theme: (),
     // TODO use `indexmap` or alternative with user controlled ordering.
-    chapters: HashMap<u32, Chapter>,
+    pub chapters: HashMap<u32, Chapter>,
 }
 
 impl Project {
@@ -52,19 +52,19 @@ impl Project {
 
 #[derive(Clone, Debug, Serialize, Deserialize, Default)]
 pub struct Chapter {
-    heading: String,
-    body: String,
-    decisions: Vec<Decision>,
+    pub heading: String,
+    pub body: String,
+    pub decisions: Vec<Decision>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, Default)]
 pub struct Decision {
-    body: String,
-    goes_to: Option<Link>,
+    pub body: String,
+    pub goes_to: Option<Link>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
-enum Link {
+pub enum Link {
     /// The story has ended.
     End,
     Chapter(u32),

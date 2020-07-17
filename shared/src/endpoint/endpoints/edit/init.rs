@@ -18,8 +18,8 @@ impl PostEndpoint for StartEditor {
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct ProjectPath {
-    user_name: String,
-    project_name: String,
+    pub user_name: String,
+    pub project_name: String,
 }
 
 /// Reasons creating a new project may fail.

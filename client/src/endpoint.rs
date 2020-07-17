@@ -4,6 +4,7 @@ use {anyhow::anyhow, async_trait::async_trait, seed::prelude::*};
 
 use shared::endpoint::{
     create_account::CreateAccount,
+    edit::init::StartEditor,
     hello::Hello,
     new_project::NewProject,
     refresh_token::RefreshToken,
@@ -83,3 +84,6 @@ impl Endpoint for CreateAccount {}
 
 impl Post for NewProject {}
 impl Endpoint for NewProject {}
+
+impl Post for StartEditor {}
+impl Endpoint for StartEditor {}

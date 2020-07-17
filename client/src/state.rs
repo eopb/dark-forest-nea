@@ -28,13 +28,24 @@ impl Model {
 }
 
 /// Data used only by particular routes.
-#[derive(Default)]
 pub struct RouteData {
     pub sign_in: ui::router::sign_in::Model,
     pub create_account: ui::router::create_account::Model,
     pub new_project: ui::router::new_project::Model,
+    // TODO wrap this in a Model.
+    pub editor: Result<shared::data::Project, shared::endpoint::edit::init::Fail>,
 }
 
+impl Default for RouteData {
+    fn default() -> Self {
+        Self {
+            sign_in: ui::router::sign_in::Model::default(),
+            create_account: ui::router::create_account::Model::default(),
+            new_project: ui::router::new_project::Model::default(),
+            editor: Ok(shared::data::Project::default()),
+        }
+    }
+}
 #[derive(Copy, Clone)]
 /// Colour theme.
 pub enum Theme {
