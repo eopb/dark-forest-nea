@@ -8,6 +8,7 @@ use {
 #[derive(Clone, Debug, Serialize, Deserialize, Default)]
 pub struct Project {
     pub name: String,
+    pub description: String,
     // TODO theme
     pub theme: (),
     // TODO use `indexmap` or alternative with user controlled ordering.
@@ -20,6 +21,7 @@ impl Project {
         Self {
             name: "The Endless Loop!".to_owned(),
             theme: (),
+            description: "A stupid game".to_owned(),
             chapters: hashmap! {
                 1 => Chapter {
                     heading: "This is the start of your adventure.".to_owned(),

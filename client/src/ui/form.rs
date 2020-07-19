@@ -36,6 +36,11 @@ impl InputBuilder {
         Self::new(InputType::Text)
     }
 
+    /// Textarea.
+    pub fn text_area() -> Self {
+        Self::new(InputType::TextArea)
+    }
+
     /// Password input box.
     pub fn password() -> Self {
         Self::new(InputType::Password)
@@ -45,10 +50,12 @@ impl InputBuilder {
     pub fn email() -> Self {
         Self::new(InputType::Email)
     }
+
     /// Submit button.
     pub fn submit() -> Self {
         Self::new(InputType::Submit)
     }
+
     pub fn id(mut self, id: impl fmt::Display) -> Self {
         self.id = Some(id.to_string());
         self
@@ -80,16 +87,25 @@ impl InputBuilder {
             } else {
                 empty()
             }],
-            ui::Bordered::new(input![
+            ui::Bordered::new(custom![
+                if InputType::TextArea == self.input_type {
+                    Tag::TextArea
+                } else {
+                    Tag::Input
+                },
                 self.id.as_ref().map(|id| attrs! {
                         At::Id => id,
                         At::Name => id,
                 }),
-                attrs! {
-                    At::Type => self.input_type,
+                if InputType::TextArea == self.input_type {
+                    attrs! {}
+                } else {
+                    attrs! {
+                        At::Type => self.input_type,
+                    }
                 },
                 self.placeholder.as_ref().map(|placeholder| {
-                    if InputType::Submit == self.input_type {
+                    if let InputType::Submit | InputType::TextArea = self.input_type {
                         attrs! {At::Value => placeholder}
                     } else {
                         attrs! {At::Placeholder => placeholder}
@@ -136,6 +152,7 @@ pub enum InputType {
     Text,
     Password,
     Submit,
+    TextArea,
     Email,
 }
 
@@ -146,6 +163,7 @@ impl fmt::Display for InputType {
             Self::Password => "password",
             Self::Submit => "submit",
             Self::Email => "email",
+            Self::TextArea => unreachable!("Text areas should not be used in that way."),
         })
     }
 }

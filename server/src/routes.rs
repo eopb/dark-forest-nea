@@ -29,17 +29,17 @@ pub async fn index(_: Request<State>) -> tide::Result<impl Into<Response>> {
                         (PreEscaped(r#"
                             @font-face {
                                 font-family: bitlimt;
-                                src: url("fonts/8-bit-limit/8bitlim.ttf");
+                                src: url("/fonts/8-bit-limit/8bitlim.ttf");
                                 font-weight: bold;
                             }
                             @font-face {
                                 font-family: adobedia;
-                                src: url("fonts/levi-adobe-dia/adobedia.ttf");
+                                src: url("/fonts/levi-adobe-dia/adobedia.ttf");
                                 font-weight: bold;
                             }
                             @font-face {
                                 font-family: prstart;
-                                src: url("fonts/press-start/prstart.ttf");
+                                src: url("/fonts/press-start/prstart.ttf");
                                 font-weight: bold;
                             }
                         "#))
