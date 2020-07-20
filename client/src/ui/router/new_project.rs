@@ -83,6 +83,7 @@ pub fn view(model: &state::Model) -> Node<updates::Msg> {
         ui::form::InputBuilder::text()
             .id("project_name")
             .placeholder("Project Name...")
+            .value(&model.route_data.new_project.form.project_name)
             .error(err)
             .view(model, |text| Some(Msg::ProjectNameChanged(text).into()))
     };

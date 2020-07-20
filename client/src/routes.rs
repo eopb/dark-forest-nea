@@ -19,7 +19,7 @@ impl From<shared::Route> for Route {
 impl TryFrom<&Url> for Route {
     type Error = ApiRoute;
     fn try_from(url: &Url) -> Result<Self, Self::Error> {
-        match &url
+        match url
             .path()
             .iter()
             .map(AsRef::as_ref)
@@ -34,10 +34,10 @@ impl TryFrom<&Url> for Route {
 
             ["users", user_name, "projects", project_name, "edit"] => {
                 Ok(Some(shared::Route::Users {
-                    user_name: user_name.to_string(),
+                    user_name: (*user_name).to_string(),
                     nest: Some(shared::routes::UserRoute::Projects(Some(
                         shared::routes::Project {
-                            project_name: project_name.to_string(),
+                            project_name: (*project_name).to_string(),
                             nest: Some(shared::routes::ProjectRoute::Edit),
                         },
                     ))),
@@ -66,7 +66,9 @@ impl Route {
     }
     /// Request data required by an endpoint to be attached to the model.
     pub fn request_required_data(&self, orders: &mut impl Orders<updates::Msg>) {
+        orders.send_msg(updates::Msg::ClearRouteData);
         orders.send_msg(updates::Msg::ToFetch(updates::ToFetch::SignedIn));
+
         if let Some(ref route) = self.0 {
             match route {
                 shared::Route::Index => {

@@ -1,6 +1,4 @@
-use crate::{
-    data::Project, security::Authenticated, validation, Endpoint, PostEndpoint, Validation,
-};
+use crate::{data::Project, security::Authenticated, validation, Endpoint, PostEndpoint};
 
 use serde::{Deserialize, Serialize};
 

@@ -34,7 +34,7 @@ shadow-clone = "1.2.1"
 
 [profile.release]
 lto = true
-opt-level = 'z'
+opt-level = 's'
 codegen-units = 1
 
 [package.metadata.wasm-pack.profile.release]

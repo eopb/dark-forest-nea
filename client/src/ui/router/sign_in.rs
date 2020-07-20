@@ -48,11 +48,13 @@ impl From<Msg> for updates::Msg {
 
 pub fn view(model: &state::Model) -> Node<updates::Msg> {
     use shared::endpoint::sign_in::Fail::{IncorrectPassword, UserNotFound};
+    let form = &model.route_data.sign_in.form;
     let error = model.route_data.sign_in.error;
     let user_name = |err| {
         ui::form::InputBuilder::text()
             .id("user_name")
             .placeholder("Username...")
+            .value(&form.user_name)
             .error(err)
             .view(model, |text| Some(Msg::UsernameChanged(text).into()))
     };
@@ -60,6 +62,7 @@ pub fn view(model: &state::Model) -> Node<updates::Msg> {
         ui::form::InputBuilder::password()
             .id("password")
             .placeholder("Password...")
+            .value(&form.password)
             .error(err)
             .view(model, |text| Some(Msg::PasswordChanged(text).into()))
     };

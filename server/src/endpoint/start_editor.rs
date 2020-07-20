@@ -12,7 +12,7 @@ use shared::{
 impl endpoint::Post for StartEditor {
     async fn post(
         _: Request<State>,
-        _project_path: Authenticated<ProjectPath>,
+        _: Authenticated<ProjectPath>,
     ) -> tide::Result<Result<Project, Fail>> {
         Ok(Ok(Project::example()))
     }

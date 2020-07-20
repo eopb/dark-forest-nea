@@ -64,11 +64,13 @@ impl From<Msg> for updates::Msg {
     }
 }
 pub fn view(model: &state::Model) -> Node<updates::Msg> {
+    let form = &model.route_data.create_account.form;
     let error = model.route_data.create_account.error.as_ref();
     let user_name = |err| {
         ui::form::InputBuilder::text()
             .id("user_name")
             .placeholder("Username...")
+            .value(&form.user_name)
             .error(err)
             .view(model, |text| Some(Msg::UsernameChanged(text).into()))
     };
@@ -76,6 +78,7 @@ pub fn view(model: &state::Model) -> Node<updates::Msg> {
         ui::form::InputBuilder::email()
             .id("email")
             .placeholder("Email...")
+            .value(&form.email)
             .error(err)
             .view(model, |text| Some(Msg::EmailChanged(text).into()))
     };
@@ -83,6 +86,7 @@ pub fn view(model: &state::Model) -> Node<updates::Msg> {
         ui::form::InputBuilder::password()
             .id("password")
             .placeholder("Password...")
+            .value(&form.password)
             .error(err)
             .view(model, |text| Some(Msg::PasswordChanged(text).into()))
     };
