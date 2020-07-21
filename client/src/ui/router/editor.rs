@@ -135,6 +135,7 @@ pub fn view(model: &state::Model) -> Node<updates::Msg> {
                                     .collect::<Vec<Node<updates::Msg>>>()
                             )
                             .inner(s().width(pc(100)))
+                            .outer(s().padding("0"))
                             .view(model),
                             ui::form::InputBuilder::submit()
                                 .value("Add decision")
