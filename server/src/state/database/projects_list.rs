@@ -5,7 +5,6 @@ use crate::{
 
 use {
     bson::doc,
-    bson::Bson,
     mongodb,
     once_cell::sync::Lazy,
     serde::{Deserialize, Serialize},
@@ -105,7 +104,6 @@ impl Database {
             if let Some(bson::Bson::Array(users_project_list)) =
                 users_project_list.as_ref().and_then(|x| x.get("projects"))
             {
-                dbg!("1");
                 users_project_list
                     .iter()
                     .map(|bson| (bson::from_bson::<Project>(bson.clone()).unwrap()))

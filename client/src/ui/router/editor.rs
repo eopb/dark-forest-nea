@@ -10,7 +10,6 @@ use shared::{
         save::{PermissionDenied, SaveEditor},
         ProjectPath,
     },
-    routes::Route,
     security::Authenticated,
 };
 

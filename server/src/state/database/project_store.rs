@@ -7,9 +7,7 @@ use shared::data::Project;
 
 use {
     bson::doc,
-    bson::Bson,
     mongodb,
-    once_cell::sync::Lazy,
     serde::{Deserialize, Serialize},
     uuid::Uuid,
 };
@@ -38,10 +36,8 @@ impl Database {
     pub async fn save_project(&self, project: ProjectStore) -> tide::Result<Insert> {
         Ok({
             let collection = self.project_store();
-            dbg!("here");
             let query = doc! { "_id":  project.uuid.to_string() };
-            dbg!("here");
-            let users_project_list = collection.find_one(query.clone(), None).await?;
+            let _users_project_list = collection.find_one(query.clone(), None).await?;
             collection.insert_one(project.as_bson()?, None).await?;
             Insert::Success
         })

@@ -1,4 +1,4 @@
-use {async_trait::async_trait, log::log, tide::Request};
+use {async_trait::async_trait, tide::Request};
 
 use crate::{
     endpoint::{self, signed_in::Ext},
@@ -26,18 +26,14 @@ impl endpoint::Post for SaveEditor {
         Ok({
             let user = SignedIn::get_user(&req_body.token).await;
             let (path, project) = req_body.inner;
-            dbg!("1");
             if let signed_in::Res::As(user) = user {
-                dbg!("1");
                 if user == path.user_name {
-                    dbg!("1");
                     let uuid = req
                         .state()
                         .database()
                         .get_project_uuid(&path.user_name, &path.project_name)
                         .await?;
                     if let Some(uuid) = uuid {
-                        dbg!("1");
                         req.state()
                             .database()
                             .save_project(ProjectStore::new(uuid, project))

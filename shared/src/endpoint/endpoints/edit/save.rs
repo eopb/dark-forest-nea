@@ -1,4 +1,4 @@
-use crate::{data::Project, security::Authenticated, validation, Endpoint, PostEndpoint};
+use crate::{data::Project, security::Authenticated, Endpoint, PostEndpoint};
 
 use super::ProjectPath;
 

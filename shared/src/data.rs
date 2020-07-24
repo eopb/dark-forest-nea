@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use crate::util::StringMap;
 
 use {
     maplit::hashmap,
@@ -12,7 +12,7 @@ pub struct Project {
     // TODO theme
     pub theme: (),
     // TODO use `indexmap` or alternative with user controlled ordering.
-    pub chapters: HashMap<i64, Chapter>,
+    pub chapters: StringMap<i64, Chapter>,
 }
 
 impl Project {
@@ -47,7 +47,8 @@ impl Project {
                         }
                     ]
                 }
-            },
+            }
+            .into(),
         }
     }
 }
