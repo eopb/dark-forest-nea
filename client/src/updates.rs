@@ -36,7 +36,7 @@ pub enum Msg {
     SignInForm(ui::router::sign_in::Msg),
     CreateAccountForm(ui::router::create_account::Msg),
     NewProjectForm(ui::router::new_project::Msg),
-    Editor(ui::router::editor::Msg),
+    Editor(ui::router::users::route::project::route::editor::Msg),
     ClearRouteData,
     SignOut,
 }

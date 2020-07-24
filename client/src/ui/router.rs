@@ -1,19 +1,15 @@
 pub mod create_account;
-pub mod editor;
 pub mod index;
 pub mod new_project;
 pub mod not_found;
 pub mod sign_in;
+pub mod users;
 
 use crate::{state, updates};
 
 use seed::{prelude::*, *};
 
-use shared::{
-    endpoint::edit::ProjectPath,
-    routes::{Project, ProjectRoute, UserRoute},
-    Route,
-};
+use shared::Route;
 
 /// Main router view showing items unique to a route.
 pub fn view(model: &state::Model) -> Node<updates::Msg> {
@@ -24,18 +20,7 @@ pub fn view(model: &state::Model) -> Node<updates::Msg> {
             Route::SignIn => sign_in::view(model),
             Route::CreateAccount => create_account::view(model),
             Route::NewProject => new_project::view(model),
-            Route::Users {
-                user_name,
-                nest:
-                    Some(UserRoute::Projects(Some(Project {
-                        project_name,
-                        nest: Some(ProjectRoute::Edit),
-                    }))),
-            } => editor::view(model, ProjectPath {
-                user_name: user_name.to_owned(),
-                project_name: project_name.to_owned(),
-            }),
-            Route::Users { .. } => todo!(),
+            Route::Users { user_name, nest } => users::view(model, user_name, nest.as_ref()),
         },
         None => not_found::view(model),
     }

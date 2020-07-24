@@ -11,7 +11,7 @@ use std::{
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 /// Wrapper type for `HashMaps` that serializes keys as strings to better
-/// support MongoDB.
+/// support `MongoDB`.
 #[derive(Clone, Debug, Default)]
 pub struct StringMap<K, V>(HashMap<K, V>);
 
