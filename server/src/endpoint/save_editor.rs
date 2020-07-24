@@ -27,7 +27,7 @@ impl endpoint::Post for SaveEditor {
             let user = SignedIn::get_user(&req_body.token).await;
             let (path, project) = req_body.inner;
             if let signed_in::Res::As(user) = user {
-                if user == path.user_name {
+                if dbg!(user) == dbg!(path.user_name.clone()) {
                     let uuid = req
                         .state()
                         .database()

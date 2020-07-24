@@ -25,4 +25,10 @@ impl Res {
     pub fn is_signed_in(&self) -> bool {
         self != &Self::Not
     }
+    pub fn ok(&self) -> Option<&str> {
+        match self {
+            Self::As(s) => Some(s),
+            Self::Not => None,
+        }
+    }
 }

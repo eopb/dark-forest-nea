@@ -20,7 +20,7 @@ use shadow_clone::shadow_clone;
 pub enum Msg {
     DescriptionChanged(String),
     NameChanged(String),
-    Submit,
+    Submit(ProjectPath),
     Submited(Result<(), PermissionDenied>),
     SubmitFailed(String),
 }
@@ -31,7 +31,7 @@ impl Msg {
         match self {
             Self::DescriptionChanged(description) => inner_model.description = description,
             Self::NameChanged(name) => inner_model.name = name,
-            Self::Submit => {
+            Self::Submit(project_path) => {
                 orders.skip(); // No need to rerender
                 shadow_clone!(inner_model);
                 let login_token = model.login_token.clone();
@@ -39,13 +39,7 @@ impl Msg {
                     updates::Msg::from({
                         if let Some(login_token) = login_token {
                             if let Ok(response) = SaveEditor::fetch(Authenticated::new(
-                                (
-                                    ProjectPath {
-                                        project_name: "Meme".to_string(),
-                                        user_name: "ethanboxx".to_owned(),
-                                    },
-                                    inner_model,
-                                ),
+                                (project_path, inner_model),
                                 login_token,
                             ))
                             .await
@@ -72,7 +66,7 @@ impl From<Msg> for updates::Msg {
 }
 
 #[allow(clippy::too_many_lines)]
-pub fn view(model: &state::Model) -> Node<updates::Msg> {
+pub fn view(model: &state::Model, project_path: ProjectPath) -> Node<updates::Msg> {
     log!(model.route_data.editor);
     match &model.route_data.editor {
         Ok(project) => div![div![
@@ -92,7 +86,9 @@ pub fn view(model: &state::Model) -> Node<updates::Msg> {
                 ui::form::InputBuilder::submit()
                     .value("Save")
                     .width(pc(100))
-                    .view(model, |_| Some(Msg::Submit.into()))
+                    .view(model, move |_| Some(
+                        Msg::Submit(project_path.clone()).into()
+                    ))
             ],
             ui::form::InputBuilder::text_area()
                 .value(&project.description)

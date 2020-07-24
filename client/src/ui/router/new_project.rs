@@ -54,16 +54,22 @@ impl Msg {
                     inner_model.error = Some(error)
                 } else {
                     Url::go_and_load_with_str(
-                        shared::Route::Users {
-                            user_name: "ethanboxx".to_owned(),
-                            nest: Some(shared::routes::UserRoute::Projects(Some(
-                                shared::routes::Project {
-                                    project_name: inner_model.form.project_name.clone(),
-                                    nest: Some(shared::routes::ProjectRoute::Edit),
-                                },
-                            ))),
-                        }
-                        .to_string(),
+                        model
+                            .server
+                            .signed_in
+                            .ok()
+                            .and_then(shared::endpoint::signed_in::Res::ok)
+                            .map(|user| shared::Route::Users {
+                                user_name: user.to_owned(),
+                                nest: Some(shared::routes::UserRoute::Projects(Some(
+                                    shared::routes::Project {
+                                        project_name: inner_model.form.project_name.clone(),
+                                        nest: Some(shared::routes::ProjectRoute::Edit),
+                                    },
+                                ))),
+                            })
+                            .unwrap_or_else(|| shared::Route::Index)
+                            .to_string(),
                     );
                     *inner_model = Model::default();
                 }
