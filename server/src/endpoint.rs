@@ -3,6 +3,7 @@
 mod create_account;
 mod new_project;
 mod refresh_token;
+mod save_editor;
 pub mod sign_in;
 mod signed_in;
 mod start_editor;

@@ -12,7 +12,7 @@ pub struct Project {
     // TODO theme
     pub theme: (),
     // TODO use `indexmap` or alternative with user controlled ordering.
-    pub chapters: HashMap<u32, Chapter>,
+    pub chapters: HashMap<i64, Chapter>,
 }
 
 impl Project {
@@ -23,7 +23,7 @@ impl Project {
             theme: (),
             description: "A stupid game".to_owned(),
             chapters: hashmap! {
-                1 => Chapter {
+                2 => Chapter {
                     heading: "This is the start of your adventure.".to_owned(),
                     body: "You can continue or leave.".to_owned(),
                     decisions: vec![
@@ -37,7 +37,7 @@ impl Project {
                         }
                     ]
                 },
-                2 =>  Chapter {
+                3 =>  Chapter {
                     heading: "This is the start of your adventure.".to_owned(),
                     body: "You may only continue".to_owned(),
                     decisions: vec![
@@ -69,5 +69,5 @@ pub struct Decision {
 pub enum Link {
     /// The story has ended.
     End,
-    Chapter(u32),
+    Chapter(i64),
 }

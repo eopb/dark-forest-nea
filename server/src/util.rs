@@ -1,6 +1,6 @@
 //! Useful functions not complex enough for their own modules.
 
-use {bson::document::Document, serde::Serialize};
+use {bson::document::Document, serde::Serialize, uuid::Uuid};
 
 /// Implement this only for types that can be converted into `bson` documents.
 pub trait BsonDoc: Serialize {

@@ -83,7 +83,7 @@ impl Route {
                         }))),
                 } => {
                     orders.send_msg(updates::Msg::ToFetch(updates::ToFetch::Editor(
-                        shared::endpoint::edit::init::ProjectPath {
+                        shared::endpoint::edit::ProjectPath {
                             project_name: project_name.to_owned(),
                             user_name: user_name.to_owned(),
                         },

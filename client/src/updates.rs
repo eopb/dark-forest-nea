@@ -16,7 +16,7 @@ use {seed::prelude::*, web_sys::Window};
 
 use shared::{
     endpoint::{
-        edit::init::{ProjectPath, StartEditor},
+        edit::{init::StartEditor, ProjectPath},
         hello::Hello,
         refresh_token::RefreshToken,
         signed_in::{self, SignedIn},

@@ -1,5 +1,7 @@
 use crate::{data::Project, security::Authenticated, validation, Endpoint, PostEndpoint};
 
+use super::ProjectPath;
+
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Serialize, Deserialize, Debug, Eq, PartialEq)]
@@ -12,12 +14,6 @@ impl Endpoint for StartEditor {
 
 impl PostEndpoint for StartEditor {
     type Requires = Authenticated<ProjectPath>;
-}
-
-#[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct ProjectPath {
-    pub user_name: String,
-    pub project_name: String,
 }
 
 /// Reasons creating a new project may fail.

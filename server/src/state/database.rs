@@ -1,3 +1,4 @@
+pub mod project_store;
 pub mod projects_list;
 pub mod user;
 

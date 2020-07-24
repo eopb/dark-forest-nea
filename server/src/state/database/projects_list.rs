@@ -95,8 +95,8 @@ impl Database {
     #[allow(clippy::find_map)] // find_map is rubbish in this case
     pub async fn get_project_uuid(
         &self,
-        user: String,
-        project_name: String,
+        user: &str,
+        project_name: &str,
     ) -> tide::Result<Option<Uuid>> {
         let collection = self.project_lists();
         let query = doc! { "_id": &user};
@@ -105,10 +105,11 @@ impl Database {
             if let Some(bson::Bson::Array(users_project_list)) =
                 users_project_list.as_ref().and_then(|x| x.get("projects"))
             {
+                dbg!("1");
                 users_project_list
                     .iter()
-                    .map(|bson| bson::from_bson::<Project>(bson.clone()).unwrap())
-                    .find(|project| project_name == project.name)
+                    .map(|bson| (bson::from_bson::<Project>(bson.clone()).unwrap()))
+                    .find(|project| (project_name == project.name))
                     .map(|project| project.uuid)
             } else {
                 todo!()

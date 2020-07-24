@@ -1,14 +1,29 @@
 use crate::{
+    endpoint::Post,
     state,
     ui::{self, view::View},
     updates,
 };
+
+use shared::{
+    endpoint::edit::{
+        save::{PermissionDenied, SaveEditor},
+        ProjectPath,
+    },
+    routes::Route,
+    security::Authenticated,
+};
+
 use seed::{prelude::*, *};
 use seed_style::{em, pc, px, *};
+use shadow_clone::shadow_clone;
 
 pub enum Msg {
     DescriptionChanged(String),
     NameChanged(String),
+    Submit,
+    Submited(Result<(), PermissionDenied>),
+    SubmitFailed(String),
 }
 
 impl Msg {
@@ -17,6 +32,37 @@ impl Msg {
         match self {
             Self::DescriptionChanged(description) => inner_model.description = description,
             Self::NameChanged(name) => inner_model.name = name,
+            Self::Submit => {
+                orders.skip(); // No need to rerender
+                shadow_clone!(inner_model);
+                let login_token = model.login_token.clone();
+                orders.perform_cmd(async move {
+                    updates::Msg::from({
+                        if let Some(login_token) = login_token {
+                            if let Ok(response) = SaveEditor::fetch(Authenticated::new(
+                                (
+                                    ProjectPath {
+                                        project_name: "Meme".to_string(),
+                                        user_name: "ethanboxx".to_owned(),
+                                    },
+                                    inner_model,
+                                ),
+                                login_token,
+                            ))
+                            .await
+                            {
+                                Self::Submited(response)
+                            } else {
+                                Self::SubmitFailed("Http request failed".to_owned())
+                            }
+                        } else {
+                            Self::SubmitFailed("No login token".to_owned())
+                        }
+                    })
+                });
+            }
+            Self::Submited(result) => {}
+            Self::SubmitFailed(reason) => log!(reason),
         }
     }
 }
@@ -47,7 +93,7 @@ pub fn view(model: &state::Model) -> Node<updates::Msg> {
                 ui::form::InputBuilder::submit()
                     .value("Save")
                     .width(pc(100))
-                    .view(model, |_| None)
+                    .view(model, |_| Some(Msg::Submit.into()))
             ],
             ui::form::InputBuilder::text_area()
                 .value(&project.description)
