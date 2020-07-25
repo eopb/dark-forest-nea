@@ -1,14 +1,28 @@
 use crate::{
+    endpoint::Post,
     state,
     ui::{self, view::View},
     updates,
 };
+
+use shared::{
+    endpoint::edit::{
+        save::{PermissionDenied, SaveEditor},
+        ProjectPath,
+    },
+    security::Authenticated,
+};
+
 use seed::{prelude::*, *};
 use seed_style::{em, pc, px, *};
+use shadow_clone::shadow_clone;
 
 pub enum Msg {
     DescriptionChanged(String),
     NameChanged(String),
+    Submit(ProjectPath),
+    Submited(Result<(), PermissionDenied>),
+    SubmitFailed(String),
 }
 
 impl Msg {
@@ -17,6 +31,31 @@ impl Msg {
         match self {
             Self::DescriptionChanged(description) => inner_model.description = description,
             Self::NameChanged(name) => inner_model.name = name,
+            Self::Submit(project_path) => {
+                orders.skip(); // No need to rerender
+                shadow_clone!(inner_model);
+                let login_token = model.login_token.clone();
+                orders.perform_cmd(async move {
+                    updates::Msg::from({
+                        if let Some(login_token) = login_token {
+                            if let Ok(response) = SaveEditor::fetch(Authenticated::new(
+                                (project_path, inner_model),
+                                login_token,
+                            ))
+                            .await
+                            {
+                                Self::Submited(response)
+                            } else {
+                                Self::SubmitFailed("Http request failed".to_owned())
+                            }
+                        } else {
+                            Self::SubmitFailed("No login token".to_owned())
+                        }
+                    })
+                });
+            }
+            Self::Submited(result) => {}
+            Self::SubmitFailed(reason) => log!(reason),
         }
     }
 }
@@ -27,7 +66,7 @@ impl From<Msg> for updates::Msg {
 }
 
 #[allow(clippy::too_many_lines)]
-pub fn view(model: &state::Model) -> Node<updates::Msg> {
+pub fn view(model: &state::Model, project_path: ProjectPath) -> Node<updates::Msg> {
     log!(model.route_data.editor);
     match &model.route_data.editor {
         Ok(project) => div![div![
@@ -47,7 +86,9 @@ pub fn view(model: &state::Model) -> Node<updates::Msg> {
                 ui::form::InputBuilder::submit()
                     .value("Save")
                     .width(pc(100))
-                    .view(model, |_| None)
+                    .view(model, move |_| Some(
+                        Msg::Submit(project_path.clone()).into()
+                    ))
             ],
             ui::form::InputBuilder::text_area()
                 .value(&project.description)
@@ -135,6 +176,7 @@ pub fn view(model: &state::Model) -> Node<updates::Msg> {
                                     .collect::<Vec<Node<updates::Msg>>>()
                             )
                             .inner(s().width(pc(100)))
+                            .outer(s().padding("0"))
                             .view(model),
                             ui::form::InputBuilder::submit()
                                 .value("Add decision")

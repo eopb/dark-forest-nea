@@ -14,6 +14,7 @@ pub mod data;
 pub mod endpoint;
 pub mod routes;
 pub mod security;
+pub mod util;
 pub mod validation;
 
 #[doc(inline)]

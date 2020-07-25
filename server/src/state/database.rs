@@ -1,3 +1,4 @@
+pub mod project_store;
 pub mod projects_list;
 pub mod user;
 
@@ -11,7 +12,7 @@ use once_cell::sync::Lazy;
 static DB_URL: Lazy<String> = Lazy::new(|| env::var("DB_URL").unwrap());
 
 /// Newtype for our `mongodb::Client` so we can implement our own methods.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Database(mongodb::Client);
 
 impl Database {

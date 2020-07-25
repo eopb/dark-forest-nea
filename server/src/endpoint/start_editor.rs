@@ -4,7 +4,10 @@ use crate::{endpoint, state::State};
 
 use shared::{
     data::Project,
-    endpoint::edit::init::{Fail, ProjectPath, StartEditor},
+    endpoint::edit::{
+        init::{Fail, StartEditor},
+        ProjectPath,
+    },
     security::Authenticated,
 };
 
