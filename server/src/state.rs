@@ -1,5 +1,7 @@
 //! Shared application state.
 
+use tracing::instrument;
+
 pub mod database;
 
 pub use database::Database;
@@ -12,6 +14,7 @@ pub struct State {
 
 impl State {
     /// Create a new instance of `State`.
+    #[instrument(level = "trace")]
     pub async fn new() -> tide::Result<Self> {
         Ok(Self {
             database: Database::new().await?,

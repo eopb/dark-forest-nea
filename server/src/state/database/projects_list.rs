@@ -8,6 +8,7 @@ use {
     mongodb,
     once_cell::sync::Lazy,
     serde::{Deserialize, Serialize},
+    tracing::instrument,
     uuid::Uuid,
 };
 
@@ -45,6 +46,7 @@ impl Database {
         self.main().collection("projects_lists")
     }
     /// Add project to a users project list.
+    #[instrument(level = "trace", skip(self), err)]
     pub async fn add_project(&self, user: String, project_name: String) -> tide::Result<Insert> {
         let uuid = Lazy::new(Uuid::new_v4);
         Ok({
@@ -92,6 +94,7 @@ impl Database {
     }
 
     #[allow(clippy::find_map)] // find_map is rubbish in this case
+    #[instrument(level = "trace", skip(self), err)]
     pub async fn get_project_uuid(
         &self,
         user: &str,

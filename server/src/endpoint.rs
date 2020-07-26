@@ -21,6 +21,7 @@ use {
         Kinds,
     },
     tide::{Body, Request, Response, Server, StatusCode},
+    tracing::instrument,
 };
 
 /// API endpoint that uses the `get` HTTP verb.
@@ -101,6 +102,7 @@ fn response(value: impl Serialize, res_kind: Kinds) -> tide::Result<Response> {
 
 #[async_trait]
 impl Get for Hello {
+    #[instrument(err)]
     async fn get(_: Request<State>) -> tide::Result<<Self as shared::Endpoint>::Response> {
         thread::sleep(time::Duration::from_secs(1)); // Simulate slow response time.
         Ok(hello::Res {

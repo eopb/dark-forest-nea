@@ -8,6 +8,7 @@ use {
     jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, TokenData, Validation},
     once_cell::sync::Lazy,
     serde::{Deserialize, Serialize},
+    tracing::instrument,
 };
 
 /// Secret bytes used to create tokens. These are stored as an environment
@@ -29,6 +30,7 @@ impl Claims {
     /// Create a token for a user.
     ///
     /// Only use for authenticated users.
+    #[instrument(level = "trace")]
     pub fn new(user: String) -> Self {
         Self {
             sub: user,
@@ -37,10 +39,12 @@ impl Claims {
         }
     }
     /// Encodes a claim into a token string.
+    #[instrument(level = "trace")]
     pub fn get_token(&self) -> jsonwebtoken::errors::Result<String> {
         encode(&Header::default(), self, &EncodingKey::from_secret(&SECRET))
     }
     /// Decodes a token to produce the underlying claim.
+    #[instrument(level = "trace", err)]
     pub fn decode_token(token: &str) -> Result<TokenData<Self>, jsonwebtoken::errors::Error> {
         decode::<Self>(
             token,

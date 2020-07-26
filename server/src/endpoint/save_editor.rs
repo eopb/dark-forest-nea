@@ -19,6 +19,7 @@ use shared::{
 
 #[async_trait]
 impl endpoint::Post for SaveEditor {
+    #[tracing::instrument(err, skip(req))]
     async fn post(
         req: Request<State>,
         req_body: Authenticated<(ProjectPath, Project)>,

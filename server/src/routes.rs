@@ -6,13 +6,16 @@ use {
     http_types::mime,
     maud::{html, PreEscaped, DOCTYPE},
     tide::{Request, Response, StatusCode},
+    tracing::{instrument, trace},
 };
 
 use shared::routes::SubRoute;
 
 /// This index endpoint returns the `html` needed to start our client-side
 /// application.
+#[instrument(level = "trace")]
 pub async fn index(_: Request<State>) -> tide::Result<impl Into<Response>> {
+    trace!("Rendering index page",);
     Ok({
         let mut res = Response::new(StatusCode::Ok);
         res.set_content_type(mime::HTML);

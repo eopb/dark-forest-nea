@@ -9,6 +9,7 @@ use {
     bson::doc,
     mongodb,
     serde::{Deserialize, Serialize},
+    tracing::instrument,
     uuid::Uuid,
 };
 
@@ -22,6 +23,7 @@ pub struct ProjectStore {
 }
 
 impl ProjectStore {
+    #[instrument(level = "trace")]
     pub fn new(uuid: Uuid, project: Project) -> Self {
         Self { uuid, project }
     }
@@ -33,6 +35,7 @@ impl Database {
     pub fn project_store(&self) -> mongodb::Collection {
         self.main().collection("project_store")
     }
+    #[instrument(level = "trace", skip(self), err)]
     pub async fn save_project(&self, project: ProjectStore) -> tide::Result<Insert> {
         Ok({
             let collection = self.project_store();

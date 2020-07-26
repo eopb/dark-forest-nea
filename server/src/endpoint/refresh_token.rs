@@ -16,6 +16,7 @@ use shared::{
 
 #[async_trait]
 impl endpoint::Post for RefreshToken {
+    #[tracing::instrument(err)]
     async fn post(_: Request<State>, token: Token) -> tide::Result<Option<Token>> {
         let user = SignedIn::get_user(&token).await;
 

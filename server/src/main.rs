@@ -7,6 +7,7 @@
 )]
 
 pub mod endpoint;
+mod logger;
 mod routes;
 pub mod security;
 mod state;
@@ -18,6 +19,8 @@ use {
     dotenv::dotenv,
     endpoint::{Get, Post},
     tide::Redirect,
+    tracing::{info, Level},
+    tracing_subscriber::fmt::format::FmtSpan,
 };
 
 use shared::endpoint::{
@@ -32,13 +35,24 @@ use shared::endpoint::{
 
 #[async_std::main]
 async fn main() -> tide::Result<()> {
+    info!("Setting up environment");
     dotenv().ok();
 
-    femme::with_level(log::LevelFilter::Debug);
+    let subscriber = tracing_subscriber::fmt()
+        .with_max_level(Level::TRACE)
+        .with_span_events(FmtSpan::CLOSE)
+        .finish();
+
+    tracing::subscriber::set_global_default(subscriber).expect("no global subscriber has been set");
+
+    // LogTracer::init()?;
 
     let state = State::new().await?;
-    let mut app = tide::with_state(state);
+    let mut app = tide::Server::with_state(state);
 
+    info!("Attaching Endpoints");
+
+    app.middleware(logger::TraceMiddleware::new());
     // By default all routes should be handled by the client if not specified
     // otherwise.
     app.at("/").get(routes::index);
@@ -61,6 +75,8 @@ async fn main() -> tide::Result<()> {
     RefreshToken::apply(&mut app);
     StartEditor::apply(&mut app);
     SaveEditor::apply(&mut app);
+
+    info!("Starting Server");
 
     app.listen("localhost:8081").await?;
 
