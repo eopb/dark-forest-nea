@@ -6,7 +6,7 @@ pub use user::User;
 
 use std::env;
 
-use once_cell::sync::Lazy;
+use {once_cell::sync::Lazy, tracing::instrument};
 
 /// Database URL has a password so we must store it as an environment variable.
 static DB_URL: Lazy<String> = Lazy::new(|| env::var("DB_URL").unwrap());
@@ -17,6 +17,7 @@ pub struct Database(mongodb::Client);
 
 impl Database {
     /// Creates a connection with the database.
+    #[instrument(level = "trace", err)]
     pub async fn new() -> tide::Result<Self> {
         let mongo = mongodb::Client::with_uri_str(&DB_URL).await?;
         Ok(Self(mongo))

@@ -13,6 +13,7 @@ use shared::{
 
 #[async_trait]
 impl endpoint::Post for StartEditor {
+    #[tracing::instrument]
     async fn post(
         _: Request<State>,
         _: Authenticated<ProjectPath>,
