@@ -1,7 +1,8 @@
 image: "rust:latest"
 
 before_script:
-  - rustup toolchain install nightly-2020-07-11
+  - rustup toolchain install nightly-2020-07-26
+  - rustup component add --toolchain nightly-2020-07-26 rustfmt clippy
   - rustup default nightly
   - cargo install cargo-make
 
@@ -20,7 +21,6 @@ verify:
   script:
     - apt update
     - apt install firefox-esr -y
-    - rustup component add --toolchain nightly-2020-07-11 rustfmt clippy
     - cargo make verify
 # coverage:
 #   stage: coverage
