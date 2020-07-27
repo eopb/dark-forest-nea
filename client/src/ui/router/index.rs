@@ -2,7 +2,7 @@ use crate::{state, ui::View, updates};
 use seed::{prelude::*, *};
 use tracing::{info, instrument};
 
-#[instrument]
+#[instrument(skip(model))]
 pub fn view(model: &state::Model) -> Node<updates::Msg> {
     info!("hello my friend");
     div![
