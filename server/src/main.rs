@@ -7,7 +7,6 @@
 )]
 
 pub mod endpoint;
-mod logger;
 mod routes;
 pub mod security;
 mod state;
@@ -19,6 +18,7 @@ use {
     dotenv::dotenv,
     endpoint::{Get, Post},
     tide::Redirect,
+    tide_tracing::TraceMiddleware,
     tracing::{info, Level},
     tracing_subscriber::fmt::format::FmtSpan,
 };
@@ -52,7 +52,7 @@ async fn main() -> tide::Result<()> {
 
     info!("Attaching Endpoints");
 
-    app.middleware(logger::TraceMiddleware::new());
+    app.middleware(TraceMiddleware::new());
     // By default all routes should be handled by the client if not specified
     // otherwise.
     app.at("/").get(routes::index);
