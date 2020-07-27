@@ -5,7 +5,7 @@ use seed_style::*;
 use shadow_clone::shadow_clone;
 
 use shared::endpoint::create_account::{self, CreateAccount};
-#[derive(Clone, Default)]
+#[derive(Clone, Default, Debug)]
 pub struct Model {
     form: create_account::Details,
     error: Option<create_account::Fail>,

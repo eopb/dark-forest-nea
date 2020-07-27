@@ -7,7 +7,7 @@ use {
 
 use shared::endpoint::sign_in::Credentials;
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, Debug)]
 pub struct Model {
     form: Credentials,
     pub error: Option<shared::endpoint::sign_in::Fail>,

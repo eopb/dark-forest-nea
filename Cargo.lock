@@ -453,6 +453,7 @@ dependencies = [
  "anyhow",
  "async-trait",
  "bincode",
+ "console_error_panic_hook",
  "seed",
  "seed_style_preview",
  "serde",
@@ -460,6 +461,8 @@ dependencies = [
  "shadow-clone",
  "shared",
  "time 0.2.16",
+ "tracing",
+ "tracing-wasm",
  "wasm-bindgen-test",
  "web-sys",
 ]
@@ -2749,6 +2752,17 @@ dependencies = [
  "tracing-core",
  "tracing-log",
  "tracing-serde",
+]
+
+[[package]]
+name = "tracing-wasm"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fd96394d3d2f119de6c1078fa065b99217db4377f9aac6e87f8393276a0d7962"
+dependencies = [
+ "tracing",
+ "tracing-subscriber",
+ "wasm-bindgen",
 ]
 
 [[package]]

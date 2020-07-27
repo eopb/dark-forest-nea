@@ -4,14 +4,14 @@ use crate::ui;
 
 use seed::{prelude::*, virtual_dom::update_el::UpdateEl, *};
 
-#[derive(Default)]
+#[derive(Debug, Default)]
 pub struct Server {
     pub hello: Fetch<shared::endpoint::hello::Res, anyhow::Error>,
     pub signed_in: Fetch<shared::endpoint::signed_in::Res, anyhow::Error>,
 }
 
 /// Fetching status.
-#[derive(Clone)]
+#[derive(Copy, Clone, Debug)]
 pub enum Fetch<T, E> {
     Loading,
     Fetched(Result<T, E>),

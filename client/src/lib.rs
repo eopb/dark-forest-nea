@@ -48,5 +48,9 @@ fn init(url: Url, orders: &mut impl Orders<updates::Msg>) -> state::Model {
 /// point of our program.
 #[wasm_bindgen(start)]
 pub fn start() {
+    if cfg!(debug_assertions) {
+        console_error_panic_hook::set_once();
+        tracing_wasm::set_as_global_default();
+    }
     let _app = App::start("app", init, updates::update, ui::view);
 }
