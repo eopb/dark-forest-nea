@@ -7,6 +7,7 @@ use crate::{routes::Route, ui, LOGIN_KEY};
 use seed::browser::web_storage::{LocalStorage, WebStorage};
 
 use shared::security::Token;
+
 /// Describes client state.
 pub struct Model {
     pub theme: Theme,

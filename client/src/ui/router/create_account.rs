@@ -8,6 +8,7 @@ use {
 };
 
 use shared::endpoint::create_account::{self, CreateAccount};
+
 #[derive(Clone, Default)]
 pub struct Model {
     form: create_account::Details,
