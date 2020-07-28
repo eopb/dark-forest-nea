@@ -1,8 +1,13 @@
-use crate::{endpoint::create_account, security, Endpoint, PostEndpoint};
+use crate::{
+    endpoint::create_account, security, security::serialize_secret, Endpoint, PostEndpoint,
+};
 
 use std::fmt;
 
-use serde::{Deserialize, Serialize};
+use {
+    secrecy::{Secret, SecretString},
+    serde::{Deserialize, Serialize},
+};
 
 pub struct SignIn;
 
@@ -15,12 +20,21 @@ impl PostEndpoint for SignIn {
     type Requires = Credentials;
 }
 /// A users credentials used to sign-in.
-#[derive(Clone, Serialize, Deserialize, Debug, Default)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Credentials {
     pub user_name: String,
-    pub password: String,
+    #[serde(serialize_with = "serialize_secret")]
+    pub password: SecretString,
 }
 
+impl Default for Credentials {
+    fn default() -> Self {
+        Self {
+            user_name: String::new(),
+            password: Secret::new(String::new()),
+        }
+    }
+}
 /// Reasons signing-in may fail.
 #[derive(Copy, Clone, Serialize, Deserialize, Debug, Eq, PartialEq)]
 pub enum Fail {

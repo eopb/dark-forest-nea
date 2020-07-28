@@ -22,7 +22,7 @@ use shared::{
         signed_in::{self, SignedIn},
     },
     routes::SubRoute,
-    security::Authenticated,
+    security::{Authenticated, Token},
 };
 
 /// Describes the different events that can be invoked.
@@ -97,7 +97,7 @@ pub enum ToFetch {
 
 impl ToFetch {
     /// Fetch an item and inform with a message.
-    async fn order(self, login_token: Option<String>) -> Option<Msg> {
+    async fn order(self, login_token: Option<Token>) -> Option<Msg> {
         Some(match self {
             Self::Hello => Msg::DataFetched(Fetched::Hello(Hello::fetch().await)),
             Self::SignedIn => Msg::DataFetched(Fetched::SignedIn(

@@ -453,6 +453,7 @@ dependencies = [
  "anyhow",
  "async-trait",
  "bincode",
+ "secrecy",
  "seed",
  "seed_style_preview",
  "serde",
@@ -2012,6 +2013,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "secrecy"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0673d6a6449f5e7d12a1caf424fd9363e2af3a4953023ed455e3c4beef4597c0"
+dependencies = [
+ "serde",
+ "zeroize",
+]
+
+[[package]]
 name = "seed"
 version = "0.7.0"
 source = "git+https://github.com/ethanboxx/seed.git?branch=Request_bytes#72694b37e567376b8cbd1a1a36bbb0e13655389f"
@@ -2200,6 +2211,7 @@ dependencies = [
  "maud",
  "mongodb",
  "once_cell",
+ "secrecy",
  "serde",
  "shared",
  "tide",
@@ -2276,6 +2288,7 @@ version = "0.1.0"
 dependencies = [
  "maplit",
  "regex",
+ "secrecy",
  "serde",
 ]
 
@@ -3141,3 +3154,9 @@ dependencies = [
  "winapi 0.2.8",
  "winapi-build",
 ]
+
+[[package]]
+name = "zeroize"
+version = "1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3cbac2ed2ba24cc90f5e06485ac8c7c1e5449fe8911aef4d8877218af021a5b8"

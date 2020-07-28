@@ -5,13 +5,15 @@ pub use server::Server;
 use crate::{routes::Route, ui, LOGIN_KEY};
 
 use seed::browser::web_storage::{LocalStorage, WebStorage};
+
+use shared::security::Token;
 /// Describes client state.
 pub struct Model {
     pub theme: Theme,
     pub route: Route,
     pub server: Server,
     pub route_data: RouteData,
-    pub login_token: Option<String>,
+    pub login_token: Option<Token>,
 }
 
 impl Model {

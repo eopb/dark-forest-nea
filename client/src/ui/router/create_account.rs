@@ -1,8 +1,11 @@
 use crate::{endpoint::Post, state, ui, updates, updates::sign_in::SignIn};
 
-use seed::{prelude::*, *};
-use seed_style::*;
-use shadow_clone::shadow_clone;
+use {
+    secrecy::{ExposeSecret, Secret},
+    seed::{prelude::*, *},
+    seed_style::*,
+    shadow_clone::shadow_clone,
+};
 
 use shared::endpoint::create_account::{self, CreateAccount};
 #[derive(Clone, Default)]
@@ -26,7 +29,7 @@ impl Msg {
         match self {
             Self::UsernameChanged(user_name) => inner_model.form.user_name = user_name,
             Self::EmailChanged(email) => inner_model.form.email = email,
-            Self::PasswordChanged(password) => inner_model.form.password = password,
+            Self::PasswordChanged(password) => inner_model.form.password = Secret::new(password),
             Self::Submit => {
                 orders.skip(); // No need to rerender
                 shadow_clone!(inner_model);
@@ -86,7 +89,7 @@ pub fn view(model: &state::Model) -> Node<updates::Msg> {
         ui::form::InputBuilder::password()
             .id("password")
             .placeholder("Password...")
-            .value(&form.password)
+            .value(form.password.expose_secret())
             .error(err)
             .view(model, |text| Some(Msg::PasswordChanged(text).into()))
     };
