@@ -7,13 +7,17 @@ use {
     chrono::{offset::Utc, Duration},
     jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, TokenData, Validation},
     once_cell::sync::Lazy,
+    secrecy::{ExposeSecret, Secret, SecretVec},
     serde::{Deserialize, Serialize},
     tracing::instrument,
 };
 
+use shared::security::Token;
+
 /// Secret bytes used to create tokens. These are stored as an environment
 /// variable.
-static SECRET: Lazy<Vec<u8>> = Lazy::new(|| env::var("SECRET").unwrap().as_bytes().to_vec());
+static SECRET: Lazy<SecretVec<u8>> =
+    Lazy::new(|| Secret::new(env::var("SECRET").unwrap().as_bytes().to_vec()));
 
 /// `Claims` is the data we are going to encode in our tokens.
 #[derive(Debug, Serialize, Deserialize)]
@@ -40,15 +44,20 @@ impl Claims {
     }
     /// Encodes a claim into a token string.
     #[instrument(level = "trace")]
-    pub fn get_token(&self) -> jsonwebtoken::errors::Result<String> {
-        encode(&Header::default(), self, &EncodingKey::from_secret(&SECRET))
+    pub fn get_token(&self) -> jsonwebtoken::errors::Result<Token> {
+        Ok(encode(
+            &Header::default(),
+            self,
+            &EncodingKey::from_secret(SECRET.expose_secret()),
+        )?
+        .into())
     }
     /// Decodes a token to produce the underlying claim.
     #[instrument(level = "trace", err)]
-    pub fn decode_token(token: &str) -> Result<TokenData<Self>, jsonwebtoken::errors::Error> {
+    pub fn decode_token(token: &Token) -> Result<TokenData<Self>, jsonwebtoken::errors::Error> {
         decode::<Self>(
-            token,
-            &DecodingKey::from_secret(&SECRET),
+            token.expose_secret(),
+            &DecodingKey::from_secret(SECRET.expose_secret()),
             &Validation::default(),
         )
     }

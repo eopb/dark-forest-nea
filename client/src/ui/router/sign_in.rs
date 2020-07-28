@@ -1,6 +1,7 @@
 use crate::{state, ui, updates, updates::sign_in::SignIn};
 
 use {
+    secrecy::{ExposeSecret, Secret},
     seed::{prelude::*, *},
     seed_style::*,
 };
@@ -24,7 +25,7 @@ impl Msg {
         let mut inner_model = &mut model.route_data.sign_in;
         match self {
             Self::UsernameChanged(user_name) => inner_model.form.user_name = user_name,
-            Self::PasswordChanged(password) => inner_model.form.password = password,
+            Self::PasswordChanged(password) => inner_model.form.password = Secret::new(password),
             Self::Submit => {
                 orders.skip(); // No need to rerender
                 orders.send_msg(
@@ -62,7 +63,7 @@ pub fn view(model: &state::Model) -> Node<updates::Msg> {
         ui::form::InputBuilder::password()
             .id("password")
             .placeholder("Password...")
-            .value(&form.password)
+            .value(form.password.expose_secret())
             .error(err)
             .view(model, |text| Some(Msg::PasswordChanged(text).into()))
     };
