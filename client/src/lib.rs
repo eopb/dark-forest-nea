@@ -70,6 +70,7 @@ pub fn start() {
     let _app = App::start("app", init, updates::update, ui::view);
 }
 
+/// Writer to log to the JS console.
 #[derive(Default)]
 pub struct ConsoleWrite {
     buffer: Vec<u8>,
@@ -82,12 +83,14 @@ impl ConsoleWrite {
 }
 
 impl Drop for ConsoleWrite {
+    /// Ensure that all logs are printed before dropping the writer.
     fn drop(&mut self) {
         self.flush().unwrap();
     }
 }
 
 impl Write for ConsoleWrite {
+    /// Write bytes to a buffer and log them when a `\n` is found.
     fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
         let to_write = buf.len();
         for byte in buf {
@@ -99,14 +102,22 @@ impl Write for ConsoleWrite {
         Ok(to_write)
     }
 
+    /// Write buffer to JS console.
+    /// Writes to different console methods when the log starts with certain
+    /// strings.
     fn flush(&mut self) -> io::Result<()> {
+        fn core_log(logger: impl Fn(&JsValue), text: &str) {
+            if !text.is_empty() {
+                logger(&JsValue::from_str(text))
+            }
+        }
         #[cfg(test)]
         fn log(logger: impl Fn(&JsValue), text: &str) {
-            logger(&JsValue::from_str(text))
+            core_log(log_1, text)
         }
         #[cfg(not(test))]
-        fn log(_: impl Fn(&JsValue), text: &str) {
-            log_1(&JsValue::from_str(text))
+        fn log(logger: impl Fn(&JsValue), text: &str) {
+            core_log(logger, text)
         }
         let to_log = std::str::from_utf8(&self.buffer).unwrap().trim_start();
 
@@ -121,6 +132,8 @@ impl Write for ConsoleWrite {
         } else {
             log(log_1, to_log)
         }
+
+        self.buffer = Vec::new();
 
         Ok(())
     }
