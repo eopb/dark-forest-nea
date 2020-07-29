@@ -8,10 +8,12 @@ pub mod users;
 use crate::{state, updates};
 
 use seed::{prelude::*, *};
+use tracing::{error, instrument};
 
 use shared::Route;
 
 /// Main router view showing items unique to a route.
+#[instrument(skip(model))]
 pub fn view(model: &state::Model) -> Node<updates::Msg> {
     match model.route.0 {
         Some(ref route) => match route {

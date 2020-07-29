@@ -9,6 +9,7 @@ use seed::browser::web_storage::{LocalStorage, WebStorage};
 use shared::security::Token;
 
 /// Describes client state.
+#[derive(Debug)]
 pub struct Model {
     pub theme: Theme,
     pub route: Route,
@@ -31,6 +32,7 @@ impl Model {
 }
 
 /// Data used only by particular routes.
+#[derive(Debug)]
 pub struct RouteData {
     pub sign_in: ui::router::sign_in::Model,
     pub create_account: ui::router::create_account::Model,
@@ -49,7 +51,7 @@ impl Default for RouteData {
         }
     }
 }
-#[derive(Copy, Clone)]
+#[derive(Debug, Copy, Clone)]
 /// Colour theme.
 pub enum Theme {
     Dark,

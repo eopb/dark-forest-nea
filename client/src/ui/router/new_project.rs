@@ -10,7 +10,7 @@ use shared::{
     security::Authenticated,
 };
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, Debug)]
 pub struct Model {
     form: new_project::Details,
     error: Option<new_project::Fail>,

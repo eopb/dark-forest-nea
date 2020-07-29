@@ -461,6 +461,8 @@ dependencies = [
  "shadow-clone",
  "shared",
  "time 0.2.16",
+ "tracing",
+ "tracing-subscriber",
  "wasm-bindgen-test",
  "web-sys",
 ]
