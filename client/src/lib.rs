@@ -17,9 +17,16 @@ pub use {endpoint::Endpoint, routes::Route};
 use {
     seed::{app::subs::UrlChanged, prelude::*},
     time::Duration,
+    tracing::Level,
+    tracing_subscriber::fmt::format::FmtSpan,
+    wasm_bindgen::JsValue,
+    web_sys::console::{debug_1, error_1, info_1, log_1, warn_1},
 };
 
-use std::convert::TryInto;
+use std::{
+    convert::TryInto,
+    io::{self, Write},
+};
 
 /// Key where to store the login token on `LocalStorage`.
 pub static LOGIN_KEY: &str = "Login";
@@ -48,5 +55,73 @@ fn init(url: Url, orders: &mut impl Orders<updates::Msg>) -> state::Model {
 /// point of our program.
 #[wasm_bindgen(start)]
 pub fn start() {
+    if cfg!(debug_assertions) {
+        let subscriber = tracing_subscriber::fmt()
+            .with_max_level(Level::TRACE)
+            .with_span_events(FmtSpan::CLOSE)
+            .without_time()
+            .with_ansi(false)
+            .with_writer(ConsoleWrite::new)
+            .finish();
+
+        tracing::subscriber::set_global_default(subscriber)
+            .expect("no global subscriber has been set");
+    }
     let _app = App::start("app", init, updates::update, ui::view);
+}
+
+#[derive(Default)]
+pub struct ConsoleWrite {
+    buffer: Vec<u8>,
+}
+
+impl ConsoleWrite {
+    pub fn new() -> Self {
+        Self::default()
+    }
+}
+
+impl Drop for ConsoleWrite {
+    fn drop(&mut self) {
+        self.flush().unwrap();
+    }
+}
+
+impl Write for ConsoleWrite {
+    fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
+        let to_write = buf.len();
+        for byte in buf {
+            match byte {
+                b'\n' => self.flush()?,
+                _ => self.buffer.push(*byte),
+            }
+        }
+        Ok(to_write)
+    }
+
+    fn flush(&mut self) -> io::Result<()> {
+        #[cfg(test)]
+        fn log(logger: impl Fn(&JsValue), text: &str) {
+            logger(&JsValue::from_str(text))
+        }
+        #[cfg(not(test))]
+        fn log(_: impl Fn(&JsValue), text: &str) {
+            log_1(&JsValue::from_str(text))
+        }
+        let to_log = std::str::from_utf8(&self.buffer).unwrap().trim_start();
+
+        if to_log.starts_with("INFO") {
+            log(info_1, to_log)
+        } else if to_log.starts_with("WARN") {
+            log(warn_1, to_log)
+        } else if to_log.starts_with("ERROR") && cfg!(not(test)) {
+            log(error_1, to_log)
+        } else if to_log.starts_with("DEBUG") {
+            log(debug_1, to_log)
+        } else {
+            log(log_1, to_log)
+        }
+
+        Ok(())
+    }
 }
