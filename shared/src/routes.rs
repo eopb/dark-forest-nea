@@ -28,6 +28,7 @@ pub struct Project {
 #[derive(Clone, PartialEq, Eq, Debug)]
 pub enum ProjectRoute {
     Edit,
+    Play,
 }
 
 impl Default for Route {
@@ -71,6 +72,7 @@ impl fmt::Display for ProjectRoute {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", match self {
             Self::Edit => "/edit",
+            Self::Play => "/play",
         })
     }
 }
@@ -121,6 +123,7 @@ impl SubRoute for ProjectRoute {
     fn title(&self) -> String {
         match self {
             Self::Edit => ": Edit".to_owned(),
+            Self::Play => ": Play".to_owned(),
         }
     }
 }
