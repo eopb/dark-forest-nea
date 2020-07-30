@@ -92,32 +92,27 @@ impl From<ChapterMsgWrapper> for updates::Msg {
 impl ChapterMsgWrapper {
     #[instrument(skip(inner_model, orders))]
     pub fn update(self, inner_model: &mut Project, orders: &mut impl Orders<updates::Msg>) {
-        self.msg.update(inner_model, orders, self.key)
+        let chapter = inner_model.chapters.get_mut(&self.key);
+        if let Some(chapter) = chapter {
+            self.msg.update(chapter, orders)
+        } else {
+            error!("Attempt to edit chapter that does not exist");
+        }
     }
 }
 
 #[derive(Debug)]
 enum ChapterMsg {
     NameChanged(String),
+    BodyChanged(String),
 }
 
 impl ChapterMsg {
-    #[instrument(skip(inner_model, orders))]
-    pub fn update(
-        self,
-        inner_model: &mut Project,
-        orders: &mut impl Orders<updates::Msg>,
-        key: i64,
-    ) {
+    #[instrument(skip(orders))]
+    pub fn update(self, chapter: &mut Chapter, orders: &mut impl Orders<updates::Msg>) {
         match self {
-            Self::NameChanged(name) => {
-                let chapter = inner_model.chapters.get_mut(&key);
-                if let Some(chapter) = chapter {
-                    chapter.heading = name
-                } else {
-                    error!("Attempt to edit chapter that does not exist");
-                }
-            }
+            Self::NameChanged(name) => chapter.heading = name,
+            Self::BodyChanged(body) => chapter.body = body,
         }
     }
 }
@@ -187,14 +182,14 @@ pub fn chapters<'a>(
     model: &'a state::Model,
 ) -> impl Fn((i64, &Chapter)) -> Node<updates::Msg> + 'a {
     fn chapter_event<'a>(
-        func: impl Fn(String) -> ChapterMsg + 'a + Clone,
+        func: &'a (dyn Fn(String) -> ChapterMsg + 'a),
         key: i64,
     ) -> impl Fn(String) -> Option<updates::Msg> + 'a + Clone {
         move |s| Some(ChapterMsgWrapper::new(key, func(s)).into())
     }
 
     move |(key, chapter)| {
-        let msg = |func| chapter_event(func, key);
+        let chapter_event = |func| chapter_event(func, key);
         div![
             s().padding_left(px(8)).padding_right(px(8)),
             vec![div![
@@ -209,12 +204,12 @@ pub fn chapters<'a>(
                 ui::form::InputBuilder::text()
                     .value(&chapter.heading)
                     .width(pc(100))
-                    .view(model, msg(ChapterMsg::NameChanged))
+                    .view(model, chapter_event(&ChapterMsg::NameChanged))
             ]],
             ui::form::InputBuilder::text_area()
                 .value(&chapter.body)
                 .width(pc(100))
-                .view(model, |x| None),
+                .view(model, chapter_event(&ChapterMsg::BodyChanged)),
             vec![
                 vec![label![
                     s().margin("0")
