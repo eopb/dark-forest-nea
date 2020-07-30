@@ -1,9 +1,10 @@
 use crate::{state, ui, updates, updates::sign_in::SignIn};
 
 use {
-    secrecy::{ExposeSecret, Secret},
+    secrecy::{ExposeSecret, Secret, SecretString},
     seed::{prelude::*, *},
     seed_style::*,
+    tracing::{info, instrument},
 };
 
 use shared::endpoint::sign_in::Credentials;
@@ -14,18 +15,20 @@ pub struct Model {
     pub error: Option<shared::endpoint::sign_in::Fail>,
 }
 
+#[derive(Debug)]
 pub enum Msg {
     UsernameChanged(String),
-    PasswordChanged(String),
+    PasswordChanged(SecretString),
     Submit,
 }
 
 impl Msg {
+    #[instrument(skip(model, orders))]
     pub fn update(self, model: &mut state::Model, orders: &mut impl Orders<updates::Msg>) {
         let mut inner_model = &mut model.route_data.sign_in;
         match self {
             Self::UsernameChanged(user_name) => inner_model.form.user_name = user_name,
-            Self::PasswordChanged(password) => inner_model.form.password = Secret::new(password),
+            Self::PasswordChanged(password) => inner_model.form.password = password,
             Self::Submit => {
                 orders.skip(); // No need to rerender
                 orders.send_msg(
@@ -47,6 +50,7 @@ impl From<Msg> for updates::Msg {
     }
 }
 
+#[instrument(skip(model), name = "sign_in view")]
 pub fn view(model: &state::Model) -> Node<updates::Msg> {
     use shared::endpoint::sign_in::Fail::{IncorrectPassword, UserNotFound};
     let form = &model.route_data.sign_in.form;
@@ -65,7 +69,9 @@ pub fn view(model: &state::Model) -> Node<updates::Msg> {
             .placeholder("Password...")
             .value(form.password.expose_secret())
             .error(err)
-            .view(model, |text| Some(Msg::PasswordChanged(text).into()))
+            .view(model, |text| {
+                Some(Msg::PasswordChanged(Secret::new(text)).into())
+            })
     };
     ui::form::view(
         model,

@@ -1,10 +1,11 @@
 use crate::{endpoint::Post, state, ui, updates, updates::sign_in::SignIn};
 
 use {
-    secrecy::{ExposeSecret, Secret},
+    secrecy::{ExposeSecret, Secret, SecretString},
     seed::{prelude::*, *},
     seed_style::*,
     shadow_clone::shadow_clone,
+    tracing::instrument,
 };
 
 use shared::endpoint::create_account::{self, CreateAccount};
@@ -14,22 +15,24 @@ pub struct Model {
     error: Option<create_account::Fail>,
 }
 
+#[derive(Debug)]
 pub enum Msg {
     UsernameChanged(String),
     EmailChanged(String),
-    PasswordChanged(String),
+    PasswordChanged(SecretString),
     Submit,
     Submited(<CreateAccount as shared::Endpoint>::Response),
     SubmitFailed(String),
 }
 
 impl Msg {
+    #[instrument(skip(model, orders))]
     pub fn update(self, model: &mut state::Model, orders: &mut impl Orders<updates::Msg>) {
         let mut inner_model = &mut model.route_data.create_account;
         match self {
             Self::UsernameChanged(user_name) => inner_model.form.user_name = user_name,
             Self::EmailChanged(email) => inner_model.form.email = email,
-            Self::PasswordChanged(password) => inner_model.form.password = Secret::new(password),
+            Self::PasswordChanged(password) => inner_model.form.password = password,
             Self::Submit => {
                 orders.skip(); // No need to rerender
                 shadow_clone!(inner_model);
@@ -66,6 +69,8 @@ impl From<Msg> for updates::Msg {
         Self::CreateAccountForm(msg)
     }
 }
+
+#[instrument(skip(model), name = "create_account view")]
 pub fn view(model: &state::Model) -> Node<updates::Msg> {
     let form = &model.route_data.create_account.form;
     let error = model.route_data.create_account.error.as_ref();
@@ -91,7 +96,9 @@ pub fn view(model: &state::Model) -> Node<updates::Msg> {
             .placeholder("Password...")
             .value(form.password.expose_secret())
             .error(err)
-            .view(model, |text| Some(Msg::PasswordChanged(text).into()))
+            .view(model, |text| {
+                Some(Msg::PasswordChanged(Secret::new(text)).into())
+            })
     };
     ui::form::view(
         model,
