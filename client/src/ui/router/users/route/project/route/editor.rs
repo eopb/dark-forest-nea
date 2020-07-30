@@ -75,11 +75,11 @@ impl From<Msg> for updates::Msg {
 
 #[derive(Debug)]
 pub struct ChapterMsgWrapper {
-    key: i64,
+    key: usize,
     msg: ChapterMsg,
 }
 impl ChapterMsgWrapper {
-    fn new(key: i64, msg: ChapterMsg) -> Self {
+    fn new(key: usize, msg: ChapterMsg) -> Self {
         Self { key, msg }
     }
 }
@@ -214,7 +214,7 @@ pub fn view(model: &state::Model, project_path: ProjectPath) -> Node<updates::Ms
 #[instrument(skip(model))]
 pub fn chapters<'a>(
     model: &'a state::Model,
-) -> impl Fn((i64, &Chapter)) -> Node<updates::Msg> + 'a {
+) -> impl Fn((usize, &Chapter)) -> Node<updates::Msg> + 'a {
     move |(key, chapter)| {
         let chapter_event = |func| chapter_event(func, key);
         div![
@@ -269,7 +269,7 @@ pub fn chapters<'a>(
 /// Converts a [`ChapterMsg`] based event into a standard [`updates::Msg`]
 fn chapter_event<'a>(
     func: &'a (dyn Fn(String) -> ChapterMsg + 'a),
-    key: i64,
+    key: usize,
 ) -> impl Fn(String) -> Option<updates::Msg> + 'a + Clone {
     move |s| Some(ChapterMsgWrapper::new(key, func(s)).into())
 }

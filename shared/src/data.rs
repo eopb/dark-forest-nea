@@ -12,7 +12,7 @@ pub struct Project {
     // TODO theme
     pub theme: (),
     // TODO use `indexmap` or alternative with user controlled ordering.
-    pub chapters: StringMap<i64, Chapter>,
+    pub chapters: StringMap<usize, Chapter>,
 }
 
 impl Project {
