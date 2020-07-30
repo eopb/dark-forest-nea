@@ -16,11 +16,13 @@ use {seed::prelude::*, web_sys::Window};
 
 use shared::{
     endpoint::{
+        edit::{init::StartEditor, ProjectPath},
         hello::Hello,
         refresh_token::RefreshToken,
         signed_in::{self, SignedIn},
     },
     routes::SubRoute,
+    security::{Authenticated, Token},
 };
 
 /// Describes the different events that can be invoked.
@@ -34,6 +36,8 @@ pub enum Msg {
     SignInForm(ui::router::sign_in::Msg),
     CreateAccountForm(ui::router::create_account::Msg),
     NewProjectForm(ui::router::new_project::Msg),
+    Editor(ui::router::users::route::project::route::editor::Msg),
+    ClearRouteData,
     SignOut,
 }
 
@@ -78,6 +82,8 @@ pub fn update(msg: Msg, model: &mut state::Model, orders: &mut impl Orders<Msg>)
             orders.send_msg(Msg::ToFetch(ToFetch::SignedIn));
         }
         Msg::SignIn(x) => x.update(model, orders),
+        Msg::Editor(x) => x.update(model, orders),
+        Msg::ClearRouteData => model.route_data = state::RouteData::default(),
     }
 }
 
@@ -86,11 +92,12 @@ pub enum ToFetch {
     Hello,
     SignedIn,
     RefreshToken,
+    Editor(ProjectPath),
 }
 
 impl ToFetch {
     /// Fetch an item and inform with a message.
-    async fn order(self, login_token: Option<String>) -> Option<Msg> {
+    async fn order(self, login_token: Option<Token>) -> Option<Msg> {
         Some(match self {
             Self::Hello => Msg::DataFetched(Fetched::Hello(Hello::fetch().await)),
             Self::SignedIn => Msg::DataFetched(Fetched::SignedIn(
@@ -98,6 +105,9 @@ impl ToFetch {
             )),
             Self::RefreshToken => Msg::DataFetched(Fetched::RefreshToken(
                 RefreshToken::fetch(login_token?).await,
+            )),
+            Self::Editor(path) => Msg::DataFetched(Fetched::Editor(
+                StartEditor::fetch(Authenticated::new(path, login_token?)).await,
             )),
         })
     }
@@ -108,6 +118,7 @@ pub enum Fetched {
     Hello(anyhow::Result<<Hello as shared::Endpoint>::Response>),
     SignedIn(anyhow::Result<<SignedIn as shared::Endpoint>::Response>),
     RefreshToken(anyhow::Result<<RefreshToken as shared::Endpoint>::Response>),
+    Editor(anyhow::Result<<StartEditor as shared::Endpoint>::Response>),
 }
 
 impl Fetched {
@@ -116,6 +127,7 @@ impl Fetched {
         match self {
             Self::Hello(x) => model.server.hello = state::server::Fetch::Fetched(x),
             Self::SignedIn(x) => model.server.signed_in = state::server::Fetch::Fetched(x),
+            Self::Editor(x) => model.route_data.editor = x.unwrap(),
             //TODO handle refresh tokens!
             Self::RefreshToken(_) => {}
         }

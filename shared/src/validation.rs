@@ -112,7 +112,7 @@ mod tests {
             must_be_ascii: true,
             ..Validation::default()
         };
-        assert_eq!(v.of("τ > π"), Err(NotAscii));
+        assert_eq!(v.of("\u{03c4} > \u{03c0}"), Err(NotAscii));
         assert_eq!(v.of("tau > pi"), Ok(()));
     }
 

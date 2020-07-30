@@ -14,6 +14,7 @@ use shared::{
 
 #[async_trait]
 impl endpoint::Post for CreateAccount {
+    #[tracing::instrument(err, skip(req))]
     async fn post(
         req: Request<State>,
         account_info: create_account::Details,

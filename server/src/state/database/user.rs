@@ -3,7 +3,9 @@ use std::convert::TryFrom;
 use {
     bcrypt::BcryptError,
     bson::doc,
+    secrecy::ExposeSecret,
     serde::{Deserialize, Serialize},
+    tracing::{instrument, trace, warn},
 };
 
 use crate::{
@@ -29,18 +31,26 @@ impl TryFrom<shared::endpoint::create_account::Details> for User {
         Ok(Self {
             user_name: value.user_name,
             email: value.email,
-            password_hash: bcrypt::hash(value.password, bcrypt::DEFAULT_COST)?,
+            password_hash: bcrypt::hash(value.password.expose_secret(), bcrypt::DEFAULT_COST)?,
         })
     }
 }
 
 impl User {
+    #[instrument(err)]
     pub fn verify_credentials(
         &self,
         credentials: &shared::endpoint::sign_in::Credentials,
     ) -> Result<bool, BcryptError> {
-        Ok(self.user_name == credentials.user_name
-            && bcrypt::verify(&credentials.password, &self.password_hash)?)
+        let result = self.user_name == credentials.user_name
+            && bcrypt::verify(credentials.password.expose_secret(), &self.password_hash)?;
+
+        if result {
+            trace!("Credentials Valid")
+        } else {
+            warn!("Credentials Invalid")
+        }
+        Ok(result)
     }
 }
 
@@ -51,6 +61,7 @@ impl Database {
     }
 
     /// Add a new user to the database.
+    #[instrument(level = "trace", err, skip(self))]
     pub async fn add_user(&self, user: User) -> tide::Result<Insert> {
         let filter = doc! { "_id": &user.user_name};
         let cursor = self.users().find_one(filter, None).await?;
@@ -64,6 +75,7 @@ impl Database {
     }
 
     /// Get user information for user attached to a username.
+    #[instrument(level = "trace", err, skip(self))]
     pub async fn get_user(&self, user_name: &str) -> tide::Result<Option<User>> {
         Ok(
             if let Some(x) = self

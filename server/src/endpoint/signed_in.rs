@@ -1,4 +1,8 @@
-use {async_trait::async_trait, tide::Request};
+use {
+    async_trait::async_trait,
+    tide::Request,
+    tracing::{info, instrument},
+};
 
 use crate::{endpoint, security::jwt, state::State};
 
@@ -9,7 +13,9 @@ use shared::{
 
 #[async_trait]
 impl endpoint::Post for SignedIn {
+    #[instrument(err)]
     async fn post(_: Request<State>, token: Token) -> tide::Result<signed_in::Res> {
+        info!("Checking if user is singed in.");
         Ok(Self::get_user(&token).await)
     }
 }
@@ -23,6 +29,7 @@ pub trait Ext: shared::Endpoint {
 
 #[async_trait]
 impl Ext for SignedIn {
+    #[instrument(level = "trace")]
     async fn get_user(token: &Token) -> signed_in::Res {
         let user = jwt::Claims::decode_token(token)
             .map(|token| token.claims.sub)

@@ -1,6 +1,9 @@
-use crate::{validation, Endpoint, PostEndpoint, Validation};
+use crate::{security::serialize_secret, validation, Endpoint, PostEndpoint, Validation};
 
-use serde::{Deserialize, Serialize};
+use {
+    secrecy::{ExposeSecret, Secret, SecretString},
+    serde::{Deserialize, Serialize},
+};
 
 #[derive(Clone, Serialize, Deserialize, Debug, Eq, PartialEq)]
 pub struct CreateAccount;
@@ -16,11 +19,22 @@ impl PostEndpoint for CreateAccount {
 }
 
 /// Data sent when a user creates an account.
-#[derive(Clone, Default, Serialize, Deserialize, Debug, Eq, PartialEq)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Details {
     pub user_name: String,
     pub email: String,
-    pub password: String,
+    #[serde(serialize_with = "serialize_secret")]
+    pub password: SecretString,
+}
+
+impl Default for Details {
+    fn default() -> Self {
+        Self {
+            user_name: String::new(),
+            email: String::new(),
+            password: Secret::new(String::new()),
+        }
+    }
 }
 
 impl validation::Post for Details {
@@ -46,7 +60,7 @@ impl validation::Post for Details {
             max_length: Some(1_000),
             ..Validation::minimal()
         }
-        .of(&self.password)
+        .of(self.password.expose_secret())
         .err();
 
         if user_name.is_none() && email.is_none() && password.is_none() {
@@ -81,7 +95,7 @@ impl Details {
         Self {
             user_name: "Ethan".to_owned(),
             email: "example@example.com".to_owned(),
-            password: "hunter2".to_owned(),
+            password: Secret::new("hunter2".to_owned()),
         }
     }
 }

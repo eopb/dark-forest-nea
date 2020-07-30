@@ -9,6 +9,7 @@ use shared::{
 
 #[async_trait]
 impl endpoint::Post for SignIn {
+    #[tracing::instrument(err, skip(req))]
     async fn post(
         req: Request<State>,
         credentials: sign_in::Credentials,

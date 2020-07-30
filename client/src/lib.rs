@@ -6,6 +6,7 @@
     clippy::missing_const_for_fn
 )]
 
+mod console;
 pub mod endpoint;
 pub mod routes;
 pub mod state;
@@ -17,6 +18,8 @@ pub use {endpoint::Endpoint, routes::Route};
 use {
     seed::{app::subs::UrlChanged, prelude::*},
     time::Duration,
+    tracing::Level,
+    tracing_subscriber::fmt::format::FmtSpan,
 };
 
 use std::convert::TryInto;
@@ -48,5 +51,17 @@ fn init(url: Url, orders: &mut impl Orders<updates::Msg>) -> state::Model {
 /// point of our program.
 #[wasm_bindgen(start)]
 pub fn start() {
+    if cfg!(debug_assertions) {
+        let subscriber = tracing_subscriber::fmt()
+            .with_max_level(Level::TRACE)
+            .with_span_events(FmtSpan::CLOSE)
+            .without_time()
+            .with_ansi(false)
+            .with_writer(console::Write::new)
+            .finish();
+
+        tracing::subscriber::set_global_default(subscriber)
+            .expect("no global subscriber has been set");
+    }
     let _app = App::start("app", init, updates::update, ui::view);
 }

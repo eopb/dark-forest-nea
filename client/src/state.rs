@@ -5,13 +5,17 @@ pub use server::Server;
 use crate::{routes::Route, ui, LOGIN_KEY};
 
 use seed::browser::web_storage::{LocalStorage, WebStorage};
+
+use shared::security::Token;
+
 /// Describes client state.
+#[derive(Debug)]
 pub struct Model {
     pub theme: Theme,
     pub route: Route,
     pub server: Server,
     pub route_data: RouteData,
-    pub login_token: Option<String>,
+    pub login_token: Option<Token>,
 }
 
 impl Model {
@@ -28,14 +32,26 @@ impl Model {
 }
 
 /// Data used only by particular routes.
-#[derive(Default)]
+#[derive(Debug)]
 pub struct RouteData {
     pub sign_in: ui::router::sign_in::Model,
     pub create_account: ui::router::create_account::Model,
     pub new_project: ui::router::new_project::Model,
+    // TODO wrap this in a Model.
+    pub editor: Result<shared::data::Project, shared::endpoint::edit::init::Fail>,
 }
 
-#[derive(Copy, Clone)]
+impl Default for RouteData {
+    fn default() -> Self {
+        Self {
+            sign_in: ui::router::sign_in::Model::default(),
+            create_account: ui::router::create_account::Model::default(),
+            new_project: ui::router::new_project::Model::default(),
+            editor: Ok(shared::data::Project::default()),
+        }
+    }
+}
+#[derive(Debug, Copy, Clone)]
 /// Colour theme.
 pub enum Theme {
     Dark,

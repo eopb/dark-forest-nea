@@ -1,11 +1,14 @@
 use crate::{endpoint::Post, state, ui, updates, updates::sign_in::SignIn};
 
-use seed::{prelude::*, *};
-use seed_style::*;
-use shadow_clone::shadow_clone;
+use {
+    secrecy::{ExposeSecret, Secret},
+    seed::{prelude::*, *},
+    seed_style::*,
+    shadow_clone::shadow_clone,
+};
 
 use shared::endpoint::create_account::{self, CreateAccount};
-#[derive(Clone, Default)]
+#[derive(Clone, Default, Debug)]
 pub struct Model {
     form: create_account::Details,
     error: Option<create_account::Fail>,
@@ -26,7 +29,7 @@ impl Msg {
         match self {
             Self::UsernameChanged(user_name) => inner_model.form.user_name = user_name,
             Self::EmailChanged(email) => inner_model.form.email = email,
-            Self::PasswordChanged(password) => inner_model.form.password = password,
+            Self::PasswordChanged(password) => inner_model.form.password = Secret::new(password),
             Self::Submit => {
                 orders.skip(); // No need to rerender
                 shadow_clone!(inner_model);
@@ -64,11 +67,13 @@ impl From<Msg> for updates::Msg {
     }
 }
 pub fn view(model: &state::Model) -> Node<updates::Msg> {
+    let form = &model.route_data.create_account.form;
     let error = model.route_data.create_account.error.as_ref();
     let user_name = |err| {
         ui::form::InputBuilder::text()
             .id("user_name")
             .placeholder("Username...")
+            .value(&form.user_name)
             .error(err)
             .view(model, |text| Some(Msg::UsernameChanged(text).into()))
     };
@@ -76,6 +81,7 @@ pub fn view(model: &state::Model) -> Node<updates::Msg> {
         ui::form::InputBuilder::email()
             .id("email")
             .placeholder("Email...")
+            .value(&form.email)
             .error(err)
             .view(model, |text| Some(Msg::EmailChanged(text).into()))
     };
@@ -83,6 +89,7 @@ pub fn view(model: &state::Model) -> Node<updates::Msg> {
         ui::form::InputBuilder::password()
             .id("password")
             .placeholder("Password...")
+            .value(form.password.expose_secret())
             .error(err)
             .view(model, |text| Some(Msg::PasswordChanged(text).into()))
     };

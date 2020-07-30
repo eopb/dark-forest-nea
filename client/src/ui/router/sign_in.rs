@@ -1,13 +1,14 @@
 use crate::{state, ui, updates, updates::sign_in::SignIn};
 
 use {
+    secrecy::{ExposeSecret, Secret},
     seed::{prelude::*, *},
     seed_style::*,
 };
 
 use shared::endpoint::sign_in::Credentials;
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, Debug)]
 pub struct Model {
     form: Credentials,
     pub error: Option<shared::endpoint::sign_in::Fail>,
@@ -24,7 +25,7 @@ impl Msg {
         let mut inner_model = &mut model.route_data.sign_in;
         match self {
             Self::UsernameChanged(user_name) => inner_model.form.user_name = user_name,
-            Self::PasswordChanged(password) => inner_model.form.password = password,
+            Self::PasswordChanged(password) => inner_model.form.password = Secret::new(password),
             Self::Submit => {
                 orders.skip(); // No need to rerender
                 orders.send_msg(
@@ -48,11 +49,13 @@ impl From<Msg> for updates::Msg {
 
 pub fn view(model: &state::Model) -> Node<updates::Msg> {
     use shared::endpoint::sign_in::Fail::{IncorrectPassword, UserNotFound};
+    let form = &model.route_data.sign_in.form;
     let error = model.route_data.sign_in.error;
     let user_name = |err| {
         ui::form::InputBuilder::text()
             .id("user_name")
             .placeholder("Username...")
+            .value(&form.user_name)
             .error(err)
             .view(model, |text| Some(Msg::UsernameChanged(text).into()))
     };
@@ -60,6 +63,7 @@ pub fn view(model: &state::Model) -> Node<updates::Msg> {
         ui::form::InputBuilder::password()
             .id("password")
             .placeholder("Password...")
+            .value(form.password.expose_secret())
             .error(err)
             .view(model, |text| Some(Msg::PasswordChanged(text).into()))
     };
