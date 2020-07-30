@@ -6,7 +6,7 @@ use crate::{
 };
 
 use shared::{
-    data::{Chapter, Decision},
+    data::{Chapter, Decision, Project},
     endpoint::edit::{
         save::{PermissionDenied, SaveEditor},
         ProjectPath,
@@ -21,20 +21,24 @@ use {
     tracing::{info, instrument, trace},
 };
 
+#[derive(Debug)]
 pub enum Msg {
     DescriptionChanged(String),
     NameChanged(String),
+    Chapter(ChapterMsgWrapper),
     Submit(ProjectPath),
     Submited(Result<(), PermissionDenied>),
     SubmitFailed(String),
 }
 
 impl Msg {
+    #[instrument(skip(model, orders))]
     pub fn update(self, model: &mut state::Model, orders: &mut impl Orders<updates::Msg>) {
         let mut inner_model = model.route_data.editor.as_mut().unwrap();
         match self {
             Self::DescriptionChanged(description) => inner_model.description = description,
             Self::NameChanged(name) => inner_model.name = name,
+            Self::Chapter(msg) => msg.update(inner_model, orders),
             Self::Submit(project_path) => {
                 orders.skip(); // No need to rerender
                 shadow_clone!(inner_model);
@@ -59,7 +63,7 @@ impl Msg {
                 });
             }
             Self::Submited(result) => {}
-            Self::SubmitFailed(reason) => log!(reason),
+            Self::SubmitFailed(reason) => error!(reason),
         }
     }
 }
@@ -69,6 +73,54 @@ impl From<Msg> for updates::Msg {
     }
 }
 
+#[derive(Debug)]
+pub struct ChapterMsgWrapper {
+    key: i64,
+    msg: ChapterMsg,
+}
+impl ChapterMsgWrapper {
+    fn new(key: i64, msg: ChapterMsg) -> Self {
+        Self { key, msg }
+    }
+}
+
+impl From<ChapterMsgWrapper> for updates::Msg {
+    fn from(msg: ChapterMsgWrapper) -> Self {
+        Self::Editor(Msg::Chapter(msg))
+    }
+}
+impl ChapterMsgWrapper {
+    #[instrument(skip(inner_model, orders))]
+    pub fn update(self, inner_model: &mut Project, orders: &mut impl Orders<updates::Msg>) {
+        self.msg.update(inner_model, orders, self.key)
+    }
+}
+
+#[derive(Debug)]
+enum ChapterMsg {
+    NameChanged(String),
+}
+
+impl ChapterMsg {
+    #[instrument(skip(inner_model, orders))]
+    pub fn update(
+        self,
+        inner_model: &mut Project,
+        orders: &mut impl Orders<updates::Msg>,
+        key: i64,
+    ) {
+        match self {
+            Self::NameChanged(name) => {
+                let chapter = inner_model.chapters.get_mut(&key);
+                if let Some(chapter) = chapter {
+                    chapter.heading = name
+                } else {
+                    error!("Attempt to edit chapter that does not exist");
+                }
+            }
+        }
+    }
+}
 #[instrument(skip(model))]
 pub fn view(model: &state::Model, project_path: ProjectPath) -> Node<updates::Msg> {
     info!("rendering project");
@@ -112,6 +164,7 @@ pub fn view(model: &state::Model, project_path: ProjectPath) -> Node<updates::Ms
                 vec![project
                     .chapters
                     .iter()
+                    .map(|(key, chapter)| (*key, chapter))
                     .map(chapters(model))
                     .collect::<Vec<Node<updates::Msg>>>(),]
                 .into_iter()
@@ -132,8 +185,16 @@ pub fn view(model: &state::Model, project_path: ProjectPath) -> Node<updates::Ms
 #[instrument(skip(model))]
 pub fn chapters<'a>(
     model: &'a state::Model,
-) -> impl Fn((&i64, &Chapter)) -> Node<updates::Msg> + 'a {
+) -> impl Fn((i64, &Chapter)) -> Node<updates::Msg> + 'a {
+    fn chapter_event<'a>(
+        func: impl Fn(String) -> ChapterMsg + 'a + Clone,
+        key: i64,
+    ) -> impl Fn(String) -> Option<updates::Msg> + 'a + Clone {
+        move |s| Some(ChapterMsgWrapper::new(key, func(s)).into())
+    }
+
     move |(key, chapter)| {
+        let msg = |func| chapter_event(func, key);
         div![
             s().padding_left(px(8)).padding_right(px(8)),
             vec![div![
@@ -148,7 +209,7 @@ pub fn chapters<'a>(
                 ui::form::InputBuilder::text()
                     .value(&chapter.heading)
                     .width(pc(100))
-                    .view(model, |_| None),
+                    .view(model, msg(ChapterMsg::NameChanged))
             ]],
             ui::form::InputBuilder::text_area()
                 .value(&chapter.body)
