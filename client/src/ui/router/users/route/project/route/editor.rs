@@ -34,7 +34,7 @@ pub enum Msg {
 impl Msg {
     #[instrument(skip(model, orders))]
     pub fn update(self, model: &mut state::Model, orders: &mut impl Orders<updates::Msg>) {
-        let mut inner_model = model.route_data.editor.as_mut().unwrap();
+        let mut inner_model = &mut model.route_data.project;
         match self {
             Self::DescriptionChanged(description) => inner_model.description = description,
             Self::NameChanged(name) => inner_model.name = name,
@@ -153,61 +153,59 @@ impl DecisionMsg {
 #[instrument(skip(model))]
 pub fn view(model: &state::Model, project_path: ProjectPath) -> Node<updates::Msg> {
     info!("rendering project");
-    trace!(project = format!("{:#?}", model.route_data.editor).as_str());
-    match &model.route_data.editor {
-        Ok(project) => div![div![
-            s().display("flex")
-                .align_items("center")
-                .flex_direction("column")
-                .margin("auto"),
-            div![
-                s().display_grid()
-                    .grid_template_columns("auto auto")
-                    .grid_gap(px(8))
-                    .width(px(600)),
-                ui::form::InputBuilder::text()
-                    .value(&project.name)
-                    .width(pc(100))
-                    .view(model, |x| Some(Msg::NameChanged(x).into())),
-                ui::form::InputBuilder::submit()
-                    .value("Save")
-                    .width(pc(100))
-                    .view(model, move |_| Some(
-                        Msg::Submit(project_path.clone()).into()
-                    ))
-            ],
-            ui::form::InputBuilder::text_area()
-                .value(&project.description)
-                .label("Description")
-                .view(model, |x| Some(Msg::DescriptionChanged(x).into())),
-            label![
-                s().margin("0")
-                    .margin_bottom(px(-15))
-                    .width(px(600))
-                    .text_align_left()
-                    .font_size(em(2.9))
-                    .color(model.theme.text()),
-                "Chapters"
-            ],
-            ui::Bordered::new(
-                vec![project
-                    .chapters
-                    .iter()
-                    .map(|(key, chapter)| (*key, chapter))
-                    .map(chapters(model))
-                    .collect::<Vec<Node<updates::Msg>>>(),]
-                .into_iter()
-                .flatten()
-                .collect::<Vec<Node<updates::Msg>>>()
-            )
-            .inner(s().width(px(600)))
-            .view(model),
+    let project = &model.route_data.project;
+    trace!(project = format!("{:#?}", project).as_str());
+    div![div![
+        s().display("flex")
+            .align_items("center")
+            .flex_direction("column")
+            .margin("auto"),
+        div![
+            s().display_grid()
+                .grid_template_columns("auto auto")
+                .grid_gap(px(8))
+                .width(px(600)),
+            ui::form::InputBuilder::text()
+                .value(&project.name)
+                .width(pc(100))
+                .view(model, |x| Some(Msg::NameChanged(x).into())),
             ui::form::InputBuilder::submit()
-                .value("Add chapter")
-                .view(model, |_| None)
-        ]],
-        Err(error) => div!["some error"],
-    }
+                .value("Save")
+                .width(pc(100))
+                .view(model, move |_| Some(
+                    Msg::Submit(project_path.clone()).into()
+                ))
+        ],
+        ui::form::InputBuilder::text_area()
+            .value(&project.description)
+            .label("Description")
+            .view(model, |x| Some(Msg::DescriptionChanged(x).into())),
+        label![
+            s().margin("0")
+                .margin_bottom(px(-15))
+                .width(px(600))
+                .text_align_left()
+                .font_size(em(2.9))
+                .color(model.theme.text()),
+            "Chapters"
+        ],
+        ui::Bordered::new(
+            vec![project
+                .chapters
+                .iter()
+                .map(|(key, chapter)| (*key, chapter))
+                .map(chapters(model))
+                .collect::<Vec<Node<updates::Msg>>>(),]
+            .into_iter()
+            .flatten()
+            .collect::<Vec<Node<updates::Msg>>>()
+        )
+        .inner(s().width(px(600)))
+        .view(model),
+        ui::form::InputBuilder::submit()
+            .value("Add chapter")
+            .view(model, |_| None)
+    ]]
 }
 // TODO use type alias for `Node<updates::Msg>>`
 

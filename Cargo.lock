@@ -462,6 +462,7 @@ dependencies = [
  "shared",
  "time 0.2.16",
  "tracing",
+ "tracing-futures",
  "tracing-subscriber",
  "wasm-bindgen-test",
  "web-sys",

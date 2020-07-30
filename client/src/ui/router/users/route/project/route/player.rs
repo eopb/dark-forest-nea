@@ -21,6 +21,9 @@ use {
     tracing::{info, instrument, trace},
 };
 
+pub struct State {
+    chapter: usize,
+}
 #[derive(Debug)]
 pub enum Msg {}
 
@@ -33,6 +36,6 @@ impl Msg {
 #[instrument(skip(model))]
 pub fn view(model: &state::Model, project_path: ProjectPath) -> Node<updates::Msg> {
     info!("rendering player");
-    trace!(project = format!("{:#?}", model.route_data.editor).as_str());
-    div![]
+    trace!(project = format!("{:#?}", model.route_data.project).as_str());
+    div!["hello from the player"]
 }

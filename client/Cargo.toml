@@ -34,6 +34,7 @@ secrecy = "0.7.0"
 shadow-clone = "1.2.1"
 tracing = "0.1.17"
 tracing-subscriber = { version = "0.2.9", features = [] }
+tracing-futures = "0.2.4"
 
 [profile.release]
 lto = true

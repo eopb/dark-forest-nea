@@ -31,14 +31,17 @@ impl TryFrom<&Url> for Route {
             ["sign-in"] => Ok(Some(shared::Route::SignIn)),
             ["create-account"] => Ok(Some(shared::Route::CreateAccount)),
             ["new-project"] => Ok(Some(shared::Route::NewProject)),
-
-            ["users", user_name, "projects", project_name, "edit"] => {
+            ["users", user_name, "projects", project_name, project_path] => {
                 Ok(Some(shared::Route::Users {
                     user_name: (*user_name).to_string(),
                     nest: Some(shared::routes::UserRoute::Projects(Some(
                         shared::routes::Project {
                             project_name: (*project_name).to_string(),
-                            nest: Some(shared::routes::ProjectRoute::Edit),
+                            nest: Some(if let Some(p) = project_route(project_path) {
+                                p
+                            } else {
+                                return Ok(Self(None));
+                            }),
                         },
                     ))),
                 }))
@@ -47,6 +50,14 @@ impl TryFrom<&Url> for Route {
             _ => Ok(None),
         }
         .map(Self)
+    }
+}
+
+fn project_route(s: &str) -> Option<shared::routes::ProjectRoute> {
+    match s {
+        "edit" => Some(shared::routes::ProjectRoute::Edit),
+        "play" => Some(shared::routes::ProjectRoute::Play),
+        _ => None,
     }
 }
 

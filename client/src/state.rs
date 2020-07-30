@@ -37,8 +37,8 @@ pub struct RouteData {
     pub sign_in: ui::router::sign_in::Model,
     pub create_account: ui::router::create_account::Model,
     pub new_project: ui::router::new_project::Model,
-    // TODO wrap this in a Model.
-    pub editor: Result<shared::data::Project, shared::endpoint::edit::init::Fail>,
+    /// This data is used by multiple routes.
+    pub project: shared::data::Project,
 }
 
 impl Default for RouteData {
@@ -47,7 +47,7 @@ impl Default for RouteData {
             sign_in: ui::router::sign_in::Model::default(),
             create_account: ui::router::create_account::Model::default(),
             new_project: ui::router::new_project::Model::default(),
-            editor: Ok(shared::data::Project::default()),
+            project: shared::data::Project::default(),
         }
     }
 }
