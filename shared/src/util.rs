@@ -8,7 +8,10 @@ use std::{
     str::FromStr,
 };
 
-use serde::{Deserialize, Deserializer, Serialize, Serializer};
+use {
+    num_traits::int::PrimInt,
+    serde::{Deserialize, Deserializer, Serialize, Serializer},
+};
 
 /// Wrapper type for `HashMaps` that serializes keys as strings to better
 /// support `MongoDB`.
@@ -18,7 +21,7 @@ pub struct StringMap<K, V>(HashMap<K, V>);
 #[allow(clippy::type_repetition_in_bounds)]
 impl<K, V> Serialize for StringMap<K, V>
 where
-    K: ToString,
+    K: ToString + PrimInt,
     HashMap<K, V>: Clone,
     HashMap<String, V>: Serialize,
 {
@@ -37,7 +40,7 @@ where
 
 impl<'de, K, V> Deserialize<'de> for StringMap<K, V>
 where
-    K: FromStr + Eq + Hash,
+    K: FromStr + Eq + Hash + PrimInt,
     <K as FromStr>::Err: Debug,
     HashMap<String, V>: Deserialize<'de>,
 {
