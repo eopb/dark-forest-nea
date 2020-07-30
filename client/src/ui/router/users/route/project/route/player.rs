@@ -60,9 +60,21 @@ pub fn view(model: &state::Model, project_path: ProjectPath) -> Node<updates::Ms
             .align_items("center")
             .flex_direction("column")
             .margin("auto"),
-        div![ui::form::InputBuilder::text()
-            .value(&project.name)
-            .width(pc(100))
-            .view(model, |_| None)],
+        div![
+            s().font_size(em(2.9)),
+            h2![
+                s().margin("0").margin_bottom(px(-15)).text_align_left(),
+                &project.name
+            ],
+            p![
+                s().margin("0").margin_bottom(px(-15)).text_align_left(),
+                &project.description
+            ],
+            div![ui::form::InputBuilder::submit()
+                .value("Start")
+                .width(pc(100))
+                .font_size(em(1.2))
+                .view(model, move |_| None)]
+        ],
     ]]
 }
