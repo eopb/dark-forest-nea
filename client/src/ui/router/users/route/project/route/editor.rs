@@ -105,6 +105,7 @@ impl ChapterMsgWrapper {
 enum ChapterMsg {
     NameChanged(String),
     BodyChanged(String),
+    Decision(DecisionMsgWrapper),
 }
 
 impl ChapterMsg {
@@ -113,7 +114,40 @@ impl ChapterMsg {
         match self {
             Self::NameChanged(name) => chapter.heading = name,
             Self::BodyChanged(body) => chapter.body = body,
+            Self::Decision(msg) => msg.update(chapter, orders),
         }
+    }
+}
+#[derive(Debug)]
+pub struct DecisionMsgWrapper {
+    index: usize,
+    msg: DecisionMsg,
+}
+impl DecisionMsgWrapper {
+    fn new(index: usize, msg: DecisionMsg) -> Self {
+        Self { index, msg }
+    }
+}
+
+impl DecisionMsgWrapper {
+    #[instrument(skip(chapter, orders))]
+    pub fn update(self, chapter: &mut Chapter, orders: &mut impl Orders<updates::Msg>) {
+        let chapter = chapter.decisions.get_mut(self.index);
+        if let Some(chapter) = chapter {
+            self.msg.update(chapter, orders)
+        } else {
+            error!("Attempt to edit chapter that does not exist");
+        }
+    }
+}
+
+#[derive(Debug)]
+enum DecisionMsg {}
+
+impl DecisionMsg {
+    #[instrument(skip(orders))]
+    pub fn update(self, decision: &mut Decision, orders: &mut impl Orders<updates::Msg>) {
+        match self {}
     }
 }
 #[instrument(skip(model))]
@@ -181,13 +215,6 @@ pub fn view(model: &state::Model, project_path: ProjectPath) -> Node<updates::Ms
 pub fn chapters<'a>(
     model: &'a state::Model,
 ) -> impl Fn((i64, &Chapter)) -> Node<updates::Msg> + 'a {
-    fn chapter_event<'a>(
-        func: &'a (dyn Fn(String) -> ChapterMsg + 'a),
-        key: i64,
-    ) -> impl Fn(String) -> Option<updates::Msg> + 'a + Clone {
-        move |s| Some(ChapterMsgWrapper::new(key, func(s)).into())
-    }
-
     move |(key, chapter)| {
         let chapter_event = |func| chapter_event(func, key);
         div![
@@ -224,6 +251,7 @@ pub fn chapters<'a>(
                     chapter
                         .decisions
                         .iter()
+                        .enumerate()
                         .map(decisions(model))
                         .collect::<Vec<Node<updates::Msg>>>()
                 )
@@ -237,9 +265,20 @@ pub fn chapters<'a>(
         ]
     }
 }
+
+/// Converts a [`ChapterMsg`] based event into a standard [`updates::Msg`]
+fn chapter_event<'a>(
+    func: &'a (dyn Fn(String) -> ChapterMsg + 'a),
+    key: i64,
+) -> impl Fn(String) -> Option<updates::Msg> + 'a + Clone {
+    move |s| Some(ChapterMsgWrapper::new(key, func(s)).into())
+}
+
 #[instrument(skip(model))]
-pub fn decisions<'a>(model: &'a state::Model) -> impl Fn(&Decision) -> Node<updates::Msg> + 'a {
-    move |decision| {
+pub fn decisions<'a>(
+    model: &'a state::Model,
+) -> impl Fn((usize, &Decision)) -> Node<updates::Msg> + 'a {
+    move |(index, decision)| {
         div![
             s().padding_left(px(8)).padding_right(px(8)),
             vec![div![
