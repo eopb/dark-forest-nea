@@ -8,7 +8,7 @@ pub mod users;
 use crate::{state, updates};
 
 use seed::{prelude::*, *};
-use tracing::{error, instrument};
+use tracing::instrument;
 
 use shared::Route;
 
