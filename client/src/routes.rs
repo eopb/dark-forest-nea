@@ -90,10 +90,10 @@ impl Route {
                     nest:
                         Some(shared::routes::UserRoute::Projects(Some(shared::routes::Project {
                             project_name,
-                            nest: Some(shared::routes::ProjectRoute::Edit),
+                            nest: Some(_),
                         }))),
                 } => {
-                    orders.send_msg(updates::Msg::ToFetch(updates::ToFetch::Editor(
+                    orders.send_msg(updates::Msg::ToFetch(updates::ToFetch::Project(
                         shared::endpoint::edit::ProjectPath {
                             project_name: project_name.to_owned(),
                             user_name: user_name.to_owned(),

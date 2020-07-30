@@ -95,7 +95,7 @@ pub enum ToFetch {
     Hello,
     SignedIn,
     RefreshToken,
-    Editor(ProjectPath),
+    Project(ProjectPath),
 }
 
 impl ToFetch {
@@ -110,7 +110,7 @@ impl ToFetch {
             Self::RefreshToken => Msg::DataFetched(Fetched::RefreshToken(
                 RefreshToken::fetch(login_token?).await,
             )),
-            Self::Editor(path) => Msg::DataFetched(Fetched::Editor(
+            Self::Project(path) => Msg::DataFetched(Fetched::Editor(
                 StartEditor::fetch(Authenticated::new(path, login_token?)).await,
             )),
         })
@@ -128,7 +128,7 @@ pub enum Fetched {
 
 impl Fetched {
     /// Add a fetched item to the model.
-    #[instrument]
+    #[instrument(skip(model))]
     fn add_to(self, model: &mut state::Model) {
         match self {
             Self::Hello(x) => model.server.hello = state::server::Fetch::Fetched(x),
