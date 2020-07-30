@@ -37,6 +37,7 @@ pub enum Msg {
     CreateAccountForm(ui::router::create_account::Msg),
     NewProjectForm(ui::router::new_project::Msg),
     Editor(ui::router::users::route::project::route::editor::Msg),
+    Player(ui::router::users::route::project::route::player::Msg),
     ClearRouteData,
     SignOut,
 }
@@ -83,6 +84,7 @@ pub fn update(msg: Msg, model: &mut state::Model, orders: &mut impl Orders<Msg>)
         }
         Msg::SignIn(x) => x.update(model, orders),
         Msg::Editor(x) => x.update(model, orders),
+        Msg::Player(x) => x.update(model, orders),
         Msg::ClearRouteData => model.route_data = state::RouteData::default(),
     }
 }

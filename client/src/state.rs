@@ -39,6 +39,7 @@ pub struct RouteData {
     pub new_project: ui::router::new_project::Model,
     /// This data is used by multiple routes.
     pub project: shared::data::Project,
+    pub player_state: ui::router::users::route::project::route::player::State,
 }
 
 impl Default for RouteData {
@@ -48,6 +49,7 @@ impl Default for RouteData {
             create_account: ui::router::create_account::Model::default(),
             new_project: ui::router::new_project::Model::default(),
             project: shared::data::Project::default(),
+            player_state: ui::router::users::route::project::route::player::State::default(),
         }
     }
 }

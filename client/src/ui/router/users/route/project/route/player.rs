@@ -21,9 +21,20 @@ use {
     tracing::{info, instrument, trace},
 };
 
+type Model = State;
+
+#[derive(Debug)]
 pub struct State {
-    chapter: usize,
+    chapter_key: usize,
 }
+
+impl Default for State {
+    /// Start on the first chapter.
+    fn default() -> Self {
+        Self { chapter_key: 1 }
+    }
+}
+
 #[derive(Debug)]
 pub enum Msg {}
 
