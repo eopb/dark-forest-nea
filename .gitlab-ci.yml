@@ -1,8 +1,10 @@
 image: "rust:latest"
 
 before_script:
-  - rustup toolchain install nightly-2020-07-11
-  - rustup default nightly
+  - apt update
+  - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+  - apt-get -f install
+  - apt install ./google-chrome-stable_current_amd64.deb -y
   - cargo install cargo-make
 
 stages:
@@ -18,9 +20,7 @@ stages:
 verify:
   stage: verify
   script:
-    - apt update
-    - apt install firefox-esr -y
-    - rustup component add --toolchain nightly-2020-07-11 rustfmt clippy
+    - rustup component add --toolchain nightly-2020-07-27 rustfmt clippy
     - cargo make verify
 # coverage:
 #   stage: coverage
