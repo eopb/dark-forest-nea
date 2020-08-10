@@ -25,14 +25,20 @@ type Model = State;
 
 #[derive(Debug, Default)]
 pub struct State {
-    chapter_key: Position,
+    position: Position,
 }
 
 #[derive(Debug)]
-enum Position {
+pub enum Position {
     Start,
     Chapter(usize),
     End,
+}
+
+impl Position {
+    fn first_chapter() -> Self {
+        Self::Chapter(1)
+    }
 }
 
 impl Default for Position {
@@ -42,14 +48,26 @@ impl Default for Position {
 }
 
 #[derive(Debug)]
-pub enum Msg {}
+pub enum Msg {
+    ChangePosition(Position),
+}
 
 impl Msg {
     #[instrument(skip(model, orders))]
     pub fn update(self, model: &mut state::Model, orders: &mut impl Orders<updates::Msg>) {
-        match self {}
+        let mut inner_model = &mut model.route_data.player_state;
+        match self {
+            Self::ChangePosition(p) => inner_model.position = p,
+        }
     }
 }
+
+impl From<Msg> for updates::Msg {
+    fn from(msg: Msg) -> Self {
+        Self::Player(msg)
+    }
+}
+
 #[instrument(skip(model))]
 pub fn view(model: &state::Model, project_path: ProjectPath) -> Node<updates::Msg> {
     let project = &model.route_data.project;
@@ -74,7 +92,9 @@ pub fn view(model: &state::Model, project_path: ProjectPath) -> Node<updates::Ms
                 .value("Start")
                 .width(pc(100))
                 .font_size(em(1.2))
-                .view(model, move |_| None)]
+                .view(model, move |_| Some(
+                    Msg::ChangePosition(Position::first_chapter()).into()
+                ))]
         ],
     ]]
 }
