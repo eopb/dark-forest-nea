@@ -71,6 +71,7 @@ impl From<Msg> for updates::Msg {
 #[instrument(skip(model))]
 pub fn view(model: &state::Model, project_path: ProjectPath) -> Node<updates::Msg> {
     let project = &model.route_data.project;
+    let state = &model.route_data.player_state;
     info!("rendering player");
     trace!(project = format!("{:#?}", project).as_str());
     div![div![
@@ -84,17 +85,23 @@ pub fn view(model: &state::Model, project_path: ProjectPath) -> Node<updates::Ms
                 s().margin("0").margin_bottom(px(-15)).text_align_left(),
                 &project.name
             ],
-            p![
-                s().margin("0").margin_bottom(px(-15)).text_align_left(),
-                &project.description
-            ],
-            div![ui::form::InputBuilder::submit()
-                .value("Start")
-                .width(pc(100))
-                .font_size(em(1.2))
-                .view(model, move |_| Some(
-                    Msg::ChangePosition(Position::first_chapter()).into()
-                ))]
+            match state.position {
+                Position::Start => div![
+                    p![
+                        s().margin("0").margin_bottom(px(-15)).text_align_left(),
+                        &project.description
+                    ],
+                    div![ui::form::InputBuilder::submit()
+                        .value("Start")
+                        .width(pc(100))
+                        .font_size(em(1.2))
+                        .view(model, move |_| Some(
+                            Msg::ChangePosition(Position::first_chapter()).into()
+                        ))]
+                ],
+                Position::Chapter(_) => todo!(),
+                Position::End => todo!(),
+            }
         ],
     ]]
 }

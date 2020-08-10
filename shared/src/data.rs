@@ -23,7 +23,7 @@ impl Project {
             theme: (),
             description: "A stupid game".to_owned(),
             chapters: hashmap! {
-                2 => Chapter {
+                1 => Chapter {
                     heading: "This is the start of your adventure.".to_owned(),
                     body: "You can continue or leave.".to_owned(),
                     decisions: vec![
@@ -37,7 +37,7 @@ impl Project {
                         }
                     ]
                 },
-                3 =>  Chapter {
+                2 =>  Chapter {
                     heading: "This is the start of your adventure.".to_owned(),
                     body: "You may only continue".to_owned(),
                     decisions: vec![
