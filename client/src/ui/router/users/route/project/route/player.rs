@@ -6,7 +6,7 @@ use crate::{
 };
 
 use shared::{
-    data::{Chapter, Decision, Project},
+    data::{Chapter, Decision, Link, Project},
     endpoint::edit::{
         save::{PermissionDenied, SaveEditor},
         ProjectPath,
@@ -28,7 +28,16 @@ pub struct State {
     position: Position,
 }
 
-#[derive(Debug)]
+impl From<Link> for Position {
+    fn from(link: Link) -> Self {
+        match link {
+            Link::Chapter(c) => Self::Chapter(c),
+            Link::End => Self::End,
+        }
+    }
+}
+
+#[derive(Clone, Debug)]
 pub enum Position {
     Start,
     Chapter(usize),
@@ -47,7 +56,7 @@ impl Default for Position {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum Msg {
     ChangePosition(Position),
 }
@@ -99,9 +108,35 @@ pub fn view(model: &state::Model, project_path: ProjectPath) -> Node<updates::Ms
                             Msg::ChangePosition(Position::first_chapter()).into()
                         ))]
                 ],
-                Position::Chapter(_) => todo!(),
-                Position::End => todo!(),
+                Position::Chapter(ref key) => {
+                    let chapter = project.chapters.get(key).expect("Invalid chapter setup");
+                    div![
+                        h3![chapter.heading.to_owned()],
+                        p![chapter.body.to_owned()],
+                        chapter
+                            .decisions
+                            .iter()
+                            .map(decisions(model))
+                            .flatten()
+                            .collect::<Vec<Node<updates::Msg>>>()
+                    ]
+                }
+                Position::End => p!["Thank you for playing"],
             }
         ],
     ]]
+}
+
+#[instrument(skip(model))]
+pub fn decisions<'a>(
+    model: &'a state::Model,
+) -> impl Fn(&'a Decision) -> Vec<Node<updates::Msg>> + 'a {
+    move |decision| {
+        let msg = Msg::ChangePosition(decision.goes_to.clone().unwrap().into());
+        ui::form::InputBuilder::submit()
+            .value(decision.body.to_owned())
+            .width(pc(100))
+            .font_size(em(1.2))
+            .view(model, move |_| Some(msg.clone().into()))
+    }
 }

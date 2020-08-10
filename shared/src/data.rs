@@ -70,5 +70,5 @@ pub struct Decision {
 pub enum Link {
     /// The story has ended.
     End,
-    Chapter(i64),
+    Chapter(usize),
 }
