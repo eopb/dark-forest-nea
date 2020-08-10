@@ -52,7 +52,7 @@ async fn main() -> tide::Result<()> {
 
     info!("Attaching Endpoints");
 
-    app.middleware(TraceMiddleware::new());
+    app.with(TraceMiddleware::new());
     // By default all routes should be handled by the client if not specified
     // otherwise.
     app.at("/").get(routes::index);
