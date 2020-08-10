@@ -1,25 +1,18 @@
 image: "rust:latest"
 
 before_script:
-  - apt update
-  - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-  - apt-get -f install
-  - apt install ./google-chrome-stable_current_amd64.deb -y
   - cargo install cargo-make
 
 stages:
-  # - build
   - verify
   # - coverage
-
-# build:
-#   stage: build
-#   script:
-#     - cargo make build
 
 verify:
   stage: verify
   script:
+    - apt update
+    - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+    - apt install ./google-chrome-stable_current_amd64.deb -y
     - rustup component add --toolchain nightly-2020-07-27 rustfmt clippy
     - cargo make verify
 # coverage:
