@@ -116,8 +116,7 @@ pub fn view(model: &state::Model, project_path: ProjectPath) -> Node<updates::Ms
                         chapter
                             .decisions
                             .iter()
-                            .map(decisions(model))
-                            .flatten()
+                            .flat_map(decisions(model))
                             .collect::<Vec<Node<updates::Msg>>>()
                     ]
                 }
