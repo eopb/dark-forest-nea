@@ -13,7 +13,7 @@ verify:
     - apt update
     - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
     - apt install ./google-chrome-stable_current_amd64.deb -y
-    - rustup component add --toolchain nightly-2020-07-27 rustfmt clippy
+    - rustup component add --toolchain nightly-2020-08-13 rustfmt clippy
     - cargo make verify
 # coverage:
 #   stage: coverage

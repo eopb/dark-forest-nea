@@ -27,7 +27,7 @@ watch = true
 [tasks.doc_open]
 workspace = false
 command = "cargo"
-args = ["doc", "--open", "--document-private-items"]
+args = ["doc", "--open", "--document-private-items", "--show-coverage"]
 
 [tasks.doc]
 workspace = false
