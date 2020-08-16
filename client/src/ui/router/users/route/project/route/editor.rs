@@ -65,7 +65,7 @@ impl Msg {
                     })
                 });
             }
-            Self::Submited(result) => {}
+            Self::Submited(_result) => {}
             Self::SubmitFailed(reason) => error!(reason),
         }
     }
@@ -145,8 +145,8 @@ impl DecisionMsgWrapper {
 enum DecisionMsg {}
 
 impl DecisionMsg {
-    #[instrument(skip(orders))]
-    pub fn update(self, decision: &mut Decision, orders: &mut impl Orders<updates::Msg>) {
+    #[instrument(skip(_orders))]
+    pub fn update(self, decision: &mut Decision, _orders: &mut impl Orders<updates::Msg>) {
         match self {}
     }
 }
@@ -204,7 +204,7 @@ pub fn view(model: &state::Model, project_path: ProjectPath) -> Node<updates::Ms
         .view(model),
         ui::form::InputBuilder::submit()
             .value("Add chapter")
-            .view(model, |_| None)
+            .view_without_event(model)
     ]]
 }
 // TODO use type alias for `Node<updates::Msg>>`
@@ -225,7 +225,7 @@ pub fn chapters<'a>(
                 ui::form::InputBuilder::text()
                     .value(&chapter.key)
                     .width(pc(100))
-                    .view(model, |_| None),
+                    .view_without_event(model),
                 ui::form::InputBuilder::text()
                     .value(&chapter.heading)
                     .width(pc(100))
@@ -258,7 +258,7 @@ pub fn chapters<'a>(
                 .view(model),
                 ui::form::InputBuilder::submit()
                     .value("Add decision")
-                    .view(model, |_| None)
+                    .view_without_event(model)
             ]
         ]
     }
@@ -276,7 +276,7 @@ fn chapter_event<'a>(
 pub fn decisions<'a>(
     model: &'a state::Model,
 ) -> impl Fn((usize, &Decision)) -> Node<updates::Msg> + 'a {
-    move |(index, decision)| {
+    move |(_index, decision)| {
         div![
             s().padding_left(px(8)).padding_right(px(8)),
             vec![div![
@@ -296,7 +296,7 @@ pub fn decisions<'a>(
                         ui::form::InputBuilder::text()
                             .value(&goes_to)
                             .width(pc(100))
-                            .view(model, |_| None),
+                            .view_without_event(model),
                     ]
                 } else {
                     vec![empty()]
@@ -305,7 +305,7 @@ pub fn decisions<'a>(
             ui::form::InputBuilder::submit()
                 .value(&decision.body)
                 .width(pc(100))
-                .view(model, |x| None),
+                .view_without_event(model),
         ]
     }
 }

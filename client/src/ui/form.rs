@@ -96,6 +96,9 @@ impl InputBuilder {
         self.font_size = font_size.into();
         self
     }
+    pub fn view_without_event(self, model: &state::Model) -> Vec<Node<updates::Msg>> {
+        self.view(model, |_| None)
+    }
     pub fn view(
         self,
         model: &state::Model,

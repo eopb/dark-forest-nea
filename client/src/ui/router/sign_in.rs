@@ -4,7 +4,7 @@ use {
     secrecy::{ExposeSecret, Secret, SecretString},
     seed::{prelude::*, *},
     seed_style::*,
-    tracing::{info, instrument},
+    tracing::instrument,
 };
 
 use shared::endpoint::sign_in::Credentials;

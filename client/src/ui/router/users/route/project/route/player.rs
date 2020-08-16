@@ -1,30 +1,15 @@
-use crate::{
-    endpoint::Post,
-    state,
-    ui::{self, view::View},
-    updates,
-};
+use crate::{state, ui, updates};
 
 use shared::{
-    data::{
-        chapters::{Chapter, Decision, Link},
-        Project,
-    },
-    endpoint::edit::{
-        save::{PermissionDenied, SaveEditor},
-        ProjectPath,
-    },
-    security::Authenticated,
+    data::chapters::{Decision, Link},
+    endpoint::edit::ProjectPath,
 };
 
 use {
     seed::{prelude::*, *},
     seed_style::{em, pc, px, *},
-    shadow_clone::shadow_clone,
     tracing::{info, instrument, trace},
 };
-
-type Model = State;
 
 #[derive(Debug, Default)]
 pub struct State {
@@ -66,8 +51,8 @@ pub enum Msg {
 }
 
 impl Msg {
-    #[instrument(skip(model, orders))]
-    pub fn update(self, model: &mut state::Model, orders: &mut impl Orders<updates::Msg>) {
+    #[instrument(skip(model, _orders))]
+    pub fn update(self, model: &mut state::Model, _orders: &mut impl Orders<updates::Msg>) {
         let mut inner_model = &mut model.route_data.player_state;
         match self {
             Self::ChangePosition(p) => inner_model.position = p,
