@@ -6,7 +6,10 @@ use crate::{
 };
 
 use shared::{
-    data::{Chapter, Decision, Link, Project},
+    data::{
+        chapters::{Chapter, Decision, Link},
+        Project,
+    },
     endpoint::edit::{
         save::{PermissionDenied, SaveEditor},
         ProjectPath,
@@ -40,7 +43,8 @@ impl From<Link> for Position {
 #[derive(Clone, Debug)]
 pub enum Position {
     Start,
-    Chapter(usize),
+    /// Chapter with key.
+    Chapter(u32),
     End,
 }
 
@@ -108,8 +112,13 @@ pub fn view(model: &state::Model, project_path: ProjectPath) -> Node<updates::Ms
                             Msg::ChangePosition(Position::first_chapter()).into()
                         ))]
                 ],
-                Position::Chapter(ref key) => {
-                    let chapter = project.chapters.get(key).expect("Invalid chapter setup");
+                Position::Chapter(key) => {
+                    let chapter = project
+                        .chapters
+                        .get_chapter_with_key(key)
+                        .unwrap_or_else(|| {
+                            panic!("Invalid chapter setup: No chapter at key: {}", key)
+                        });
                     div![
                         h3![chapter.heading.to_owned()],
                         p![chapter.body.to_owned()],
