@@ -1,7 +1,6 @@
 //! Useful functions not complex enough for their own modules.
 
 use std::{
-    collections::HashMap,
     fmt::Debug,
     hash::Hash,
     ops::{Deref, DerefMut},
@@ -11,30 +10,32 @@ use std::{
 use {
     num_traits::int::PrimInt,
     serde::{Deserialize, Deserializer, Serialize, Serializer},
+    indexmap::IndexMap
 };
 
 /// Wrapper type for `HashMaps` that serializes keys as strings to better
 /// support `MongoDB`.
 #[derive(Clone, Debug, Default)]
-pub struct StringMap<K, V>(HashMap<K, V>);
+pub struct StringMap<K, V>(IndexMap<K, V>);
 
 #[allow(clippy::type_repetition_in_bounds)]
 impl<K, V> Serialize for StringMap<K, V>
 where
     K: ToString + PrimInt,
-    HashMap<K, V>: Clone,
-    HashMap<String, V>: Serialize,
+    IndexMap<K, V>: Clone,
+    IndexMap<String, V>: Serialize ,
+    // <IndexMap<String, V> as Serialize>::Ok: Debug ,
 {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
     {
-        self.0
+       self.0
             .clone()
             .into_iter()
             .map(|(k, v)| (k.to_string(), v))
-            .collect::<HashMap<String, V>>()
-            .serialize(serializer)
+            .collect::<IndexMap<String, V>>()
+            .serialize(serializer )
     }
 }
 
@@ -42,13 +43,13 @@ impl<'de, K, V> Deserialize<'de> for StringMap<K, V>
 where
     K: FromStr + Eq + Hash + PrimInt,
     <K as FromStr>::Err: Debug,
-    HashMap<String, V>: Deserialize<'de>,
+    IndexMap<String, V>: Deserialize<'de>,
 {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
     {
-        let inner = HashMap::<String, V>::deserialize(deserializer)?;
+        let inner = IndexMap::<String, V>::deserialize(deserializer)?;
         Ok(Self(
             inner
                 .into_iter()
@@ -59,7 +60,7 @@ where
 }
 
 impl<K, V> Deref for StringMap<K, V> {
-    type Target = HashMap<K, V>;
+    type Target = IndexMap<K, V>;
     fn deref(&self) -> &Self::Target {
         &self.0
     }
@@ -71,8 +72,8 @@ impl<K, V> DerefMut for StringMap<K, V> {
     }
 }
 
-impl<K, V> From<HashMap<K, V>> for StringMap<K, V> {
-    fn from(m: HashMap<K, V>) -> Self {
+impl<K, V> From<IndexMap<K, V>> for StringMap<K, V> {
+    fn from(m: IndexMap<K, V>) -> Self {
         Self(m)
     }
 }

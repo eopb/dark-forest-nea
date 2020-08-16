@@ -1,7 +1,7 @@
 use crate::util::StringMap;
 
 use {
-    maplit::hashmap,
+    indexmap::indexmap,
     serde::{Deserialize, Serialize},
 };
 
@@ -22,7 +22,7 @@ impl Project {
             name: "The Endless Loop!".to_owned(),
             theme: (),
             description: "A stupid game".to_owned(),
-            chapters: hashmap! {
+            chapters: indexmap! {
                 1 => Chapter {
                     heading: "This is the start of your adventure.".to_owned(),
                     body: "You can continue or leave.".to_owned(),
