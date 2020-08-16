@@ -3,6 +3,7 @@
     clippy::wildcard_imports,
     clippy::future_not_send,
     clippy::must_use_candidate,
+    clippy::empty_enum,
     clippy::missing_const_for_fn
 )]
 

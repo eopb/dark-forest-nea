@@ -6,7 +6,10 @@ use crate::{
 };
 
 use shared::{
-    data::{Chapter, Decision, Project},
+    data::{
+        chapters::{Chapter, Decision, Link},
+        Project,
+    },
     endpoint::edit::{
         save::{PermissionDenied, SaveEditor},
         ProjectPath,
@@ -34,7 +37,7 @@ pub enum Msg {
 impl Msg {
     #[instrument(skip(model, orders))]
     pub fn update(self, model: &mut state::Model, orders: &mut impl Orders<updates::Msg>) {
-        let mut inner_model = model.route_data.editor.as_mut().unwrap();
+        let mut inner_model = &mut model.route_data.project;
         match self {
             Self::DescriptionChanged(description) => inner_model.description = description,
             Self::NameChanged(name) => inner_model.name = name,
@@ -62,7 +65,7 @@ impl Msg {
                     })
                 });
             }
-            Self::Submited(result) => {}
+            Self::Submited(_result) => {}
             Self::SubmitFailed(reason) => error!(reason),
         }
     }
@@ -75,12 +78,13 @@ impl From<Msg> for updates::Msg {
 
 #[derive(Debug)]
 pub struct ChapterMsgWrapper {
-    key: usize,
+    /// Index of chapter to update
+    index: usize,
     msg: ChapterMsg,
 }
 impl ChapterMsgWrapper {
-    fn new(key: usize, msg: ChapterMsg) -> Self {
-        Self { key, msg }
+    fn new(index: usize, msg: ChapterMsg) -> Self {
+        Self { index, msg }
     }
 }
 
@@ -92,12 +96,8 @@ impl From<ChapterMsgWrapper> for updates::Msg {
 impl ChapterMsgWrapper {
     #[instrument(skip(inner_model, orders))]
     pub fn update(self, inner_model: &mut Project, orders: &mut impl Orders<updates::Msg>) {
-        let chapter = inner_model.chapters.get_mut(&self.key);
-        if let Some(chapter) = chapter {
-            self.msg.update(chapter, orders)
-        } else {
-            error!("Attempt to edit chapter that does not exist");
-        }
+        self.msg
+            .update(&mut inner_model.chapters[self.index], orders)
     }
 }
 
@@ -145,69 +145,67 @@ impl DecisionMsgWrapper {
 enum DecisionMsg {}
 
 impl DecisionMsg {
-    #[instrument(skip(orders))]
-    pub fn update(self, decision: &mut Decision, orders: &mut impl Orders<updates::Msg>) {
+    #[instrument(skip(_orders))]
+    pub fn update(self, decision: &mut Decision, _orders: &mut impl Orders<updates::Msg>) {
         match self {}
     }
 }
 #[instrument(skip(model))]
 pub fn view(model: &state::Model, project_path: ProjectPath) -> Node<updates::Msg> {
     info!("rendering project");
-    trace!(project = format!("{:#?}", model.route_data.editor).as_str());
-    match &model.route_data.editor {
-        Ok(project) => div![div![
-            s().display("flex")
-                .align_items("center")
-                .flex_direction("column")
-                .margin("auto"),
-            div![
-                s().display_grid()
-                    .grid_template_columns("auto auto")
-                    .grid_gap(px(8))
-                    .width(px(600)),
-                ui::form::InputBuilder::text()
-                    .value(&project.name)
-                    .width(pc(100))
-                    .view(model, |x| Some(Msg::NameChanged(x).into())),
-                ui::form::InputBuilder::submit()
-                    .value("Save")
-                    .width(pc(100))
-                    .view(model, move |_| Some(
-                        Msg::Submit(project_path.clone()).into()
-                    ))
-            ],
-            ui::form::InputBuilder::text_area()
-                .value(&project.description)
-                .label("Description")
-                .view(model, |x| Some(Msg::DescriptionChanged(x).into())),
-            label![
-                s().margin("0")
-                    .margin_bottom(px(-15))
-                    .width(px(600))
-                    .text_align_left()
-                    .font_size(em(2.9))
-                    .color(model.theme.text()),
-                "Chapters"
-            ],
-            ui::Bordered::new(
-                vec![project
-                    .chapters
-                    .iter()
-                    .map(|(key, chapter)| (*key, chapter))
-                    .map(chapters(model))
-                    .collect::<Vec<Node<updates::Msg>>>(),]
-                .into_iter()
-                .flatten()
-                .collect::<Vec<Node<updates::Msg>>>()
-            )
-            .inner(s().width(px(600)))
-            .view(model),
+    let project = &model.route_data.project;
+    trace!(project = format!("{:#?}", project).as_str());
+    div![div![
+        s().display("flex")
+            .align_items("center")
+            .flex_direction("column")
+            .margin("auto"),
+        div![
+            s().display_grid()
+                .grid_template_columns("auto auto")
+                .grid_gap(px(8))
+                .width(px(600)),
+            ui::form::InputBuilder::text()
+                .value(&project.name)
+                .width(pc(100))
+                .view(model, |x| Some(Msg::NameChanged(x).into())),
             ui::form::InputBuilder::submit()
-                .value("Add chapter")
-                .view(model, |_| None)
-        ]],
-        Err(error) => div!["some error"],
-    }
+                .value("Save")
+                .width(pc(100))
+                .view(model, move |_| Some(
+                    Msg::Submit(project_path.clone()).into()
+                ))
+        ],
+        ui::form::InputBuilder::text_area()
+            .value(&project.description)
+            .label("Description")
+            .view(model, |x| Some(Msg::DescriptionChanged(x).into())),
+        label![
+            s().margin("0")
+                .margin_bottom(px(-15))
+                .width(px(600))
+                .text_align_left()
+                .font_size(em(2.9))
+                .color(model.theme.text()),
+            "Chapters"
+        ],
+        ui::Bordered::new(
+            vec![project
+                .chapters
+                .iter()
+                .enumerate()
+                .map(chapters(model))
+                .collect::<Vec<Node<updates::Msg>>>(),]
+            .into_iter()
+            .flatten()
+            .collect::<Vec<Node<updates::Msg>>>()
+        )
+        .inner(s().width(px(600)))
+        .view(model),
+        ui::form::InputBuilder::submit()
+            .value("Add chapter")
+            .view_without_event(model)
+    ]]
 }
 // TODO use type alias for `Node<updates::Msg>>`
 
@@ -215,8 +213,8 @@ pub fn view(model: &state::Model, project_path: ProjectPath) -> Node<updates::Ms
 pub fn chapters<'a>(
     model: &'a state::Model,
 ) -> impl Fn((usize, &Chapter)) -> Node<updates::Msg> + 'a {
-    move |(key, chapter)| {
-        let chapter_event = |func| chapter_event(func, key);
+    move |(index, chapter)| {
+        let chapter_event = |func| chapter_event(func, index);
         div![
             s().padding_left(px(8)).padding_right(px(8)),
             vec![div![
@@ -225,9 +223,9 @@ pub fn chapters<'a>(
                     .grid_gap(px(8))
                     .width(pc(100)),
                 ui::form::InputBuilder::text()
-                    .value(&key)
+                    .value(&chapter.key)
                     .width(pc(100))
-                    .view(model, |_| None),
+                    .view_without_event(model),
                 ui::form::InputBuilder::text()
                     .value(&chapter.heading)
                     .width(pc(100))
@@ -260,7 +258,7 @@ pub fn chapters<'a>(
                 .view(model),
                 ui::form::InputBuilder::submit()
                     .value("Add decision")
-                    .view(model, |_| None)
+                    .view_without_event(model)
             ]
         ]
     }
@@ -269,16 +267,16 @@ pub fn chapters<'a>(
 /// Converts a [`ChapterMsg`] based event into a standard [`updates::Msg`]
 fn chapter_event<'a>(
     func: &'a (dyn Fn(String) -> ChapterMsg + 'a),
-    key: usize,
+    index: usize,
 ) -> impl Fn(String) -> Option<updates::Msg> + 'a + Clone {
-    move |s| Some(ChapterMsgWrapper::new(key, func(s)).into())
+    move |s| Some(ChapterMsgWrapper::new(index, func(s)).into())
 }
 
 #[instrument(skip(model))]
 pub fn decisions<'a>(
     model: &'a state::Model,
 ) -> impl Fn((usize, &Decision)) -> Node<updates::Msg> + 'a {
-    move |(index, decision)| {
+    move |(_index, decision)| {
         div![
             s().padding_left(px(8)).padding_right(px(8)),
             vec![div![
@@ -286,7 +284,7 @@ pub fn decisions<'a>(
                     .grid_template_columns("150px auto")
                     .grid_gap(px(8))
                     .width(pc(100)),
-                if let Some(shared::data::Link::Chapter(goes_to)) = decision.goes_to {
+                if let Some(Link::Chapter(goes_to)) = decision.goes_to {
                     nodes![
                         p![
                             s().font_size(em(2.9))
@@ -298,7 +296,7 @@ pub fn decisions<'a>(
                         ui::form::InputBuilder::text()
                             .value(&goes_to)
                             .width(pc(100))
-                            .view(model, |_| None),
+                            .view_without_event(model),
                     ]
                 } else {
                     vec![empty()]
@@ -307,7 +305,7 @@ pub fn decisions<'a>(
             ui::form::InputBuilder::submit()
                 .value(&decision.body)
                 .width(pc(100))
-                .view(model, |x| None),
+                .view_without_event(model),
         ]
     }
 }

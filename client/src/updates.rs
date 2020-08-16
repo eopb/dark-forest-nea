@@ -12,7 +12,7 @@ use crate::{
 
 use sign_in::SignIn;
 
-use {seed::prelude::*, web_sys::Window};
+use {seed::prelude::*, tracing::instrument, web_sys::Window};
 
 use shared::{
     endpoint::{
@@ -37,6 +37,7 @@ pub enum Msg {
     CreateAccountForm(ui::router::create_account::Msg),
     NewProjectForm(ui::router::new_project::Msg),
     Editor(ui::router::users::route::project::route::editor::Msg),
+    Player(ui::router::users::route::project::route::player::Msg),
     ClearRouteData,
     SignOut,
 }
@@ -83,20 +84,23 @@ pub fn update(msg: Msg, model: &mut state::Model, orders: &mut impl Orders<Msg>)
         }
         Msg::SignIn(x) => x.update(model, orders),
         Msg::Editor(x) => x.update(model, orders),
+        Msg::Player(x) => x.update(model, orders),
         Msg::ClearRouteData => model.route_data = state::RouteData::default(),
     }
 }
 
 /// An item that must be fetched.
+#[derive(Debug)]
 pub enum ToFetch {
     Hello,
     SignedIn,
     RefreshToken,
-    Editor(ProjectPath),
+    Project(ProjectPath),
 }
 
 impl ToFetch {
     /// Fetch an item and inform with a message.
+    #[instrument]
     async fn order(self, login_token: Option<Token>) -> Option<Msg> {
         Some(match self {
             Self::Hello => Msg::DataFetched(Fetched::Hello(Hello::fetch().await)),
@@ -106,7 +110,7 @@ impl ToFetch {
             Self::RefreshToken => Msg::DataFetched(Fetched::RefreshToken(
                 RefreshToken::fetch(login_token?).await,
             )),
-            Self::Editor(path) => Msg::DataFetched(Fetched::Editor(
+            Self::Project(path) => Msg::DataFetched(Fetched::Editor(
                 StartEditor::fetch(Authenticated::new(path, login_token?)).await,
             )),
         })
@@ -114,6 +118,7 @@ impl ToFetch {
 }
 
 /// An item that has been fetched ready to be handled.
+#[derive(Debug)]
 pub enum Fetched {
     Hello(anyhow::Result<<Hello as shared::Endpoint>::Response>),
     SignedIn(anyhow::Result<<SignedIn as shared::Endpoint>::Response>),
@@ -123,11 +128,13 @@ pub enum Fetched {
 
 impl Fetched {
     /// Add a fetched item to the model.
+    #[instrument(skip(model))]
     fn add_to(self, model: &mut state::Model) {
         match self {
             Self::Hello(x) => model.server.hello = state::server::Fetch::Fetched(x),
             Self::SignedIn(x) => model.server.signed_in = state::server::Fetch::Fetched(x),
-            Self::Editor(x) => model.route_data.editor = x.unwrap(),
+            // TODO error handling.
+            Self::Editor(x) => model.route_data.project = x.unwrap().unwrap(),
             //TODO handle refresh tokens!
             Self::RefreshToken(_) => {}
         }

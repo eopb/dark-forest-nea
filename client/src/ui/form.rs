@@ -22,6 +22,7 @@ pub struct InputBuilder {
     value: Option<String>,
     label: Option<String>,
     width: CssWidth,
+    font_size: ExactLength,
 }
 
 impl InputBuilder {
@@ -39,6 +40,7 @@ impl InputBuilder {
                 600
             })
             .into(),
+            font_size: em(2.9),
         }
     }
     /// Text box.
@@ -90,6 +92,13 @@ impl InputBuilder {
         self.width = width.into();
         self
     }
+    pub fn font_size(mut self, font_size: impl Into<ExactLength>) -> Self {
+        self.font_size = font_size.into();
+        self
+    }
+    pub fn view_without_event(self, model: &state::Model) -> Vec<Node<updates::Msg>> {
+        self.view(model, |_| None)
+    }
     pub fn view(
         self,
         model: &state::Model,
@@ -102,7 +111,7 @@ impl InputBuilder {
                         .margin_bottom(px(-15))
                         .width(self.width.clone())
                         .text_align_left()
-                        .font_size(em(2.9))
+                        .font_size(self.font_size.clone())
                         .color(color)
                 };
 
@@ -145,7 +154,7 @@ impl InputBuilder {
                     .font_family("adobedia")
                     .box_sizing_border_box()
                     .border("none")
-                    .font_size(em(3))
+                    .font_size(self.font_size)
                     .background_color(model.theme.background())
                     .color(model.theme.text())
                     .resize("vertical"),
