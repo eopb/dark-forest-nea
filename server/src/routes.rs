@@ -7,7 +7,10 @@ use {
     maud::{html, PreEscaped, DOCTYPE},
     tide::{Request, Response, StatusCode},
     tracing::{instrument, trace},
-};
+};use horrorshow::prelude::*;
+use horrorshow::html;
+use horrorshow::helper::doctype;
+
 
 use shared::routes::SubRoute;
 
