@@ -2269,7 +2269,7 @@ dependencies = [
 [[package]]
 name = "seed_style_preview"
 version = "0.1.9"
-source = "git+https://github.com/ethanboxx/seed_style_preview.git?branch=remove-track-caller#0fd4d29a7fc89b286c34864626965ccdc04daa7a"
+source = "git+https://github.com/rebo/seed_style_preview.git#3febd952dc31cac2142c32af75ed98c1eea73494"
 dependencies = [
  "anymap",
  "derive_more",

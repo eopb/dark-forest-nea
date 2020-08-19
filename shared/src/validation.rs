@@ -82,12 +82,16 @@ use Fail::*;
 
 impl Fail {
     pub fn show(self, field: &str) -> String {
-        format!("{} {}.", field, match self {
-            TooLong => "must be shorter",
-            TooShort => "must be longer",
-            NotAscii => "must only contain ASCII characters",
-            InvalidEmail => "must be a valid email",
-        })
+        format!(
+            "{} {}.",
+            field,
+            match self {
+                TooLong => "must be shorter",
+                TooShort => "must be longer",
+                NotAscii => "must only contain ASCII characters",
+                InvalidEmail => "must be a valid email",
+            }
+        )
     }
 }
 

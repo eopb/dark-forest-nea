@@ -2,15 +2,15 @@
 
 use super::State;
 
+use horrorshow::helper::doctype;
+use horrorshow::html;
+use horrorshow::prelude::*;
 use {
     http_types::mime,
     maud::{html, PreEscaped, DOCTYPE},
     tide::{Request, Response, StatusCode},
     tracing::{instrument, trace},
-};use horrorshow::prelude::*;
-use horrorshow::html;
-use horrorshow::helper::doctype;
-
+};
 
 use shared::routes::SubRoute;
 
