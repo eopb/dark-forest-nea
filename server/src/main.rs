@@ -1,3 +1,4 @@
+#![type_length_limit = "2592314"]
 #![deny(clippy::all, clippy::pedantic, clippy::nursery)]
 #![allow(
     clippy::missing_errors_doc,
