@@ -80,10 +80,13 @@ impl Database {
             } else {
                 collection
                     .insert_one(
-                        ProjectsList::new(user, Project {
-                            name: project_name,
-                            uuid: *uuid,
-                        })
+                        ProjectsList::new(
+                            user,
+                            Project {
+                                name: project_name,
+                                uuid: *uuid,
+                            },
+                        )
                         .as_bson()?,
                         None,
                     )
