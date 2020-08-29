@@ -1,4 +1,5 @@
 pub mod create_account;
+pub mod explore;
 pub mod index;
 pub mod new_project;
 pub mod not_found;
@@ -18,7 +19,7 @@ pub fn view(model: &state::Model) -> Node<updates::Msg> {
     match model.route.0 {
         Some(ref route) => match route {
             Route::Index => index::view(model),
-            Route::Explore => p!["explore"],
+            Route::Explore => explore::view(model),
             Route::SignIn => sign_in::view(model),
             Route::CreateAccount => create_account::view(model),
             Route::NewProject => new_project::view(model),

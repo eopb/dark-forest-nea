@@ -2,7 +2,7 @@ use crate::ui;
 use seed::{prelude::*, *};
 use seed_style::{em, px, *};
 
-pub fn view<Msg>(header: &str, subheading: &str) -> Node<Msg> {
+pub fn view<Msg>(header: &str, subheading: Option<&str>) -> Node<Msg> {
     header![
         h1![
             s().font_family("bitlimt")
@@ -10,7 +10,7 @@ pub fn view<Msg>(header: &str, subheading: &str) -> Node<Msg> {
                 .margin_bottom(px(5)),
             header
         ],
-        ui::subheading(subheading),
+        subheading.map(ui::subheading)
     ]
 }
 
@@ -24,7 +24,7 @@ mod tests {
     #[wasm_bindgen_test]
     fn test() {
         let mut element = El::<updates::Msg>::empty(Tag::Div);
-        view("Dark Forest", "A cool subheading").update_el(&mut element);
+        view("Dark Forest", Some("A cool subheading")).update_el(&mut element);
         let children = element.children;
         let header = children[0].clone();
 
