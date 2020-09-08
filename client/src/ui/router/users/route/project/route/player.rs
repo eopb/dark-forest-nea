@@ -121,9 +121,7 @@ pub fn view(model: &state::Model, project_path: ProjectPath) -> Node<updates::Ms
 }
 
 #[instrument(skip(model))]
-pub fn decisions<'a>(
-    model: &'a state::Model,
-) -> impl Fn(&'a Decision) -> Vec<Node<updates::Msg>> + 'a {
+pub fn decisions(model: &state::Model) -> impl Fn(&Decision) -> Vec<Node<updates::Msg>> + '_ {
     move |decision| {
         let msg = Msg::ChangePosition(decision.goes_to.clone().unwrap().into());
         ui::form::InputBuilder::submit()

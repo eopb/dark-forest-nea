@@ -210,9 +210,7 @@ pub fn view(model: &state::Model, project_path: ProjectPath) -> Node<updates::Ms
 // TODO use type alias for `Node<updates::Msg>>`
 
 #[instrument(skip(model))]
-pub fn chapters<'a>(
-    model: &'a state::Model,
-) -> impl Fn((usize, &Chapter)) -> Node<updates::Msg> + 'a {
+pub fn chapters(model: &state::Model) -> impl Fn((usize, &Chapter)) -> Node<updates::Msg> + '_ {
     move |(index, chapter)| {
         let chapter_event = |func| chapter_event(func, index);
         div![
@@ -265,17 +263,15 @@ pub fn chapters<'a>(
 }
 
 /// Converts a [`ChapterMsg`] based event into a standard [`updates::Msg`]
-fn chapter_event<'a>(
-    func: &'a (dyn Fn(String) -> ChapterMsg + 'a),
+fn chapter_event(
+    func: &(dyn Fn(String) -> ChapterMsg),
     index: usize,
-) -> impl Fn(String) -> Option<updates::Msg> + 'a + Clone {
+) -> impl Fn(String) -> Option<updates::Msg> + '_ + Clone {
     move |s| Some(ChapterMsgWrapper::new(index, func(s)).into())
 }
 
 #[instrument(skip(model))]
-pub fn decisions<'a>(
-    model: &'a state::Model,
-) -> impl Fn((usize, &Decision)) -> Node<updates::Msg> + 'a {
+pub fn decisions(model: &state::Model) -> impl Fn((usize, &Decision)) -> Node<updates::Msg> + '_ {
     move |(_index, decision)| {
         div![
             s().padding_left(px(8)).padding_right(px(8)),
