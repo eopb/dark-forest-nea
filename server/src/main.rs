@@ -21,7 +21,8 @@ use {
     tide::Redirect,
     tide_tracing::TraceMiddleware,
     tracing::{info, Level},
-    tracing_subscriber::fmt::format::FmtSpan,
+    tracing_subscriber::{fmt::format::FmtSpan, layer::SubscriberExt, Registry},
+    tracing_tree::HierarchicalLayer,
 };
 
 use shared::endpoint::{
@@ -34,17 +35,25 @@ use shared::endpoint::{
     signed_in::SignedIn,
 };
 
+static LISTENER: &str = "localhost:8081";
+const DISPLAY_LOGS_AS_TREE: bool = true;
+
 #[async_std::main]
 async fn main() -> tide::Result<()> {
     info!("Setting up environment");
     dotenv().ok();
 
-    let subscriber = tracing_subscriber::fmt()
-        .with_max_level(Level::TRACE)
-        .with_span_events(FmtSpan::CLOSE)
-        .finish();
-
-    tracing::subscriber::set_global_default(subscriber).expect("no global subscriber has been set");
+    if DISPLAY_LOGS_AS_TREE {
+        let subscriber = Registry::default().with(HierarchicalLayer::new(2));
+        tracing::subscriber::set_global_default(subscriber)
+    } else {
+        let subscriber = tracing_subscriber::fmt()
+            .with_max_level(Level::TRACE)
+            .with_span_events(FmtSpan::CLOSE)
+            .finish();
+        tracing::subscriber::set_global_default(subscriber)
+    }
+    .expect("no global subscriber has been set");
 
     // LogTracer::init()?;
 
@@ -77,9 +86,9 @@ async fn main() -> tide::Result<()> {
     StartEditor::apply(&mut app);
     SaveEditor::apply(&mut app);
 
-    info!("Starting Server");
+    info!("Starting Server on `{}`", LISTENER);
 
-    app.listen("localhost:8081").await?;
+    app.listen(LISTENER).await?;
 
     Ok(())
 }
