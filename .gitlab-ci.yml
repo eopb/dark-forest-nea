@@ -20,7 +20,7 @@ report:
   stage: verify
   script:
     - apt update
-    - apt install textlive-full
+    - apt install texlive-full
     - cargo make report
 # coverage:
 #   stage: coverage
