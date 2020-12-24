@@ -1,1 +1,8 @@
 target
+
+report/**.aux
+report/**.pdf
+report/**.log
+report/**.fls
+report/**.fdb_latexmk
+report/**.toc

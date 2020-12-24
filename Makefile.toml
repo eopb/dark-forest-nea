@@ -53,3 +53,16 @@ workspace = false
 dependencies = ["coverage"]
 command = "firefox"
 args = ["target/tarpaulin-report.html"]
+
+[tasks.report]
+workspace = false
+command = "pdflatex"
+args = ["-halt-on-error", "-output-directory", "report", "report/report.tex"]
+
+
+[tasks.report_watch]
+workspace = false
+run_task = [
+    { name = "report" },
+]
+watch = true
