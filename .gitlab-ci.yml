@@ -15,6 +15,13 @@ verify:
     - apt install ./google-chrome-stable_current_amd64.deb -y
     - rustup component add rustfmt clippy
     - cargo make verify
+
+report:
+  stage: verify
+  script:
+    - apt update
+    - apt install textlive-full
+    - cargo make report
 # coverage:
 #   stage: coverage
 #   script:
