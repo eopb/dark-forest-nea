@@ -125,6 +125,15 @@ This ensures that it is always possible to transmit said types via a variety of 
 \section{Telemetry and logging}
 \section{Data Structures}
 \subsection{A Game as a Multigraph}
+The core data structure in Dark Forest is a multigraph.
+A multigraph is a form of graph where multiple edges can exist between two nodes.
+
+In the case of this program the multigraph exists as a mutable user defined finite state machine.
+The state machine is traversed during the "play" stage.
+The states are game states and the transitions are choices that the player makes.
+
+In our case we have more of a Mealy machine as there are two accepting states.
+The case that the user "wins" and the "losing" state.
 
 \section{Database}
 
