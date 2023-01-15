@@ -1,5 +1,9 @@
 # dark-forest-nea
 
+A full-stack Rust Wasm project I made for an assignment while studying A-Levels.
+
+![](screenshot.jpg)
+
 ## Required tools
 
 - [Rust](https://www.rust-lang.org)
